@@ -1,0 +1,152 @@
+'\" t
+.\"     Title: flatpak remote-add
+.\"    Author: Alexander Larsson <alexl@redhat.com>
+.\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
+.\"      Date: 03/29/2019
+.\"    Manual: flatpak remote-add
+.\"    Source: flatpak
+.\"  Language: English
+.\"
+.TH "FLATPAK REMOTE\-ADD" "1" "" "flatpak" "flatpak remote-add"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+flatpak-remote-add \- Add a remote repository
+.SH "SYNOPSIS"
+.HP \w'\fBflatpak\ remote\-add\fR\ 'u
+\fBflatpak remote\-add\fR [OPTION...] NAME LOCATION
+.SH "DESCRIPTION"
+.PP
+Adds a remote repository to the flatpak repository configuration\&.
+NAME
+is the name for the new remote, and
+LOCATION
+is a url or pathname\&. The
+LOCATION
+is either a flatpak repository, or a
+\&.flatpakrepo
+file which describes a repository\&. In the former case you may also have to specify extra options, such as the gpg key for the repo\&.
+.PP
+Unless overridden with the
+\fB\-\-user\fR
+or
+\fB\-\-installation\fR
+options, this command changes the default system\-wide installation\&.
+.SH "OPTIONS"
+.PP
+The following options are understood:
+.PP
+\fB\-h\fR, \fB\-\-help\fR
+.RS 4
+Show help options and exit\&.
+.RE
+.PP
+\fB\-\-from\fR
+.RS 4
+Assume the URI is a \&.flatpakrepo file rather than the repository itself\&. This is enabled by default if the extension is \&.flatpakrepo, so generally you don\*(Aqt need this option\&.
+.RE
+.PP
+\fB\-\-user\fR
+.RS 4
+Modify the per\-user configuration\&.
+.RE
+.PP
+\fB\-\-system\fR
+.RS 4
+Modify the default system\-wide configuration\&.
+.RE
+.PP
+\fB\-\-installation=NAME\fR
+.RS 4
+Modify a system\-wide installation specified by
+NAME
+among those defined in
+/etc/flatpak/installations\&.d/\&. Using
+\fB\-\-installation=default\fR
+is equivalent to using
+\fB\-\-system\fR\&.
+.RE
+.PP
+\fB\-\-no\-gpg\-verify\fR
+.RS 4
+Disable GPG verification for the added remote\&.
+.RE
+.PP
+\fB\-\-prio=PRIO\fR
+.RS 4
+Set the priority for the remote\&. Default is 1, higher is more prioritized\&. This is mainly used for graphical installation tools\&.
+.RE
+.PP
+\fB\-\-no\-enumerate\fR
+.RS 4
+Mark the remote as not enumerated\&. This means the remote will not be used to list applications, for instance in graphical installation tools\&.
+.RE
+.PP
+\fB\-\-no\-use\-for\-deps\fR
+.RS 4
+Mark the remote as not to be used for automatic runtime dependency resolution\&.
+.RE
+.PP
+\fB\-\-if\-not\-exists\fR
+.RS 4
+Do nothing if the provided remote already exists\&.
+.RE
+.PP
+\fB\-\-disable\fR
+.RS 4
+Disable the added remote\&.
+.RE
+.PP
+\fB\-\-title=TITLE\fR
+.RS 4
+A title for the remote, e\&.g\&. for display in a UI\&.
+.RE
+.PP
+\fB\-\-default\-branch=BRANCH\fR
+.RS 4
+A default branch for the remote, mainly for use in a UI\&.
+.RE
+.PP
+\fB\-\-gpg\-import=FILE\fR
+.RS 4
+Import gpg keys from the specified keyring file as trusted for the new remote\&. If the file is \- the keyring is read from standard input\&.
+.RE
+.PP
+\fB\-v\fR, \fB\-\-verbose\fR
+.RS 4
+Print debug information during command processing\&.
+.RE
+.PP
+\fB\-\-ostree\-verbose\fR
+.RS 4
+Print OSTree debug information during command processing\&.
+.RE
+.SH "EXAMPLES"
+.PP
+\fB$ flatpak remote\-add gnome https://sdk\&.gnome\&.org/gnome\&.flatpakrepo\fR
+.PP
+\fB$ flatpak \-\-user remote\-add \-\-no\-gpg\-verify test\-repo https://people\&.gnome\&.org/~alexl/gnome\-sdk/repo/\fR
+.SH "SEE ALSO"
+.PP
+\fBflatpak\fR(1),
+\fBflatpak-remote-modify\fR(1),
+\fBflatpak-remote-delete\fR(1),
+\fBflatpak-remotes\fR(1),
+\fBflatpak-flatpakrepo\fR(5)

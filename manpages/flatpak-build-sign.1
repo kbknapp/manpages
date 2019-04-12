@@ -1,0 +1,92 @@
+'\" t
+.\"     Title: flatpak build-sign
+.\"    Author: Alexander Larsson <alexl@redhat.com>
+.\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
+.\"      Date: 03/29/2019
+.\"    Manual: flatpak build-sign
+.\"    Source: flatpak
+.\"  Language: English
+.\"
+.TH "FLATPAK BUILD\-SIGN" "1" "" "flatpak" "flatpak build-sign"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+flatpak-build-sign \- Sign an application or runtime
+.SH "SYNOPSIS"
+.HP \w'\fBflatpak\ build\-sign\fR\ 'u
+\fBflatpak build\-sign\fR [OPTION...] LOCATION ID [BRANCH]
+.SH "DESCRIPTION"
+.PP
+Signs the commit for a specified application or runtime in a local repository\&.
+LOCATION
+is the location of the repository\&.
+ID
+is the name of the application, or runtime if \-\-runtime is specified\&. If
+BRANCH
+is not specified, it is assumed to be "master"\&.
+.PP
+Applications can also be signed during build\-export, but it is sometimes useful to add additional signatures later\&.
+.SH "OPTIONS"
+.PP
+The following options are understood:
+.PP
+\fB\-h\fR, \fB\-\-help\fR
+.RS 4
+Show help options and exit\&.
+.RE
+.PP
+\fB\-\-gpg\-sign=KEYID\fR
+.RS 4
+Sign the commit with this GPG key\&. This option can be used multiple times\&.
+.RE
+.PP
+\fB\-\-gpg\-homedir=PATH\fR
+.RS 4
+GPG Homedir to use when looking for keyrings
+.RE
+.PP
+\fB\-\-runtime\fR
+.RS 4
+Sign a runtime instead of an app\&.
+.RE
+.PP
+\fB\-\-arch=ARCH\fR
+.RS 4
+The architecture to use\&.
+.RE
+.PP
+\fB\-v\fR, \fB\-\-verbose\fR
+.RS 4
+Print debug information during command processing\&.
+.RE
+.PP
+\fB\-\-ostree\-verbose\fR
+.RS 4
+Print OSTree debug information during command processing\&.
+.RE
+.SH "EXAMPLES"
+.PP
+\fB$ flatpak build\-sign \-\-gpg\-sign=D8BA6573DDD2418027736F1BC33B315E53C1E9D6 /some/repo org\&.my\&.App\fR
+.SH "SEE ALSO"
+.PP
+\fBostree\fR(1),
+\fBflatpak\fR(1),
+\fBflatpak-build-export\fR(1),
+\fBflatpak-build\fR(1),

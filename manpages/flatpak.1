@@ -1,0 +1,389 @@
+'\" t
+.\"     Title: flatpak
+.\"    Author: Alexander Larsson <alexl@redhat.com>
+.\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
+.\"      Date: 03/29/2019
+.\"    Manual: flatpak
+.\"    Source: flatpak
+.\"  Language: English
+.\"
+.TH "FLATPAK" "1" "" "flatpak" "flatpak"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+flatpak \- Build, install and run applications and runtimes
+.SH "SYNOPSIS"
+.HP \w'\fBflatpak\fR\ 'u
+\fBflatpak\fR [OPTION...] {COMMAND}
+.SH "DESCRIPTION"
+.PP
+Flatpak is a tool for managing applications and the runtimes they use\&. In the Flatpak model, applications can be built and distributed independently from the host system they are used on, and they are isolated from the host system (\*(Aqsandboxed\*(Aq) to some degree, at runtime\&.
+.PP
+Flatpak can operate in system\-wide or per\-user mode\&. The system\-wide data (runtimes, applications and configuration) is located in
+$prefix/var/lib/flatpak/, and the per\-user data is in
+$HOME/\&.local/share/flatpak/\&. Below these locations, there is a local repository in the
+repo/
+subdirectory and installed runtimes and applications are in the corresponding
+runtime/
+and
+app/
+subdirectories\&.
+.PP
+System\-wide remotes can be statically preconfigured by dropping config fragments into
+/etc/flatpak/remotes\&.d/\&.
+.PP
+In addition to the system\-wide installation in
+$prefix/var/lib/flatpak/, which is always considered the default one unless overridden, more system\-wide installations can be defined via configuration files in
+/etc/flatpak/installations\&.d/, which must define at least the id of the installation and the absolute path to it\&. Other optional parameters like
+DisplayName,
+Priority
+or
+StorageType
+are also supported\&.
+.PP
+Flatpak uses OSTree to distribute and deploy data\&. The repositories it uses are OSTree repositories and can be manipulated with the
+\fBostree\fR
+utility\&. Installed runtimes and applications are OSTree checkouts\&.
+.PP
+Basic commands for buiding flatpaks such as build\-init, build and build\-finish are included in the flatpak utility\&. For higher\-level build support, see the separate
+\fBflatpak-builder\fR(1)
+tool\&.
+.SH "OPTIONS"
+.PP
+The following global options are understood\&. Individual commands have their own options\&.
+.PP
+\fB\-h\fR, \fB\-\-help\fR
+.RS 4
+Show help options and exit\&.
+.RE
+.PP
+\fB\-v\fR, \fB\-\-verbose\fR
+.RS 4
+Show debug information during command processing\&. Use \-vv for more detail\&.
+.RE
+.PP
+\fB\-\-ostree\-verbose\fR
+.RS 4
+Show OSTree debug information during command processing\&.
+.RE
+.PP
+\fB\-\-version\fR
+.RS 4
+Print version information and exit\&.
+.RE
+.PP
+\fB\-\-default\-arch\fR
+.RS 4
+Print the default arch and exit\&.
+.RE
+.PP
+\fB\-\-supported\-arches\fR
+.RS 4
+Print the supported arches in priority order and exit\&.
+.RE
+.PP
+\fB\-\-gl\-drivers\fR
+.RS 4
+Print the list of active gl drivers and exit\&.
+.RE
+.PP
+\fB\-\-installations\fR
+.RS 4
+Print paths of system installations and exit\&.
+.RE
+.SH "COMMANDS"
+.PP
+Commands for managing installed applications and runtimes:
+.PP
+\fBflatpak-install\fR(1)
+.RS 4
+Install an application or a runtime from a remote or bundle\&.
+.RE
+.PP
+\fBflatpak-update\fR(1)
+.RS 4
+Update an installed application or runtime\&.
+.RE
+.PP
+\fBflatpak-uninstall\fR(1)
+.RS 4
+Uninstall an installed application or runtime\&.
+.RE
+.PP
+\fBflatpak-list\fR(1)
+.RS 4
+List installed applications and/or runtimes\&.
+.RE
+.PP
+\fBflatpak-info\fR(1)
+.RS 4
+Show information for an installed application or runtime\&.
+.RE
+.PP
+\fBflatpak-history\fR(1)
+.RS 4
+Show history\&.
+.RE
+.PP
+\fBflatpak-config\fR(1)
+.RS 4
+Manage flatpak configuration\&.
+.RE
+.PP
+\fBflatpak-repair\fR(1)
+.RS 4
+Repair flatpak installation\&.
+.RE
+.PP
+\fBflatpak-create-usb\fR(1)
+.RS 4
+Copy apps and/or runtimes onto removable media\&.
+.RE
+.PP
+Commands for finding applications and runtimes:
+.PP
+\fBflatpak-search\fR(1)
+.RS 4
+Search for applications and runtimes\&.
+.RE
+.PP
+Commands for running applications:
+.PP
+\fBflatpak-run\fR(1)
+.RS 4
+Run an application\&.
+.RE
+.PP
+\fBflatpak-kill\fR(1)
+.RS 4
+Stop a running application\&.
+.RE
+.PP
+\fBflatpak-override\fR(1)
+.RS 4
+Override permissions for an application\&.
+.RE
+.PP
+\fBflatpak-make-current\fR(1)
+.RS 4
+Specify the default version to run\&.
+.RE
+.PP
+\fBflatpak-enter\fR(1)
+.RS 4
+Enter the namespace of a running application\&.
+.RE
+.PP
+Commands for managing file access:
+.PP
+\fBflatpak-document-export\fR(1)
+.RS 4
+Grant an application access to a specific file\&.
+.RE
+.PP
+\fBflatpak-document-unexport\fR(1)
+.RS 4
+Revoke access to a specific file\&.
+.RE
+.PP
+\fBflatpak-document-info\fR(1)
+.RS 4
+Show information about a specific file\&.
+.RE
+.PP
+\fBflatpak-documents\fR(1)
+.RS 4
+List exported files\&.
+.RE
+.PP
+Commands for managing the dynamic permission store:
+.PP
+\fBflatpak-permission-remove\fR(1)
+.RS 4
+Remove item from permission store\&.
+.RE
+.PP
+\fBflatpak-permissions\fR(1)
+.RS 4
+List permissions\&.
+.RE
+.PP
+\fBflatpak-permission-show\fR(1)
+.RS 4
+Show app permissions\&.
+.RE
+.PP
+\fBflatpak-permission-reset\fR(1)
+.RS 4
+Reset app permissions\&.
+.RE
+.PP
+Commands for managing remote repositories:
+.PP
+\fBflatpak-remotes\fR(1)
+.RS 4
+List all configured remote repositories\&.
+.RE
+.PP
+\fBflatpak-remote-add\fR(1)
+.RS 4
+Add a new remote repository\&.
+.RE
+.PP
+\fBflatpak-remote-modify\fR(1)
+.RS 4
+Modify properties of a configured remote repository\&.
+.RE
+.PP
+\fBflatpak-remote-delete\fR(1)
+.RS 4
+Delete a configured remote repository\&.
+.RE
+.PP
+\fBflatpak-remote-ls\fR(1)
+.RS 4
+List contents of a configured remote repository\&.
+.RE
+.PP
+\fBflatpak-remote-info\fR(1)
+.RS 4
+Show information about a ref in a configured remote repository\&.
+.RE
+.PP
+Commands for building applications:
+.PP
+\fBflatpak-build-init\fR(1)
+.RS 4
+Initialize a build directory\&.
+.RE
+.PP
+\fBflatpak-build\fR(1)
+.RS 4
+Run a build command in a build directory\&.
+.RE
+.PP
+\fBflatpak-build-finish\fR(1)
+.RS 4
+Finalizes a build directory for export\&.
+.RE
+.PP
+\fBflatpak-build-export\fR(1)
+.RS 4
+Export a build directory to a repository\&.
+.RE
+.PP
+\fBflatpak-build-bundle\fR(1)
+.RS 4
+Create a bundle file from a ref in a local repository\&.
+.RE
+.PP
+\fBflatpak-build-import-bundle\fR(1)
+.RS 4
+Import a file bundle into a local repository\&.
+.RE
+.PP
+\fBflatpak-build-sign\fR(1)
+.RS 4
+Sign an application or runtime after its been exported\&.
+.RE
+.PP
+\fBflatpak-build-update-repo\fR(1)
+.RS 4
+Update the summary file in a repository\&.
+.RE
+.PP
+\fBflatpak-build-commit-from\fR(1)
+.RS 4
+Create a new commit based on an existing ref\&.
+.RE
+.PP
+\fBflatpak-repo\fR(1)
+.RS 4
+Print information about a repo\&.
+.RE
+.PP
+Commands available inside the sandbox:
+.PP
+\fBflatpak-spawn\fR(1)
+.RS 4
+Run a command in another sandbox\&.
+.RE
+.SH "FILE FORMATS"
+.PP
+File formats that are used by Flatpak commands:
+.PP
+\fBflatpak-flatpakref\fR(5)
+.RS 4
+Reference to a remote for an application or runtime
+.RE
+.PP
+\fBflatpak-flatpakrepo\fR(5)
+.RS 4
+Reference to a remote
+.RE
+.PP
+\fBflatpak-remote\fR(5)
+.RS 4
+Configuration for a remote
+.RE
+.PP
+\fBflatpak-installation\fR(5)
+.RS 4
+Configuration for an installation location
+.RE
+.PP
+\fBflatpak-metadata\fR(5)
+.RS 4
+Information about an application or runtime
+.RE
+.SH "ENVIRONMENT"
+.PP
+Besides standard environment variables such as
+\fBXDG_DATA_DIRS\fR
+and
+\fBXDG_DATA_HOME\fR, flatpak is consulting some of its own\&.
+.PP
+\fBFLATPAK_USER_DIR\fR
+.RS 4
+The location of the per\-user installation\&. If this is not set,
+$XDG_DATA_HOME/flatpak
+is used\&.
+.RE
+.PP
+\fBFLATPAK_SYSTEM_DIR\fR
+.RS 4
+The location of the default system\-wide installation\&. If this is not set,
+/var/lib/flatpak
+is used (unless overridden at build time by \-\-localstatedir or \-\-with\-system\-install\-dir)\&.
+.RE
+.PP
+\fBFLATPAK_CONFIG_DIR\fR
+.RS 4
+The location of flatpak site configuration\&. If this is not set,
+/etc/flatpak
+is used (unless overridden at build time by \-\-sysconfdir)\&.
+.RE
+.SH "SEE ALSO"
+.PP
+\fBostree\fR(1),
+\fBostree.repo\fR(5),
+\fBflatpak-remote\fR(5),
+\fBflatpak-installation\fR(5),
+\m[blue]\fBhttps://www\&.flatpak\&.org\fR\m[]

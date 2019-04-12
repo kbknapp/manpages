@@ -1,0 +1,122 @@
+'\" t
+.\"     Title: flatpak config
+.\"    Author: Alexander Larsson <alexl@redhat.com>
+.\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
+.\"      Date: 03/29/2019
+.\"    Manual: flatpak config
+.\"    Source: flatpak
+.\"  Language: English
+.\"
+.TH "FLATPAK CONFIG" "1" "" "flatpak" "flatpak config"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+flatpak-config \- Manage configuration
+.SH "SYNOPSIS"
+.HP \w'\fBflatpak\ config\fR\ 'u
+\fBflatpak config\fR [OPTION...]
+.HP \w'\fBflatpak\ config\fR\ 'u
+\fBflatpak config\fR [OPTION...] \-\-set KEY VALUE
+.HP \w'\fBflatpak\ config\fR\ 'u
+\fBflatpak config\fR [OPTION...] \-\-unset|\-\-get KEY
+.SH "DESCRIPTION"
+.PP
+The flatpak config command shows or modifies the configuration of a flatpak installation\&. The following keys are supported:
+.PP
+\fIlanguages\fR
+.RS 4
+The languages that are included when installing Locale extensions\&. The value is a semicolon\-separated list of two\-letter language codes, or one of the special values * or all\&. If this key is unset, flatpak defaults to including just the current locale\&.
+.RE
+.PP
+For configuration of individual remotes, see
+\fBflatpak-remote-modify\fR(1)\&. For configuration of individual applications, see
+\fBflatpak-override\fR(1)\&.
+.SH "OPTIONS"
+.PP
+The following options are understood:
+.PP
+\fB\-h\fR, \fB\-\-help\fR
+.RS 4
+Show help options and exit\&.
+.RE
+.PP
+\fB\-\-list\fR
+.RS 4
+Print all keys and their values\&.
+.RE
+.PP
+\fB\-\-set\fR
+.RS 4
+Set key
+KEY
+to
+VALUE\&.
+.RE
+.PP
+\fB\-\-unset\fR
+.RS 4
+Unset key
+KEY\&.
+.RE
+.PP
+\fB\-\-get\fR
+.RS 4
+Print value of
+KEY\&.
+.RE
+.PP
+\fB\-\-user\fR
+.RS 4
+Configure per\-user installation\&.
+.RE
+.PP
+\fB\-\-system\fR
+.RS 4
+Configure system\-wide installation\&.
+.RE
+.PP
+\fB\-\-installation=NAME\fR
+.RS 4
+Configure the system\-wide installation specified by
+NAME
+among those defined in
+/etc/flatpak/installations\&.d/\&. Using
+\fB\-\-installation=default\fR
+is equivalent to using
+\fB\-\-system\fR\&.
+.RE
+.PP
+\fB\-v\fR, \fB\-\-verbose\fR
+.RS 4
+Print debug information during command processing\&.
+.RE
+.PP
+\fB\-\-ostree\-verbose\fR
+.RS 4
+Print OSTree debug information during command processing\&.
+.RE
+.SH "EXAMPLES"
+.PP
+\fB$ flatpak config \-\-set languages "sv;en;fi"\fR
+.SH "SEE ALSO"
+.PP
+\fBflatpak\fR(1),
+\fBflatpak-remote-modify\fR(1),
+\fBflatpak-override\fR(1)

@@ -1,0 +1,233 @@
+'\" t
+.\"     Title: flatpak install
+.\"    Author: Alexander Larsson <alexl@redhat.com>
+.\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
+.\"      Date: 03/29/2019
+.\"    Manual: flatpak install
+.\"    Source: flatpak
+.\"  Language: English
+.\"
+.TH "FLATPAK INSTALL" "1" "" "flatpak" "flatpak install"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+flatpak-install \- Install an application or runtime
+.SH "SYNOPSIS"
+.HP \w'\fBflatpak\ install\fR\ 'u
+\fBflatpak install\fR [OPTION...] [REMOTE] REF...
+.HP \w'\fBflatpak\ install\fR\ 'u
+\fBflatpak install\fR [OPTION...] [\-\-from|\-\-bundle] LOCATION
+.SH "DESCRIPTION"
+.PP
+Installs an application or runtime\&. The primary way to install is to specify a
+REMOTE
+name as the source and one ore more
+REFs to specify the application or runtime to install\&. If
+REMOTE
+is omitted, the configured remotes are searched for the first
+REF
+and the user is asked to confirm the resulting choice\&.
+.PP
+Each
+REF
+argument is a full or partial indentifier in the flatpak ref format, which looks like "(app|runtime)/ID/ARCH/BRANCH"\&. All elements except ID are optional and can be left out, including the slashes, so most of the time you need only specify ID\&. Any part left out will be matched against what is in the remote, and if there are multiple matches you will be prompted to choose one of them\&. You will also be prompted with choices if
+REF
+doesn\*(Aqt match anything in the remote exactly but is similar to one or more refs in the remote (e\&.g\&. "devhelp" is similar to "org\&.gnome\&.Devhelp")\&.
+.PP
+By default this looks for both apps and runtimes with the given
+REF
+in the specified
+REMOTE, but you can limit this by using the
+\fB\-\-app\fR
+or
+\fB\-\-runtime\fR
+option, or by supplying the initial element in the
+REF\&.
+.PP
+If
+REMOTE
+is a uri or a path (absolute or relative starting with \&./) to a local repository, then that repository will be used as the source, and a temporary remote will be created for the lifetime of the
+REF\&.
+.PP
+If the specified
+REMOTE
+has a collection ID configured on it, flatpak will search mounted filesystems such as USB drives as well as Avahi services advertised on the local network for the needed refs, in order to support offline updates\&. See
+\fBostree-find-remotes\fR(1)
+for more information\&.
+.PP
+The alternative form of the command (with
+\fB\-\-from\fR
+or
+\fB\-\-bundle\fR) allows to install directly from a source such as a
+\&.flatpak
+single\-file bundle or a
+\&.flatpakref
+application description\&. The options are optional if the first argument has the expected filename extension\&.
+.PP
+Note that flatpak allows to have multiple branches of an application and runtimes installed and used at the same time\&. However, only one version of an application can be current, meaning its exported files (for instance desktop files and icons) are visible to the host\&. The last installed version is made current by default, but this can manually changed with flatpak make\-current\&.
+.PP
+Unless overridden with the
+\fB\-\-user\fR
+or the
+\fB\-\-installation\fR
+option, this command installs the application or runtime in the default system\-wide installation\&.
+.SH "OPTIONS"
+.PP
+The following options are understood:
+.PP
+\fB\-h\fR, \fB\-\-help\fR
+.RS 4
+Show help options and exit\&.
+.RE
+.PP
+\fB\-\-bundle\fR
+.RS 4
+Treat
+LOCATION
+as a single\-bundle file\&. This is assumed if the argument ends with
+\&.flatpak\&.
+.RE
+.PP
+\fB\-\-from\fR
+.RS 4
+Treat
+LOCATION
+as an application description file\&. This is assumed if the argument ends with
+\&.flatpakref\&.
+.RE
+.PP
+\fB\-\-reinstall\fR
+.RS 4
+Uninstall first if already installed\&.
+.RE
+.PP
+\fB\-\-user\fR
+.RS 4
+Install the application or runtime in a per\-user installation\&.
+.RE
+.PP
+\fB\-\-system\fR
+.RS 4
+Install the application or runtime in the default system\-wide installation\&.
+.RE
+.PP
+\fB\-\-installation=NAME\fR
+.RS 4
+Install the application or runtime in a system\-wide installation specified by
+NAME
+among those defined in
+/etc/flatpak/installations\&.d/\&. Using
+\fB\-\-installation=default\fR
+is equivalent to using
+\fB\-\-system\fR\&.
+.RE
+.PP
+\fB\-\-arch=ARCH\fR
+.RS 4
+The default architecture to install for, if not given explicitly in the
+REF\&.
+.RE
+.PP
+\fB\-\-subpath=PATH\fR
+.RS 4
+Install only a subpath of
+REF\&. This is mainly used to install a subset of locales\&. This can be added multiple times to install multiple subpaths\&.
+.RE
+.PP
+\fB\-\-gpg\-file=FILE\fR
+.RS 4
+Check bundle signatures with GPG key from
+FILE
+(\- for stdin)\&.
+.RE
+.PP
+\fB\-\-no\-deploy\fR
+.RS 4
+Download the latest version, but don\*(Aqt deploy it\&.
+.RE
+.PP
+\fB\-\-no\-pull\fR
+.RS 4
+Don\*(Aqt download the latest version, deploy whatever is locally available\&.
+.RE
+.PP
+\fB\-\-no\-related\fR
+.RS 4
+Don\*(Aqt download related extensions, such as the locale data\&.
+.RE
+.PP
+\fB\-\-no\-deps\fR
+.RS 4
+Don\*(Aqt verify runtime dependencies when installing\&.
+.RE
+.PP
+\fB\-\-app\fR
+.RS 4
+Assume that all
+REFs are apps if not explicitly specified\&.
+.RE
+.PP
+\fB\-\-runtime\fR
+.RS 4
+Assume that all
+REFs are runtimes if not explicitly specified\&.
+.RE
+.PP
+\fB\-y\fR, \fB\-\-assumeyes\fR
+.RS 4
+Automatically answer yes to all questions (or pick the most prioritized answer)\&. This is useful for automation\&.
+.RE
+.PP
+\fB\-\-noninteractive\fR
+.RS 4
+Produce minimal output and avoid most questions\&. This is suitable for use in non\-interactive situations, e\&.g\&. in a build script\&.
+.RE
+.PP
+\fB\-v\fR, \fB\-\-verbose\fR
+.RS 4
+Print debug information during command processing\&.
+.RE
+.PP
+\fB\-\-ostree\-verbose\fR
+.RS 4
+Print OSTree debug information during command processing\&.
+.RE
+.SH "EXAMPLES"
+.PP
+\fB$ flatpak install gedit\fR
+.PP
+\fB$ flatpak install flathub org\&.gnome\&.gedit\fR
+.PP
+\fB$ flatpak \-\-installation=default install flathub org\&.gnome\&.gedit\fR
+.PP
+\fB$ flatpak \-\-user install flathub org\&.gnome\&.gedit//3\&.30\fR
+.PP
+\fB$ flatpak \-\-user install https://flathub\&.org/repo/appstream/org\&.gnome\&.gedit\&.flatpakref\fR
+.PP
+\fB$ flatpak \-\-system install org\&.gnome\&.gedit\&.flatpakref\fR
+.SH "SEE ALSO"
+.PP
+\fBflatpak\fR(1),
+\fBflatpak-update\fR(1),
+\fBflatpak-list\fR(1),
+\fBflatpak-build-bundle\fR(1),
+\fBflatpak-flatpakref\fR(1),
+\fBflatpak-make-current\fR(1),
+\fBostree-find-remotes\fR(1)

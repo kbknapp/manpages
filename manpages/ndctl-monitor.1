@@ -1,0 +1,246 @@
+'\" t
+.\"     Title: ndctl-monitor
+.\"    Author: [see the "AUTHOR(S)" section]
+.\" Generator: Asciidoctor 1.5.8
+.\"      Date: 2019-03-18
+.\"    Manual: ndctl Manual
+.\"    Source: ndctl
+.\"  Language: English
+.\"
+.TH "NDCTL\-MONITOR" "1" "2019-03-18" "ndctl" "ndctl Manual"
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.ss \n[.ss] 0
+.nh
+.ad l
+.de URL
+\fI\\$2\fP <\\$1>\\$3
+..
+.als MTO URL
+.if \n[.g] \{\
+.  mso www.tmac
+.  am URL
+.    ad l
+.  .
+.  am MTO
+.    ad l
+.  .
+.  LINKSTYLE blue R < >
+.\}
+.SH "NAME"
+ndctl\-monitor \- Monitor the smart events of nvdimm objects
+.SH "SYNOPSIS"
+.sp
+.nf
+\fIndctl monitor\fP [<options>]
+.fi
+.br
+.SH "DESCRIPTION"
+.sp
+Ndctl monitor is used for monitoring the smart events of nvdimm
+objects and dumping the json format notifications to syslog, standard
+output or a logfile.
+.sp
+The objects to monitor and smart events to notify can be selected by
+setting options and/or the configuration file at
+/etc/ndctl/monitor.conf
+.sp
+Both, the values in configuration file and in options will work. If
+there is a conflict, the values in options will override the values in
+the configuration file. Any updated values in the configuration file will
+take effect only after the monitor process is restarted.
+.SH "EXAMPLES"
+.sp
+Run a monitor as a daemon to monitor DIMMs on bus "nfit_test.1"
+.sp
+.nf
+ndctl monitor \-\-bus=nfit_test.1 \-\-daemon
+.fi
+.br
+.sp
+Run a monitor as a one\-shot command and output the notifications to
+/var/log/ndctl.log
+.sp
+.nf
+ndctl monitor \-\-log=/var/log/ndctl.log
+.fi
+.br
+.sp
+Run a monitor daemon as a system service
+.sp
+.nf
+systemctl start ndctl\-monitor.service
+.fi
+.br
+.SH "OPTIONS"
+.sp
+\-b, \-\-bus=
+.RS 4
+Enforce that the operation only be carried on devices that are
+attached to the given bus. Where \fIbus\fP can be a provider name
+or a bus id number.
+.RE
+.sp
+\-d, \-\-dimm=
+.RS 4
+A \fInmemX\fP device name, or dimm id number. Select the devices to
+monitor reference the given dimm.
+.RE
+.sp
+\-r, \-\-region=
+.RS 4
+A \fIregionX\fP device name, or a region id number. The keyword \fIall\fP
+can be specified to carry out the operation on every region in
+the system, optionally filtered by bus id (see \-\-bus= option).
+.RE
+.sp
+\-n, \-\-namespace=
+.RS 4
+A \fInamespaceX.Y\fP device name, or namespace region plus id tuple
+\fIX.Y\fP.
+.RE
+.sp
+\-l, \-\-log=
+.RS 4
+Send log messages to the specified destination.
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+"<file>":
+Send log messages to specified <file>. When fopen() is not able
+to open <file>, log messages will be forwarded to syslog.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+"syslog":
+Send messages to syslog.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+"standard":
+Send messages to standard output.
+.RE
+.RE
+.sp
+The default log destination is \fIsyslog\fP if "\-\-daemon" is specified,
+otherwise \fIstandard\fP. Note that standard and relative path for <file>
+will not work if "\-\-daemon" is specified.
+.sp
+\-c, \-\-config\-file=
+.RS 4
+Provide the config file to use. This overrides the default config
+typically found in /etc/ndctl
+.RE
+.sp
+\-\-daemon
+.RS 4
+Run a monitor as a daemon.
+.RE
+.sp
+\-D, \-\-dimm\-event=
+.RS 4
+Name of an smart health event from the following:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+"dimm\-spares\-remaining": Spare Blocks Remaining value has gone
+below the pre\-programmed threshold.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+"dimm\-media\-temperature": NVDIMM Media temperature value has
+gone above the pre\-programmed threshold.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+"dimm\-controller\-temperature": NVDIMM Controller temperature
+value has gone above the pre\-programmed threshold.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+"dimm\-health\-state": NVDIMM Normal Health Status has changed
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+"dimm\-unclean\-shutdown": NVDIMM Last Shutdown Status was a
+unclean shutdown.
+.RE
+.RE
+.sp
+The monitor will attempt to enable the alarm control bits for all
+specified events.
+.sp
+\-u, \-\-human
+.RS 4
+Output monitor notification as human friendly json format instead
+of the default machine friendly json format.
+.RE
+.sp
+\-v, \-\-verbose
+.RS 4
+Emit extra debug messages to log.
+.RE
+.SH "COPYRIGHT"
+.sp
+Copyright (c) 2018, FUJITSU LIMITED. License GPLv2: GNU GPL version 2
+.URL "http://gnu.org/licenses/gpl.html" "" "."
+This is free software: you are
+free to change and redistribute it. There is NO WARRANTY, to the
+extent permitted by law.
+.SH "SEE ALSO"
+.sp
+ndctl\-list(1), ndctl\-inject\-smart(1)

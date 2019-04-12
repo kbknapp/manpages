@@ -1,0 +1,141 @@
+'\" t
+.\"     Title: flatpak ps
+.\"    Author: Matthias Clasen <mclasen@redhat.com>
+.\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
+.\"      Date: 03/29/2019
+.\"    Manual: flatpak enter
+.\"    Source: flatpak
+.\"  Language: English
+.\"
+.TH "FLATPAK PS" "1" "" "flatpak" "flatpak enter"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+flatpak-ps \- Enumerate running instances
+.SH "SYNOPSIS"
+.HP \w'\fBflatpak\ ps\fR\ 'u
+\fBflatpak ps\fR [OPTION...]
+.SH "DESCRIPTION"
+.PP
+Lists useful information about running Flatpak instances\&.
+.PP
+To see full details of a running instance, you can open the file
+/run/user/$UID/\&.flatpak/$INSTANCE/info, where
+\fI$INSTANCE\fR
+is the instance ID reported by flatpak ps\&.
+.SH "OPTIONS"
+.PP
+The following options are understood:
+.PP
+\fB\-h\fR, \fB\-\-help\fR
+.RS 4
+Show help options and exit\&.
+.RE
+.PP
+\fB\-v\fR, \fB\-\-verbose\fR
+.RS 4
+Print debug information during command processing\&.
+.RE
+.PP
+\fB\-\-ostree\-verbose\fR
+.RS 4
+Print OSTree debug information during command processing\&.
+.RE
+.PP
+\fB\-\-columns=FIELD,\&...\fR
+.RS 4
+Specify what information to show about each instance\&. You can list multiple fields, or use this option multiple times\&.
+.sp
+Append :s[tart], :m[iddle], :e[nd] or :f[ull] to column names to change ellipsization\&.
+.RE
+.SH "FIELDS"
+.PP
+The following fields are understood by the
+\fB\-\-columns\fR
+option:
+.PP
+instance
+.RS 4
+Show the instance ID
+.RE
+.PP
+application
+.RS 4
+Show the application ID
+.RE
+.PP
+arch
+.RS 4
+Show the architecture
+.RE
+.PP
+branch
+.RS 4
+Show the application branch
+.RE
+.PP
+commit
+.RS 4
+Show the application commit
+.RE
+.PP
+runtime
+.RS 4
+Show the runtime ID
+.RE
+.PP
+runtime\-branch
+.RS 4
+Show the runtime branch
+.RE
+.PP
+runtime\-commit
+.RS 4
+Show the runtime commit
+.RE
+.PP
+pid
+.RS 4
+Show the PID of the wrapper process
+.RE
+.PP
+child\-pid
+.RS 4
+Show the PID of the sandbox process
+.RE
+.PP
+all
+.RS 4
+Show all columns
+.RE
+.PP
+help
+.RS 4
+Show the list of available columns
+.RE
+.PP
+Note that field names can be abbreviated to a unique prefix\&.
+.SH "EXAMPLES"
+.PP
+\fB$ flatpak ps \-\-columns=application,pid,runtime,runtime\-branch\fR
+.SH "SEE ALSO"
+.PP
+\fBflatpak\fR(1),
+\fBflatpak-run\fR(1)

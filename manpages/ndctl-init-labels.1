@@ -1,0 +1,162 @@
+'\" t
+.\"     Title: ndctl-init-labels
+.\"    Author: [see the "AUTHOR(S)" section]
+.\" Generator: Asciidoctor 1.5.8
+.\"      Date: 2019-03-18
+.\"    Manual: ndctl Manual
+.\"    Source: ndctl
+.\"  Language: English
+.\"
+.TH "NDCTL\-INIT\-LABELS" "1" "2019-03-18" "ndctl" "ndctl Manual"
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.ss \n[.ss] 0
+.nh
+.ad l
+.de URL
+\fI\\$2\fP <\\$1>\\$3
+..
+.als MTO URL
+.if \n[.g] \{\
+.  mso www.tmac
+.  am URL
+.    ad l
+.  .
+.  am MTO
+.    ad l
+.  .
+.  LINKSTYLE blue R < >
+.\}
+.SH "NAME"
+ndctl\-init\-labels \- initialize the label data area on a dimm or set of dimms
+.SH "SYNOPSIS"
+.sp
+.nf
+\fIndctl init\-labels\fP <nmem0> [<nmem1>..<nmemN>] [<options>]
+.fi
+.br
+.SH "DESCRIPTION"
+.sp
+The namespace label area is a small persistent partition of capacity
+available on some NVDIMM devices.  The label area is used to resolve
+aliasing between \fIpmem\fP and \fIblk\fP capacity by delineating namespace
+boundaries.
+By default, and in kernels prior to v4.10, the kernel only honors labels
+when a DIMM aliases PMEM and BLK capacity. Starting with v4.10 the
+kernel will honor labels for sub\-dividing PMEM if all the DIMMs in an
+interleave set / region have a valid namespace index block.
+.sp
+This command can be used to initialize the namespace index block if it
+is missing or reinitialize it if it is damaged.  Note that
+reinitialization effectively destroys all existing namespace labels on
+the DIMM.
+.SH "EXAMPLE"
+.sp
+Find the DIMMs that comprise a given region:
+.sp
+.if n .RS 4
+.nf
+# ndctl list \-RD \-\-region=region1
+{
+  "dimms":[
+    {
+      "dev":"nmem0",
+      "id":"8680\-56341200"
+    }
+  ],
+  "regions":[
+    {
+      "dev":"region1",
+      "size":268435456,
+      "available_size":0,
+      "type":"pmem",
+      "mappings":[
+        {
+          "dimm":"nmem0",
+          "offset":13958643712,
+          "length":268435456
+        }
+      ]
+    }
+  ]
+}
+.fi
+.if n .RE
+.sp
+Disable that region so the DIMM label area can be written from
+userspace:
+.sp
+.if n .RS 4
+.nf
+# ndctl disable\-region region1
+.fi
+.if n .RE
+.sp
+Initialize labels:
+.sp
+.if n .RS 4
+.nf
+# ndctl init\-labels nmem0
+.fi
+.if n .RE
+.sp
+Re\-enable the region:
+.sp
+.if n .RS 4
+.nf
+# ndctl enable\-region region1
+.fi
+.if n .RE
+.sp
+Create a namespace in that region:
+.sp
+.if n .RS 4
+.nf
+# ndctl create\-namespace \-\-region=region1
+.fi
+.if n .RE
+.SH "OPTIONS"
+.sp
+<memory device(s)>
+.RS 4
+One or more \fInmemX\fP device names. The keyword \fIall\fP can be specified to
+operate on every dimm in the system, optionally filtered by bus id (see
+\-\-bus= option).
+.RE
+.sp
+\-b, \-\-bus=
+.RS 4
+Limit operation to memory devices (dimms) that are on the given bus.
+Where \fIbus\fP can be a provider name or a bus id number.
+.RE
+.sp
+\-v
+.RS 4
+Turn on verbose debug messages in the library (if ndctl was built with
+logging and debug enabled).
+.RE
+.sp
+\-f, \-\-force
+.RS 4
+Force initialization of the label space even if there appears to
+be an existing / valid namespace index.  Warning, this will
+destroy all defined namespaces on the dimm.
+.RE
+.sp
+\-V, \-\-label\-version
+.RS 4
+Initialize with a specific version of labels from the namespace
+label specification. Defaults to 1.1
+.RE
+.SH "COPYRIGHT"
+.sp
+Copyright (c) 2016 \- 2019, Intel Corporation. License GPLv2: GNU GPL
+version 2 \c
+.URL "http://gnu.org/licenses/gpl.html" "" "."
+This is free software:
+you are free to change and redistribute it.  There is NO WARRANTY, to
+the extent permitted by law.
+.SH "SEE ALSO"
+.sp
+ndctl\-create\-namespace(1),
+.URL "http://www.uefi.org/sites/default/files/resources/UEFI_Spec_2_7.pdf" "UEFI NVDIMM Label Protocol" ""

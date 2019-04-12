@@ -1,0 +1,149 @@
+'\" t
+.\"     Title: flatpak document-export
+.\"    Author: Alexander Larsson <alexl@redhat.com>
+.\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
+.\"      Date: 03/29/2019
+.\"    Manual: flatpak document-export
+.\"    Source: flatpak
+.\"  Language: English
+.\"
+.TH "FLATPAK DOCUMENT\-EX" "1" "" "flatpak" "flatpak document-export"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+flatpak-document-export \- Export a file to a sandboxed application
+.SH "SYNOPSIS"
+.HP \w'\fBflatpak\ document\-export\fR\ 'u
+\fBflatpak document\-export\fR [OPTION...] FILE
+.SH "DESCRIPTION"
+.PP
+Creates a document id for a local file that can be exposed to sandboxed applications, allowing them access to files that they would not otherwise see\&. The exported files are exposed in a fuse filesystem at
+/run/user/$UID/doc/\&.
+.PP
+This command also lets you modify the per\-application permissions of the documents, granting or revoking access to the file on a per\-application basis\&.
+.SH "OPTIONS"
+.PP
+The following options are understood:
+.PP
+\fB\-h\fR, \fB\-\-help\fR
+.RS 4
+Show help options and exit\&.
+.RE
+.PP
+\fB\-u\fR, \fB\-\-unique\fR
+.RS 4
+Don\*(Aqt reuse an existing document id for the file\&. This makes it safe to later remove the document when you\*(Aqre finished with it\&.
+.RE
+.PP
+\fB\-t\fR, \fB\-\-transient\fR
+.RS 4
+The document will only exist for the length of the session\&. This is useful for temporary grants\&.
+.RE
+.PP
+\fB\-n\fR, \fB\-\-noexist\fR
+.RS 4
+Don\*(Aqt require the file to exist already\&.
+.RE
+.PP
+\fB\-a\fR, \fB\-\-app=APPID\fR
+.RS 4
+Grant read access to the specified application\&. The
+\fB\-\-allow\fR
+and
+\fB\-\-forbid\fR
+options can be used to grant or remove additional privileges\&. This option can be used multiple times\&.
+.RE
+.PP
+\fB\-r\fR, \fB\-\-allow\-read\fR
+.RS 4
+Grant read access to the applications specified with
+\fB\-\-app\fR\&. This defaults to TRUE\&.
+.RE
+.PP
+\fB\-\-forbid\-read\fR
+.RS 4
+Revoke read access for the applications specified with
+\fB\-\-app\fR\&.
+.RE
+.PP
+\fB\-w\fR, \fB\-\-allow\-write\fR
+.RS 4
+Grant write access to the applications specified with
+\fB\-\-app\fR\&.
+.RE
+.PP
+\fB\-\-forbid\-write\fR
+.RS 4
+Revoke write access for the applications specified with
+\fB\-\-app\fR\&.
+.RE
+.PP
+\fB\-d\fR, \fB\-\-allow\-delete\fR
+.RS 4
+Grant the ability to remove the document from the document portal to the applications specified with
+\fB\-\-app\fR\&.
+.RE
+.PP
+\fB\-\-forbid\-delete\fR
+.RS 4
+Revoke the ability to remove the document from the document portal from the applications specified with
+\fB\-\-app\fR\&.
+.RE
+.PP
+\fB\-g\fR, \fB\-\-allow\-grant\-permission\fR
+.RS 4
+Grant the ability to grant further permissions to the applications specified with
+\fB\-\-app\fR\&.
+.RE
+.PP
+\fB\-\-forbid\-grant\-permission\fR
+.RS 4
+Revoke the ability to grant further permissions for the applications specified with
+\fB\-\-app\fR\&.
+.RE
+.PP
+\fB\-v\fR, \fB\-\-verbose\fR
+.RS 4
+Print debug information during command processing\&.
+.RE
+.PP
+\fB\-\-ostree\-verbose\fR
+.RS 4
+Print OSTree debug information during command processing\&.
+.RE
+.SH "EXAMPLES"
+.PP
+\fB$ flatpak document\-export \-\-app=org\&.gnome\&.GEdit ~/test\&.txt\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+/run/user/1000/doc/e52f9c6a/test\&.txt
+.fi
+.if n \{\
+.RE
+.\}
+.SH "SEE ALSO"
+.PP
+\fBflatpak\fR(1),
+\fBflatpak-document-unexport\fR(1),
+\fBflatpak-document-info\fR(1),
+\fBflatpak-documents\fR(1)

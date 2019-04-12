@@ -1,0 +1,166 @@
+'\" t
+.\"     Title: flatpak remotes
+.\"    Author: Alexander Larsson <alexl@redhat.com>
+.\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
+.\"      Date: 03/29/2019
+.\"    Manual: flatpak remotes
+.\"    Source: flatpak
+.\"  Language: English
+.\"
+.TH "FLATPAK REMOTES" "1" "" "flatpak" "flatpak remotes"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+flatpak-remotes \- List remote repositories
+.SH "SYNOPSIS"
+.HP \w'\fBflatpak\ remotes\fR\ 'u
+\fBflatpak remotes\fR [OPTION...]
+.SH "DESCRIPTION"
+.PP
+Lists the known remote repositories, in priority order\&.
+.PP
+By default, both per\-user and system\-wide installations are shown\&. Use the
+\fB\-\-user\fR,
+\fB\-\-system\fR
+or
+\fB\-\-installation\fR
+options to change this\&.
+.SH "OPTIONS"
+.PP
+The following options are understood:
+.PP
+\fB\-h\fR, \fB\-\-help\fR
+.RS 4
+Show help options and exit\&.
+.RE
+.PP
+\fB\-\-user\fR
+.RS 4
+Show the per\-user configuration\&.
+.RE
+.PP
+\fB\-\-system\fR
+.RS 4
+Show the default system\-wide configuration\&.
+.RE
+.PP
+\fB\-\-installation=NAME\fR
+.RS 4
+Show a system\-wide installation by
+NAME
+among those defined in
+/etc/flatpak/installations\&.d/\&. Using
+\fB\-\-installation=default\fR
+is equivalent to using
+\fB\-\-system\fR\&.
+.RE
+.PP
+\fB\-d\fR, \fB\-\-show\-details\fR
+.RS 4
+Show more information for each repository in addition to the name\&. Equivalent to
+\fB\-\-columns=all\fR\&.
+.RE
+.PP
+\fB\-\-show\-disabled\fR
+.RS 4
+Show disabled repos\&.
+.RE
+.PP
+\fB\-v\fR, \fB\-\-verbose\fR
+.RS 4
+Print debug information during command processing\&.
+.RE
+.PP
+\fB\-\-ostree\-verbose\fR
+.RS 4
+Print OSTree debug information during command processing\&.
+.RE
+.PP
+\fB\-\-columns=FIELD,\&...\fR
+.RS 4
+Specify what information to show about each ref\&. You can list multiple fields, or use this option multiple times\&.
+.sp
+Append :s[tart], :m[iddle], :e[nd] or :f[ull] to column names to change ellipsization\&.
+.RE
+.SH "FIELDS"
+.PP
+The following fields are understood by the
+\fB\-\-columns\fR
+option:
+.PP
+name
+.RS 4
+Show the name of the remote
+.RE
+.PP
+title
+.RS 4
+Show the title of the remote
+.RE
+.PP
+url
+.RS 4
+Show the URL of the remote
+.RE
+.PP
+collection
+.RS 4
+Show the collection ID of the remote
+.RE
+.PP
+priority
+.RS 4
+Show the priority of the remote
+.RE
+.PP
+options
+.RS 4
+Show options
+.RE
+.PP
+all
+.RS 4
+Show all columns
+.RE
+.PP
+help
+.RS 4
+Show the list of available columns
+.RE
+.PP
+Note that field names can be abbreviated to a unique prefix\&.
+.SH "EXAMPLES"
+.PP
+\fB$ flatpak remotes \-\-user \-\-show\-details\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+testrepo	Test Repository	 http://209\&.132\&.179\&.91/repo/ no\-gpg\-verify
+.fi
+.if n \{\
+.RE
+.\}
+.SH "SEE ALSO"
+.PP
+\fBflatpak\fR(1),
+\fBflatpak-remote-add\fR(1),
+\fBflatpak-remote-delete\fR(1)

@@ -1,0 +1,92 @@
+.TH pipewire-cli 1 User Manuals
+.SH NAME
+pipewire-cli \- The PipeWire Command Line Interface
+.SH SYNOPSIS
+\fBpipewire-cli
+\f1
+.SH DESCRIPTION
+Interact with a PipeWire instance.
+
+\fBpipewire-cli(1)\f1 starts an interactive session with a pipewire instance. By default, a connection is made with the local PipeWire instance, that of the pipewire-cli command itself.
+
+Connections to other, remote instances can be made. The current instance name is displayed at the prompt. Some commands operate on the current instance and some on the local instance.
+
+Use the 'help' command to list the available commands.
+.SH GENERAL COMMANDS
+.TP
+\fBhelp\f1
+Show a quick help on the commands available.
+.SH MODULE MANAGEMENT
+Modules are loaded and unloaded in the local instance and can add functionality or objects to the local instance.
+.TP
+\fBload-module\f1 \fIname\f1 [\fIarguments...\f1]
+Load a module specified by its name and arguments. For most modules it is OK to be loaded more than once.
+
+This command returns a module variable that can be used to unload the module.
+.TP
+\fBunload-module\f1 \fImodule-var\f1
+Unload a module, specified either by its variable.
+.SH OBJECT INTROSPECTION
+.TP
+\fBlist-objects\f1
+List the objects of the current instance.
+
+Objects are listed with their id, type and version.
+.TP
+\fBinfo\f1 \fIid|all\f1
+Get information about a specific object or all objects.
+
+Requesting info about an object will also notify you of changes.
+.SH WORKING WITH REMOTES
+.TP
+\fBconnect\f1 [\fIremote-name\f1]
+Connect to a remote instance and make this the new current instance.
+
+If no remote name is specified, a connection is made to the default remote instance, usually pipewire-0
+
+This command returns a remote var that can be used to disconnect or switch remotes
+.TP
+\fBdisconnect\f1 [\fIremote-var\f1]
+Disconnect from a remote instance.
+
+If no remote name is specified, the current instance is disconnected. 
+.TP
+\fBlist-remotes\f1
+List all remote instances.
+.TP
+\fBswitch-remote\f1 [\fIremote-var\f1]
+Make the specified remote the current instance.
+
+If no remote name is specified, the local instance is made current. 
+.SH NODE MANAGEMENT
+.TP
+\fBcreate-node\f1 \fIfactory-name\f1 [\fIproperties...\f1]
+Create a node from a factory in the current instance.
+
+Properties are key=value pairs separated by whitespace
+
+This command returns a node variable.
+.TP
+\fBdestroy-node\f1 \fInode-var\f1
+Destroy a node
+.TP
+\fBexport-node\f1 \fInode-id\f1 [\fIremote-var\f1]
+Export a node from the local instance to the specified instance. When no instance is specified, the node will be exported to the current instance.
+.SH LINK MANAGEMENT
+.TP
+\fBcreate-link\f1 \fInode-id\f1 \fIport-id\f1 \fInode-id\f1 \fIport-id\f1 [\fIproperties...\f1]
+Create a link between 2 nodes and ports.
+
+Port ids can be -1 to automatically select an available port.
+
+Properties are key=value pairs separated by whitespace
+
+This command returns a link variable.
+.TP
+\fBdestroy-link\f1 \fIlink-var\f1
+Destroy a link
+.SH EXAMPLES
+.SH AUTHORS
+The PipeWire Developers <https://github.com/PipeWire/pipewire/issues>; PipeWire is available from \fBhttp://pipewire.org\f1
+.SH SEE ALSO
+\fBpipewire(1)\f1, \fBpipewire-monitor(1)\f1, 

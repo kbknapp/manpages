@@ -1,0 +1,78 @@
+'\" t
+.\"     Title: daxctl-migrate-device-model
+.\"    Author: [see the "AUTHOR(S)" section]
+.\" Generator: Asciidoctor 1.5.8
+.\"      Date: 2019-03-18
+.\"    Manual: daxctl Manual
+.\"    Source: daxctl
+.\"  Language: English
+.\"
+.TH "DAXCTL\-MIGRATE\-DEVICE\-MODEL" "1" "2019-03-18" "daxctl" "daxctl Manual"
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.ss \n[.ss] 0
+.nh
+.ad l
+.de URL
+\fI\\$2\fP <\\$1>\\$3
+..
+.als MTO URL
+.if \n[.g] \{\
+.  mso www.tmac
+.  am URL
+.    ad l
+.  .
+.  am MTO
+.    ad l
+.  .
+.  LINKSTYLE blue R < >
+.\}
+.SH "NAME"
+daxctl\-migrate\-device\-model \- Opt\-in to the /sys/bus/dax device\-model, allow for alternative Device\-DAX instance drivers.
+.SH "SYNOPSIS"
+.sp
+.nf
+\fIdaxctl migrate\-device\-model\fP
+.fi
+.br
+.sp
+Arrange for modprobe to disable the dax_pmem_compat, if present, and
+instead deploy the dax_pmem module to convert to the /sys/bus/dax model.
+Kernel versions prior to v5.1 may not support /sys/bus/dax in which case
+the result of this command is a nop until the kernel is updated.  The
+motivation for changing from /sys/class/dax to /sys/bus/dax is to allow
+for alternative drivers for Device\-DAX instances, in particular the
+dax_kmem driver.
+.sp
+By default device\-dax publishes a /dev/daxX.Y character device for
+userspace to directly map performance differentiated memory. This is
+fine if the memory is to be exclusively consumed / managed by userspace.
+Alternatively an administrator may want the kernel to manage the memory,
+make it available via malloc(), allow for over\-provisioning, and / or
+apply kernel\-based resource control schemes to the memory. In that case
+the memory fronted by a given Device\-DAX instance can be assigned to the
+dax_kmem driver which arranges for the core\-kernel memory\-management
+sub\-system to assume management of the memory range.
+.sp
+This behavior is opt\-in for consideration of existing applications /
+scripts that may be hard coded to use /sys/class/dax. Fixes have been
+submitted to applications known to have these direct dependencies
+\c
+.URL "http://git.kernel.dk/cgit/fio/commit/?id=b08e7d6b18b4" "FIO"
+.URL "https://github.com/pmem/pmdk/commit/91bc8620884e" "PMDK" ","
+however, there may
+be others and a system\-owner should be aware of the potential for
+regression of Device\-DAX consuming scripts, applications, or older
+daxctl binaries.
+.sp
+The modprobe policy established by this utility becomes effective after
+the next reboot, or after all DAX related modules have been removed and
+re\-loaded with "udevadm trigger"
+.SH "COPYRIGHT"
+.sp
+Copyright (c) 2016 \- 2019, Intel Corporation. License GPLv2: GNU GPL
+version 2 \c
+.URL "http://gnu.org/licenses/gpl.html" "" "."
+This is free software:
+you are free to change and redistribute it.  There is NO WARRANTY, to
+the extent permitted by law.

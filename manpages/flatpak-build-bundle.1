@@ -1,0 +1,124 @@
+'\" t
+.\"     Title: flatpak build-bundle
+.\"    Author: Alexander Larsson <alexl@redhat.com>
+.\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
+.\"      Date: 03/29/2019
+.\"    Manual: flatpak build-bundle
+.\"    Source: flatpak
+.\"  Language: English
+.\"
+.TH "FLATPAK BUILD\-BUNDL" "1" "" "flatpak" "flatpak build-bundle"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+flatpak-build-bundle \- Create a single\-file bundle from a local repository
+.SH "SYNOPSIS"
+.HP \w'\fBflatpak\ build\-bundle\fR\ 'u
+\fBflatpak build\-bundle\fR [OPTION...] LOCATION FILENAME NAME [BRANCH]
+.SH "DESCRIPTION"
+.PP
+Creates a single\-file named
+FILENAME
+for the application (or runtime) named
+NAME
+in the repository at
+LOCATION\&. If a
+BRANCH
+is specified, this branch of the application is used\&.
+.PP
+The collection ID set on the repository at
+LOCATION
+(if set) will be used for the bundle\&.
+.PP
+The format of the bundle file is that of an ostree static delta (against an empty base) with some flatpak specific metadata for the application icons and appdata\&.
+.SH "OPTIONS"
+.PP
+The following options are understood:
+.PP
+\fB\-h\fR, \fB\-\-help\fR
+.RS 4
+Show help options and exit\&.
+.RE
+.PP
+\fB\-\-runtime\fR
+.RS 4
+Export a runtime instead of an application\&.
+.RE
+.PP
+\fB\-\-arch=ARCH\fR
+.RS 4
+The arch to create a bundle for\&.
+.RE
+.PP
+\fB\-\-repo\-url=URL\fR
+.RS 4
+The URL for the repository from which the application can be updated\&. Installing the bundle will automatically configure a remote for this URL\&.
+.RE
+.PP
+\fB\-\-runtime\-repo=URL\fR
+.RS 4
+The URL for a
+\&.flatpakrepo
+file that contains the information about the repository that supplies the runtimes required by the app\&.
+.RE
+.PP
+\fB\-\-gpg\-keys=FILE\fR
+.RS 4
+Add the GPG key from
+FILE
+(use \- for stdin)\&.
+.RE
+.PP
+\fB\-\-gpg\-homedir=PATH\fR
+.RS 4
+GPG Homedir to use when looking for keyrings\&.
+.RE
+.PP
+\fB\-\-from\-commit=COMMIT\fR
+.RS 4
+The OSTree commit to create a delta bundle from\&.
+.RE
+.PP
+\fB\-\-oci\fR
+.RS 4
+Export to an OCI image instead of a Flatpak bundle\&.
+.RE
+.PP
+\fB\-v\fR, \fB\-\-verbose\fR
+.RS 4
+Print debug information during command processing\&.
+.RE
+.PP
+\fB\-\-ostree\-verbose\fR
+.RS 4
+Print OSTree debug information during command processing\&.
+.RE
+.SH "EXAMPLES"
+.PP
+\fB$ flatpak build\-bundle /var/lib/flatpak/repo gnome\-calculator\&.flatpak org\&.gnome\&.Calculator stable\fR
+.SH "SEE ALSO"
+.PP
+\fBostree\fR(1),
+\fBflatpak\fR(1),
+\fBflatpak-build-init\fR(1),
+\fBflatpak-build\fR(1),
+\fBflatpak-build-finish\fR(1),
+\fBflatpak-build-import-bundle\fR(1),
+\fBflatpak-build-update-repo\fR(1)

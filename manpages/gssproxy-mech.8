@@ -1,0 +1,97 @@
+'\" t
+.\"     Title: gssproxy-mech
+.\"    Author: GSS-Proxy - http://fedorahosted.org/gss-proxy
+.\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
+.\"      Date: 02/09/2018
+.\"    Manual: GssProxy GSSAPI mechanism manual page
+.\"    Source: GSS Proxy
+.\"  Language: English
+.\"
+.TH "GSSPROXY\-MECH" "8" "02/09/2018" "GSS Proxy" "GssProxy GSSAPI mechanism manu"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+gssproxy-mech \- GssProxy GSSAPI mechanism plugin
+.SH "SYNOPSIS"
+.HP \w'\fBproxymech_v1\ 2\&.16\&.840\&.1\&.113730\&.3\&.8\&.15\&.1\ /usr/lib64/gssproxy/proxymech\&.so\ \fR\ 'u
+\fBproxymech_v1 2\&.16\&.840\&.1\&.113730\&.3\&.8\&.15\&.1 /usr/lib64/gssproxy/proxymech\&.so \fR [\fIoptions\fR]
+.SH "DESCRIPTION"
+.PP
+The gssproxy proxymech module is a interposer plugin that is loaded by GSSAPI\&. It is enabled by
+/etc/gss/mech
+configuration file\&.
+.PP
+The interposer plugin allows to intercept the entire GSSAPI communication and detour to the
+\fBgssproxy\fR
+daemon\&. When the interposer plugin is installed two other conditions need to be met in order to activate it:
+.PP
+a) interposer configuration file
+.RS 4
+The plugin needs to be manually enabled in the
+/etc/gss/mech
+file\&.
+.RE
+.PP
+b) gssproxy environment variable
+.RS 4
+The interposer plugin will not forward to the gssproxy daemon unless the environment variable named
+\fIGSS_USE_PROXY=yes\fR
+is set\&.
+.RE
+.PP
+Furthermore, the interposer plugin can be configured to behave in different ways when called from the GSSAPI\&. This behavior is controlled via the
+\fIGSSPROXY_BEHAVIOR\fR
+environment variable\&. It accepts four different values:
+.PP
+LOCAL_ONLY
+.RS 4
+All commands received with this setting will cause to immediately reenter the GSSAPI w/o any interaction with the gssproxy daemon\&. When the request cannot be processed it will just fail\&.
+.RE
+.PP
+LOCAL_FIRST
+.RS 4
+All commands received with this setting will cause to immediately reenter the GSSAPI\&. When the local GSSAPI cannot process the request, it will resend the request to the gssproxy daemon\&.
+.RE
+.PP
+REMOTE_FIRST
+.RS 4
+All commands received with this setting will be forwarded to the gssproxy daemon first\&. If the request cannot be handled there, the request will reenter the local GSSAPI\&.
+.RE
+.PP
+REMOTE_ONLY
+.RS 4
+This setting is currently not fully implemented and therefor not supported\&.
+.RE
+.PP
+The default setting for
+\fIGSSPROXY_BEHAVIOR\fR
+is REMOTE_FIRST\&.
+.PP
+Finally the interposer may need to use a special per\-service socket in order to communicate with gssproxy\&. The path to this socket is set via the
+\fIGSSPROXY_SOCKET\fR
+environment variable\&.
+.SH "SEE ALSO"
+.PP
+\fBgssproxy.conf\fR(5)
+and
+\fBgssproxy\fR(8)\&.
+.SH "AUTHORS"
+.PP
+\fBGSS\-Proxy \- http://fedorahosted\&.org/gss\-proxy\fR

@@ -1,0 +1,131 @@
+'\" t
+.\"     Title: flatpak search
+.\"    Author: Patrick Griffis <tingping@tingping.se>
+.\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
+.\"      Date: 03/29/2019
+.\"    Manual: flatpak search
+.\"    Source: flatpak
+.\"  Language: English
+.\"
+.TH "FLATPAK SEARCH" "1" "" "flatpak" "flatpak search"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+flatpak-search \- Search for applications and runtimes
+.SH "SYNOPSIS"
+.HP \w'\fBflatpak\ search\fR\ 'u
+\fBflatpak search\fR TEXT
+.SH "DESCRIPTION"
+.PP
+Searches for applications and runtimes matching
+TEXT\&. Note that this uses appstream data that can be updated with the
+\fBflatpak update\fR
+command\&. The appstream data is updated automatically only if it\*(Aqs at least a day old\&.
+.SH "OPTIONS"
+.PP
+The following options are understood:
+.PP
+\fB\-\-user\fR
+.RS 4
+Only search through remotes in the per\-user installation\&.
+.RE
+.PP
+\fB\-\-system\fR
+.RS 4
+Only search through remotes in the default system\-wide installation\&.
+.RE
+.PP
+\fB\-\-installation=NAME\fR
+.RS 4
+Show a system\-wide installation by
+NAME
+among those defined in
+/etc/flatpak/installations\&.d/\&. Using
+\fB\-\-installation=default\fR
+is equivalent to using
+\fB\-\-system\fR\&.
+.RE
+.PP
+\fB\-h\fR, \fB\-\-help\fR
+.RS 4
+Show help options and exit\&.
+.RE
+.PP
+\fB\-v\fR, \fB\-\-verbose\fR
+.RS 4
+Print debug information during command processing\&.
+.RE
+.PP
+\fB\-\-ostree\-verbose\fR
+.RS 4
+Print OSTree debug information during command processing\&.
+.RE
+.PP
+\fB\-\-columns=FIELD,\&...\fR
+.RS 4
+Specify what information to show about each result\&. You can list multiple fields, or use this option multiple times\&.
+.sp
+Append :s[tart], :m[iddle], :e[nd] or :f[ull] to column names to change ellipsization\&.
+.RE
+.SH "FIELDS"
+.PP
+The following fields are understood by the
+\fB\-\-columns\fR
+option:
+.PP
+description
+.RS 4
+Show the description
+.RE
+.PP
+application
+.RS 4
+Show the application ID
+.RE
+.PP
+version
+.RS 4
+Show the version
+.RE
+.PP
+version
+.RS 4
+Show the branch
+.RE
+.PP
+remotes
+.RS 4
+Show the remotes
+.RE
+.PP
+all
+.RS 4
+Show all columns
+.RE
+.PP
+help
+.RS 4
+Show the list of available columns
+.RE
+.PP
+Note that field names can be abbreviated to a unique prefix\&.
+.SH "SEE ALSO"
+.PP
+\fBflatpak\fR(1)

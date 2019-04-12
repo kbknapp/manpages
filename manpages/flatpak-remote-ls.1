@@ -1,0 +1,237 @@
+'\" t
+.\"     Title: flatpak remote-ls
+.\"    Author: Alexander Larsson <alexl@redhat.com>
+.\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
+.\"      Date: 03/29/2019
+.\"    Manual: flatpak remote-ls
+.\"    Source: flatpak
+.\"  Language: English
+.\"
+.TH "FLATPAK REMOTE\-LS" "1" "" "flatpak" "flatpak remote-ls"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+flatpak-remote-ls \- Show available runtimes and applications
+.SH "SYNOPSIS"
+.HP \w'\fBflatpak\ remote\-ls\fR\ 'u
+\fBflatpak remote\-ls\fR [OPTION...] [REMOTE]
+.SH "DESCRIPTION"
+.PP
+Shows runtimes and applications that are available in the remote repository with the name
+REMOTE, or all remotes if one isn\*(Aqt specified\&. You can find all configured remote repositories with
+\fBflatpak remotes\fR\&.
+.PP
+REMOTE
+can be a file:// URI pointing to a local repository instead of a remote name\&.
+.PP
+Unless overridden with the
+\fB\-\-system\fR,
+\fB\-\-user\fR, or
+\fB\-\-installation\fR
+options, this command uses either the default system\-wide installation or the per\-user one, depending on which has the specified
+REMOTE\&.
+.SH "OPTIONS"
+.PP
+The following options are understood:
+.PP
+\fB\-h\fR, \fB\-\-help\fR
+.RS 4
+Show help options and exit\&.
+.RE
+.PP
+\fB\-\-user\fR
+.RS 4
+Use the per\-user configuration\&.
+.RE
+.PP
+\fB\-\-system\fR
+.RS 4
+Use the default system\-wide configuration\&.
+.RE
+.PP
+\fB\-\-installation=NAME\fR
+.RS 4
+Use a system\-wide installation specified by
+NAME
+among those defined in
+/etc/flatpak/installations\&.d/\&. Using
+\fB\-\-installation=default\fR
+is equivalent to using
+\fB\-\-system\fR\&.
+.RE
+.PP
+\fB\-d\fR, \fB\-\-show\-details\fR
+.RS 4
+Show arches, branches and commit ids, in addition to the names\&. Equivalent to
+\fB\-\-columns=all\fR\&.
+.RE
+.PP
+\fB\-\-runtime\fR
+.RS 4
+Show only runtimes, omit applications\&.
+.RE
+.PP
+\fB\-\-app\fR
+.RS 4
+Show only applications, omit runtimes\&.
+.RE
+.PP
+\fB\-\-all\fR, \fB\-a\fR
+.RS 4
+Show everything\&. By default locale and debug extensions as well as secondary arches when the primary arch is available are hidden\&.
+.RE
+.PP
+\fB\-\-updates\fR
+.RS 4
+Show only those which have updates available\&.
+.RE
+.PP
+\fB\-\-arch=ARCH\fR
+.RS 4
+Show only those matching the specied architecture\&. By default, only supported architectures are shown\&. Use
+\fB\-\-arch=*\fR
+to show all architectures\&.
+.RE
+.PP
+\fB\-v\fR, \fB\-\-verbose\fR
+.RS 4
+Print debug information during command processing\&.
+.RE
+.PP
+\fB\-\-ostree\-verbose\fR
+.RS 4
+Print OSTree debug information during command processing\&.
+.RE
+.PP
+\fB\-\-app\-runtime=RUNTIME\fR
+.RS 4
+List applications that use the given runtime
+.RE
+.PP
+\fB\-\-columns=FIELD,\&...\fR
+.RS 4
+Specify what information to show about each ref\&. You can list multiple fields, or use this option multiple times\&.
+.sp
+Append :s[tart], :m[iddle], :e[nd] or :f[ull] to column names to change ellipsization\&.
+.RE
+.SH "FIELDS"
+.PP
+The following fields are understood by the
+\fB\-\-columns\fR
+option:
+.PP
+description
+.RS 4
+Show the application description
+.RE
+.PP
+application
+.RS 4
+Show the application ID
+.RE
+.PP
+arch
+.RS 4
+Show the arch
+.RE
+.PP
+branch
+.RS 4
+Show the branch
+.RE
+.PP
+version
+.RS 4
+Show the version
+.RE
+.PP
+ref
+.RS 4
+Show the ref
+.RE
+.PP
+origin
+.RS 4
+Show the origin remote
+.RE
+.PP
+commit
+.RS 4
+Show the active commit
+.RE
+.PP
+installed\-size
+.RS 4
+Show the installed size
+.RE
+.PP
+download\-size
+.RS 4
+Show the download size
+.RE
+.PP
+options
+.RS 4
+Show options
+.RE
+.PP
+all
+.RS 4
+Show all columns
+.RE
+.PP
+help
+.RS 4
+Show the list of available columns
+.RE
+.PP
+Note that field names can be abbreviated to a unique prefix\&.
+.SH "EXAMPLES"
+.PP
+\fB$ flatpak \-\-user remote\-ls \-\-app testrepo\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+Ref
+org\&.gnome\&.Builder
+org\&.freedesktop\&.glxgears
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+\fB$ flatpak remote\-ls file:///run/media/mwleeds/d4d37026\-cde2\-4e5e\-8bcc\-d23ebbf231f9/\&.ostree/repo\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+Ref
+org\&.kde\&.Khangman
+.fi
+.if n \{\
+.RE
+.\}
+.SH "SEE ALSO"
+.PP
+\fBflatpak\fR(1),
+\fBflatpak-remotes\fR(1)

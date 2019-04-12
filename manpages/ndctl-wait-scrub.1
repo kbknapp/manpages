@@ -1,0 +1,103 @@
+'\" t
+.\"     Title: ndctl-wait-scrub
+.\"    Author: [see the "AUTHOR(S)" section]
+.\" Generator: Asciidoctor 1.5.8
+.\"      Date: 2019-03-18
+.\"    Manual: ndctl Manual
+.\"    Source: ndctl
+.\"  Language: English
+.\"
+.TH "NDCTL\-WAIT\-SCRUB" "1" "2019-03-18" "ndctl" "ndctl Manual"
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.ss \n[.ss] 0
+.nh
+.ad l
+.de URL
+\fI\\$2\fP <\\$1>\\$3
+..
+.als MTO URL
+.if \n[.g] \{\
+.  mso www.tmac
+.  am URL
+.    ad l
+.  .
+.  am MTO
+.    ad l
+.  .
+.  LINKSTYLE blue R < >
+.\}
+.SH "NAME"
+ndctl\-wait\-scrub \- wait for an Address Range Scrub (ARS) operation to complete
+.SH "SYNOPSIS"
+.sp
+.nf
+\fIndctl wait\-scrub\fP [<bus\-id> <bus\-id2> ... <bus\-idN>] [<options>]
+.fi
+.br
+.SH "DESCRIPTION"
+.sp
+NVDIMM Address Range Scrub is a capability provided by platform firmware
+that allows for the discovery of memory errors by system software. It
+enables system software to pre\-emptively avoid accesses that could lead
+to uncorrectable memory error handling events, and it otherwise allows
+memory errors to be enumerated.
+.sp
+The kernel provides a POLL(2) capable sysfs file (\fIscrub\fP) to indicate
+the state of ARS. The \fIscrub\fP file maintains a running count of ARS runs
+that have taken place. While a current run is in progress a \fI+\fP
+character is emitted along with the current count. The \fIndctl
+wait\-scrub\fP operation waits for \fIscrub\fP, across all specified buses, to
+indicate not in\-progress at least once.
+.SH "EXAMPLE"
+.sp
+Wait for scrub on all nvdimm buses in the system. The json listing
+report at the end only includes the buses that support ARS operations.
+.sp
+.if n .RS 4
+.nf
+# ndctl wait\-scrub
+[
+  {
+    "provider":"nfit_test.1",
+    "dev":"ndbus3",
+    "scrub_state":"idle"
+  },
+  {
+    "provider":"nfit_test.0",
+    "dev":"ndbus2",
+    "scrub_state":"idle"
+  }
+]
+.fi
+.if n .RE
+.sp
+When specifying an individual bus, or if there is only one bus in the
+system, the command reports whether ARS support is available.
+.sp
+.if n .RS 4
+.nf
+# ndctl wait\-scrub e820
+error waiting for scrub completion: Operation not supported
+.fi
+.if n .RE
+.SH "OPTIONS"
+.sp
+\-v, \-\-verbose
+.RS 4
+Emit debug messages for the ARS wait process
+.RE
+.SH "COPYRIGHT"
+.sp
+Copyright (c) 2016 \- 2019, Intel Corporation. License GPLv2: GNU GPL
+version 2 \c
+.URL "http://gnu.org/licenses/gpl.html" "" "."
+This is free software:
+you are free to change and redistribute it.  There is NO WARRANTY, to
+the extent permitted by law.
+.SH "SEE ALSO"
+.sp
+ndctl\-start\-scrub(1),
+\c
+.URL "http://www.uefi.org/sites/default/files/resources/ACPI%206_2_A_Sept29.pdf" "ACPI
+6.2 Specification Section 9.20.7.2 Address Range Scrubbing (ARS) Overview"

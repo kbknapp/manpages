@@ -1,0 +1,173 @@
+'\" t
+.\"     Title: flatpak uninstall
+.\"    Author: Alexander Larsson <alexl@redhat.com>
+.\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
+.\"      Date: 03/29/2019
+.\"    Manual: flatpak uninstall
+.\"    Source: flatpak
+.\"  Language: English
+.\"
+.TH "FLATPAK UNINSTALL" "1" "" "flatpak" "flatpak uninstall"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+flatpak-uninstall \- Uninstall an application or runtime
+.SH "SYNOPSIS"
+.HP \w'\fBflatpak\ uninstall\fR\ 'u
+\fBflatpak uninstall\fR [OPTION...] [REF...]
+.SH "DESCRIPTION"
+.PP
+Uninstalls an application or runtime\&.
+REF
+is a reference to the application or runtime to uninstall\&.
+.PP
+Each
+REF
+argument is a full or partial indentifier in the flatpak ref format, which looks like "(app|runtime)/ID/ARCH/BRANCH"\&. All elements except ID are optional and can be left out, including the slashes, so most of the time you need only specify ID\&. Any part left out will be matched against what is installed, and if there are multiple matches you will be prompted to choose between them\&. You will also be prompted if
+REF
+doesn\*(Aqt match any installed ref exactly but is similar (e\&.g\&. "gedit" is similar to "org\&.gnome\&.gedit")\&.
+.PP
+By default this looks for both installed apps and runtimes with the given
+REF, but you can limit this by using the
+\fB\-\-app\fR
+or
+\fB\-\-runtime\fR
+option, or by supplying the initial element in the
+REF\&.
+.PP
+Normally, this command removes the ref for this application/runtime from the local OSTree repository and purges any objects that are no longer needed to free up disk space\&. If the same application is later reinstalled, the objects will be pulled from the remote repository again\&. The
+\fB\-\-keep\-ref\fR
+option can be used to prevent this\&.
+.PP
+When
+\fB\-\-delete\-data\fR
+is specified while removing an app, its data directory in
+~/\&.var/app
+and any permissions it might have are removed\&. When
+\fB\-\-delete\-data\fR
+is used without a
+REF, all \*(Aqunowned\*(Aq app data is removed\&.
+.PP
+Unless overridden with the
+\fB\-\-system\fR,
+\fB\-\-user\fR, or
+\fB\-\-installation\fR
+options, this command searches both the system\-wide installation and the per\-user one for
+REF
+and errors out if it exists in more than one\&.
+.SH "OPTIONS"
+.PP
+The following options are understood:
+.PP
+\fB\-h\fR, \fB\-\-help\fR
+.RS 4
+Show help options and exit\&.
+.RE
+.PP
+\fB\-\-keep\-ref\fR
+.RS 4
+Keep the ref for the application and the objects belonging to it in the local repository\&.
+.RE
+.PP
+\fB\-\-user\fR
+.RS 4
+Uninstalls from a per\-user installation\&.
+.RE
+.PP
+\fB\-\-system\fR
+.RS 4
+Uninstalls from the default system\-wide installation\&.
+.RE
+.PP
+\fB\-\-installation=NAME\fR
+.RS 4
+Uninstalls from a system\-wide installation specified by
+NAME
+among those defined in
+/etc/flatpak/installations\&.d/\&. Using
+\fB\-\-installation=default\fR
+is equivalent to using
+\fB\-\-system\fR\&.
+.RE
+.PP
+\fB\-\-arch=ARCH\fR
+.RS 4
+The architecture to uninstall, instead of the architecture of the host system\&.
+.RE
+.PP
+\fB\-\-all\fR
+.RS 4
+Remove all refs on the system\&.
+.RE
+.PP
+\fB\-\-unused\fR
+.RS 4
+Remove unused refs on the system\&.
+.RE
+.PP
+\fB\-y\fR, \fB\-\-assumeyes\fR
+.RS 4
+Automatically answer yes to all questions\&. This is useful for automation\&.
+.RE
+.PP
+\fB\-\-noninteractive\fR
+.RS 4
+Produce minimal output and avoid most questions\&. This is suitable for use in non\-interactive situations, e\&.g\&. in a build script\&.
+.RE
+.PP
+\fB\-\-app\fR
+.RS 4
+Only look for an app with the given name\&.
+.RE
+.PP
+\fB\-\-runtime\fR
+.RS 4
+Only look for a runtime with the given name\&.
+.RE
+.PP
+\fB\-\-no\-related\fR
+.RS 4
+Don\*(Aqt uninstall related extensions, such as the locale data\&.
+.RE
+.PP
+\fB\-\-force\-remove\fR
+.RS 4
+Remove files even if they\*(Aqre in use by a running application\&.
+.RE
+.PP
+\fB\-\-delete\-data\fR
+.RS 4
+Remove app data in
+~/\&.var/app
+and in the permission store\&.
+.RE
+.PP
+\fB\-v\fR, \fB\-\-verbose\fR
+.RS 4
+Print debug information during command processing\&.
+.RE
+.PP
+\fB\-\-ostree\-verbose\fR
+.RS 4
+Print OSTree debug information during command processing\&.
+.RE
+.SH "EXAMPLES"
+.PP
+\fB$ flatpak \-\-user uninstall org\&.gnome\&.GEdit\fR

@@ -1,0 +1,70 @@
+'\" t
+.\"     Title: flatpak enter
+.\"    Author: Alexander Larsson <alexl@redhat.com>
+.\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
+.\"      Date: 03/29/2019
+.\"    Manual: flatpak enter
+.\"    Source: flatpak
+.\"  Language: English
+.\"
+.TH "FLATPAK ENTER" "1" "" "flatpak" "flatpak enter"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+flatpak-enter \- Enter an application
+.SH "SYNOPSIS"
+.HP \w'\fBflatpak\ enter\fR\ 'u
+\fBflatpak enter\fR [OPTION...] INSTANCE COMMAND [ARG...]
+.SH "DESCRIPTION"
+.PP
+Enter a running sandbox\&.
+INSTANCE
+must be either the pid of a process running in a flatpak sandbox, or the ID of a running application or a the instance ID of a running sandbox\&.
+COMMAND
+is the command to run in the sandbox\&. Extra arguments are passed on to the command\&.
+.PP
+This creates a new process within the running sandbox, with the same environment\&. This is useful when you want to debug a problem with a running application\&.
+.PP
+This command requires extra privileges, so must be run as root or via e\&.g\&. sudo\&. To get TAB completion for the application ID, use sudo \-E\&.
+.SH "OPTIONS"
+.PP
+The following options are understood:
+.PP
+\fB\-h\fR, \fB\-\-help\fR
+.RS 4
+Show help options and exit\&.
+.RE
+.PP
+\fB\-v\fR, \fB\-\-verbose\fR
+.RS 4
+Print debug information during command processing\&.
+.RE
+.PP
+\fB\-\-ostree\-verbose\fR
+.RS 4
+Print OSTree debug information during command processing\&.
+.RE
+.SH "EXAMPLES"
+.PP
+\fB$ flatpak enter 15345 sh\fR
+.SH "SEE ALSO"
+.PP
+\fBflatpak\fR(1),
+\fBflatpak-run\fR(1)

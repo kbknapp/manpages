@@ -1,0 +1,106 @@
+'\" t
+.\"     Title: gssproxy
+.\"    Author: GSS-Proxy - http://fedorahosted.org/gss-proxy
+.\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
+.\"      Date: 02/09/2018
+.\"    Manual: GssProxy Manual pages
+.\"    Source: GSS Proxy
+.\"  Language: English
+.\"
+.TH "GSSPROXY" "8" "02/09/2018" "GSS Proxy" "GssProxy Manual pages"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+gssproxy \- GssProxy Daemon
+.SH "SYNOPSIS"
+.HP \w'\fBgssproxy\fR\ 'u
+\fBgssproxy\fR [\fIoptions\fR]
+.SH "DESCRIPTION"
+.PP
+\fBgssproxy\fR
+provides a daemon to manage access to GSSAPI credentials\&.
+.PP
+\fBgssproxy\fR
+consists of the
+\fBgssproxy\fR
+daemon (configured by the
+\fBgssproxy.conf\fR(5)
+file) and a GSSAPI interposer plugin (\fBgssproxy-mech\fR(8))\&.
+.SH "OPTIONS"
+.PP
+\fB\-D\fR,\fB\-\-daemon\fR
+.RS 4
+Become a daemon after starting up\&.
+.RE
+.PP
+\fB\-i\fR,\fB\-\-interactive\fR
+.RS 4
+Run in the foreground, don\*(Aqt become a daemon\&.
+.RE
+.PP
+\fB\-c\fR,\fB\-\-config\fR
+.RS 4
+Specify a config file to use as the main config file (read before the rest of the config directory)\&. The default is to use the file
+/etc/gssproxy/gssproxy\&.conf\&. For reference on the config file syntax and options, consult the
+\fBgssproxy.conf\fR(5)
+manual page\&.
+.RE
+.PP
+\fB\-C\fR,\fB\-\-configdir\fR
+.RS 4
+Specify a non\-default config dir\&. Files named of the form "##\-foo\&.conf" (that is, beginning with two digits and a dash, and ending in "\&.conf") will be read in numeric order from this directory, in addition to the config file itself\&. The default is
+/etc/gssproxy\&. For reference on the config file syntax and options, consult the
+\fBgssproxy.conf\fR(5)
+manual page\&.
+.RE
+.PP
+\fB\-s\fR,\fB\-\-socket\fR
+.RS 4
+Specify a custom default socket name\&. This socket will be used by all sections that do not define an explicit socket\&.
+.RE
+.PP
+\fB\-d\fR,\fB\-\-debug\fR
+.RS 4
+Turn on debugging\&.
+.RE
+.PP
+\fB\-\-version\fR
+.RS 4
+Print version number and exit\&.
+.RE
+.SH "SIGNALS"
+.PP
+SIGTERM/SIGINT
+.RS 4
+Informs the GssProxy to gracefully terminate all of its child processes and then shut down\&.
+.RE
+.PP
+SIGHUP
+.RS 4
+Request a reload of all configuration for gssproxy\&. If there is an error in the configuration files, the existing configuration will not be replaced; if there is a problem applying the new configuration, gssproxy will exit\&.
+.RE
+.SH "SEE ALSO"
+.PP
+\fBgssproxy.conf\fR(5)
+and
+\fBgssproxy-mech\fR(8)\&.
+.SH "AUTHORS"
+.PP
+\fBGSS\-Proxy \- http://fedorahosted\&.org/gss\-proxy\fR
