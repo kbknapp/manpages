@@ -1,0 +1,76 @@
+
+NAME
+ostree-admin - Use one of the ostree admin commands
+SYNOPSIS
+
+ostree admin {SUBCOMMAND}
+DESCRIPTION
+
+Use ostree admin subcommands.
+SUBCOMMANDS
+oc
+o 2.3
+
+cleanup
+oc
+o 2.3
+
+config-diff
+oc
+o 2.3
+
+deploy
+oc
+o 2.3
+
+init-fs
+oc
+o 2.3
+
+instutil
+oc
+o 2.3
+
+os-init
+oc
+o 2.3
+
+pin
+oc
+o 2.3
+
+set-origin
+oc
+o 2.3
+
+status
+oc
+o 2.3
+
+switch
+oc
+o 2.3
+
+undeploy
+oc
+o 2.3
+
+unlock
+oc
+o 2.3
+
+upgrade
+View manpages for each admin subcommand using, for example:
+
+$ man ostree-admin cleanup
+OPTIONS
+
+--help, -h
+
+Usage help
+--sysroot="PATH"
+
+Creates a new OSTree sysroot at PATH
+--print-current-dir
+
+Prints the full path to the deployment directory for the currently active deployment in the specified sysroot to standard out. This is incompatible with specifying a subcommand.

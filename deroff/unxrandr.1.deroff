@@ -1,0 +1,29 @@
+
+NAME
+unxrandr - inverse tool of xrandr
+\$1 \n[an-margin]
+level \n[rst2man-indent-level]
+level margin: \n[rst2man-indent\n[rst2man-indent-level]]
+-
+\n[rst2man-indent0]
+\n[rst2man-indent1]
+\n[rst2man-indent2]
+SYNOPSIS
+
+unxrandr
+DESCRIPTION
+
+unxrandr is a tool that queries the XRandR state using ARandR's libraries
+and outputs an xrandr command line that reproduces the state (as far as it
+is supported by the library).
+
+The command
+sh -c "unxrandr"
+should never modify the configured state.
+
+It takes no options apart from --help and --version.
+SEE ALSO
+
+man 1 arandr
+AUTHOR
+chrysn <chrysn@fsfe.org>

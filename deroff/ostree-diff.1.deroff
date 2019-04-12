@@ -1,0 +1,32 @@
+
+NAME
+ostree-diff - Compare a directory against a revision
+SYNOPSIS
+
+ostree diff [OPTIONS...] {REV} {TARGETDIR}
+DESCRIPTION
+
+Compare directory TARGETDIR against revision REV. Shows files and directories modified, added, and deleted. If there is a file in TARGETDIR not in REV, it will show with an "A" for "added". If a file in REV is not in TARGETDIR, it shows "D" for "deleted". "M" for "modified" will also show.
+OPTIONS
+
+--stats
+
+Print various statistics.
+--fs-diff
+
+Print filesystem diff.
+--owner-uid
+
+Use file ownership user id for local files.
+--owner-gid
+
+Use file ownership group id for local files.
+
+EXAMPLE
+
+$ ostree diff my-branch^ my-branch
+        A   /testdirectory
+        M   /helloworld.txt
+$ ostree diff my-branch my-branch^
+        D   /testdirectory
+        M   /helloworld.txt

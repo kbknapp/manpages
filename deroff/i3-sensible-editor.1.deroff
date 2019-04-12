@@ -1,0 +1,75 @@
+
+NAME
+i3-sensible-editor - launches $EDITOR with fallbacks
+SYNOPSIS
+
+i3-sensible-editor [arguments]
+DESCRIPTION
+
+i3-sensible-editor is used by i3-nagbar(1) when you click on the edit button.
+
+It tries to start one of the following (in that order):
+oc
+o 2.3
+
+$VISUAL
+oc
+o 2.3
+
+$EDITOR
+oc
+o 2.3
+
+nano
+oc
+o 2.3
+
+nvim
+oc
+o 2.3
+
+vim
+oc
+o 2.3
+
+vi
+oc
+o 2.3
+
+emacs
+oc
+o 2.3
+
+pico
+oc
+o 2.3
+
+qe
+oc
+o 2.3
+
+mg
+oc
+o 2.3
+
+jed
+oc
+o 2.3
+
+gedit
+oc
+o 2.3
+
+mcedit
+oc
+o 2.3
+
+gvim
+Please don't complain about the order: If the user has any preference, they will have $VISUAL or $EDITOR set.
+SEE ALSO
+
+i3(1)
+AUTHOR
+
+Michael Stapelberg and contributors
+

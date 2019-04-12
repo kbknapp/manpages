@@ -1,0 +1,68 @@
+
+NAME
+alacritty - a cross-platform, gpu-accelerated terminal emulator
+SYNOPSIS
+alacritty [FLAGS] [OPTIONS]
+DESCRIPTION
+Alacritty is focused on simplicity and performance.
+
+The performance goal means it should be faster than any other terminal emulator available.
+
+The simplicity goal means that it doesn't have features such as tabs or splits (which can be better provided by a window manager or terminal multiplexer) nor niceties like a GUI config editor.
+FLAGS
+
+-h, --help
+Prints help information
+
+--live-config-reload
+Enable automatic config reloading
+
+--no-live-config-reload
+Disable automatic config reloading
+
+--persistent-logging
+Keep the log file after quitting Alacritty
+
+--print-events
+
+-q
+Reduces the level of verbosity (the min level is -qq)
+
+--ref-test
+Generates ref test
+
+-v
+Increases the level of verbosity (the max level is -vvv)
+
+-V, --version
+Prints version information
+OPTIONS
+
+--class <class>
+Defines the window class on X11 [default: Alacritty]
+
+-e, --command <command>...
+Command and args to execute (must be last argument)
+
+--config-file <config-file>
+Specify alternative configuration file [default: $XDG_CONFIG_HOME/alacritty/alacritty.yml]
+
+-d, --dimensions <columns> <lines>
+Defines the window dimensions. Falls back to size specified by window manager if set to 0x0 [default: 0x0]
+
+-t, --title <title>
+Defines the window title [default: Alacritty]
+
+--working-directory <working-directory>
+Start the shell in the specified working directory
+SEE ALSO
+See the alacritty github repository at https://github.com/jwilm/alacritty for the full documentation.
+BUGS
+Found a bug? Please report it at https://github.com/jwilm/alacritty/issues.
+AUTHORS
+Maintainers:
+oc
+o 2.3
+
+Joe Wilm <joe@jwilm.com>
+

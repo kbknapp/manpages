@@ -1,0 +1,20 @@
+
+transmission-create 
+transmission-create creates BitTorrent .torrent files from the command line
+Show a short help page and exit.
+
+Save the generated .torrent to this filename.
+
+Flag the torrent as intended for use on private trackers.
+
+Add a comment to the torrent file.
+
+Set how many KiB each piece should be, overriding the preferred default
+
+Add a tracker's
+
+to the .torrent. Most torrents will have at least one
+
+To add more than one, use this option multiple times.
+https://transmissionbt.com/
+

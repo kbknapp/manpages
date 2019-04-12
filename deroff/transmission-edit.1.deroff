@@ -1,0 +1,15 @@
+
+transmission-edit 
+transmission-edit command-line utility to modify .torrent files' announce URLs
+Show a short help page and exit.
+
+Add an announce URL to the torrent's announce-list if it's not already in the list
+
+Remove an announce URL from the torrent's announce-list
+
+Substring search-and-replace inside a torrent's announce URLs. This can be used to change an announce URL when the tracker moves or your passcode changes.
+Update a tracker passcode in all your torrents:
+
+$ transmission-edit -r old-passcode new-passcode ~/.config/transmission/torrents/*\.torrent
+https://transmissionbt.com/
+

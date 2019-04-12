@@ -1,0 +1,122 @@
+
+NAME
+NILFS - the new implementation of a log-structured file system
+SYNOPSIS
+Overview of the NILFS file system and the related tools.
+DESCRIPTION
+NILFS is a log-structured file system developed for Linux.  NILFS
+provides versioning capability of an entire file system and continuous
+snapshotting that allows users to restore files mistakenly overwritten
+or destroyed a while ago.
+
+The current major version of NILFS is version 2, which is referred to
+as NILFS2.  NILFS2 is equipped with an online garbage collector (also
+called cleaner) that reclaims disk space in the background with
+keeping multiple snapshots.
+
+When data is written or any change is made to a NILFS2 file system, it
+automatically creates a checkpoint.  A checkpoint represents a
+consistent state of the NILFS2 file system of a certain instant.  It
+becomes mountable after being changed into a snapshot.  A snapshot is
+the checkpoint marked not to be deleted by the cleaner.  NILFS2
+creates a number of checkpoints at regular intervals (unless there is
+no change) or with synchronous writings.  There is no practical limit
+on the number of checkpoints and snapshots.
+
+The following tools are available to manage the checkpoint and the
+snapshot:
+
+lscp
+lists checkpoints or snapshots
+
+mkcp
+makes a checkpoint or a snapshot
+
+chcp
+changes an existing checkpoint to a snapshot or vice versa
+
+rmcp
+invalidates specified checkpoint(s)
+
+These tools give the versioning capability to NILFS2; a user can
+select significant versions among continuously created checkpoints and
+can change them to snapshots to be preserved for long periods.
+
+Every checkpoint except for the snapshot will become unprotected from
+the cleaner after a given period of time.  This period is controlled
+by the protection_period parameter defined in the
+/etc/nilfs_cleanerd.conf(5) file.
+MOUNT OPTIONS
+Refer to the
+mount.nilfs2 (8).
+EXAMPLES
+
+mkfs -t nilfs2 /dev/sdb1
+creates a NILFS2 file system on a block device `/dev/sdb1'.
+
+mount -t nilfs2 /dev/sdb1 /nilfs
+mounts the NILFS2 file system on a mount point `/nilfs' like an
+ordinary POSIX file system.  This will invoke a cleaner process
+nilfs_cleanerd(8) through an external mount program
+(i.e. mount.nilfs2(8)).
+
+lscp
+lists checkpoints created in the file system as follows:
+
+        CNO        DATE     TIME  MODE  FLG      BLKCNT       ICNT
+          1  2014-01-18 20:49:54   cp    -            4          2
+          2  2014-01-18 20:51:45   cp    -         3990         11
+          3  2014-01-18 20:51:45   cp    -         6058          3
+          4  2014-01-18 20:51:49   cp    -         4807          6
+          5  2014-01-18 20:51:49   cp    -          262          3
+        ...
+
+chcp ss 2
+changes the checkpoint whose checkpoint-number is two to a snapshot.
+Then the checkpoint list will become as follows:
+
+        CNO        DATE     TIME  MODE  FLG      BLKCNT       ICNT
+          1  2014-01-18 20:49:54   cp    -            4          2
+          2  2014-01-18 20:51:45   ss    -         3990         11
+          3  2014-01-18 20:51:45   cp    -         6058          3
+          4  2014-01-18 20:51:49   cp    -         4807          6
+          5  2014-01-18 20:51:49   cp    -          262          3
+        ...
+
+mount -t nilfs2 -r -o cp=2 /dev/sdb1 /snapshot
+mounts the snapshot on another directory `/snapshot' as a read-only
+file system.  Here the snapshot mount requires at least two options, a
+read-only option (-r or -o ro) and the cp option
+(-o cp=checkpoint-number).  Note that a read/write mount and
+one or more snapshots are mountable independently, so the online
+backup is possible through the snapshot mounts.
+
+        # mount -t nilfs2
+        /dev/sdb1 on /nilfs type nilfs2 (rw,gcpid=13296)
+        /dev/sdb1 on /snapshot type nilfs2 (ro,cp=2)
+
+umount /nilfs
+unmounts the NILFS2 file system mounted on `/nilfs' and will shutdown
+the nilfs_cleanerd(8) through an external umount program
+(umount.nilfs2(8)) for the read/write mount.
+AUTHORS
+NILFS2
+was developed by NILFS development team.
+SEE ALSO
+mkfs.nilfs2 (8),
+mount.nilfs2 (8),
+umount.nilfs2 (8),
+nilfs_cleanerd (8),
+nilfs_cleanerd.conf (5),
+nilfs-tune (8),
+nilfs-clean (8),
+nilfs-resize (8),
+lscp (1),
+mkcp (8),
+chcp (8),
+rmcp (8),
+lssu (1),
+dumpseg (8)
+
+http://nilfs.sourceforge.net/
+

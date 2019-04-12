@@ -1,0 +1,51 @@
+
+
+any later version
+
+NAME
+mkrlconf - Create a Linux kernel configuration file for rEFInd
+SYNOPSIS
+mkrlconf 
+[ --force ]
+
+DESCRIPTION
+
+To boot a Linux kernel directly, rEFInd must normally pass system-specific
+parameters to help the kernel locate its initial RAM disk (initrd) file,
+the installation's root filesystem, and so on. rEFInd stores this
+information in a file called refind_linux.conf, which is stored in
+the same directory as the kernel(s) to which it applies. The mkrlconf
+script creates this configuration file in /boot, using the current
+boot options (from /proc/cmdline) to populate
+/boot/refind_linux.conf with boot options that are probably (but not
+certainly) correct.
+
+The file created in this way has three lines, which correspond to three
+entries on the rEFInd suboptions menu. The first entry boots using the
+options found in /proc/cmdline. The second entry boots using the same
+options as the first, but with single added. The third entry boots
+with minimal options of ro root={CURRENT_ROOT_DEVICE}, where
+{CURRENT_ROOT_DEVICE} identifies the current root (/)
+filesystem. Users may manually edit the refind_linux.conf file to
+suit their needs, of course.
+
+OPTIONS
+--force
+Ordinarily, if mkrlconf finds an existing
+/boot/refind_linux.conf file, it refuses to replace it. The
+--force option causes mkrlconf to replace the existing file
+in favor of one it generates.
+
+AUTHORS
+Primary author: Roderick W. Smith (rodsmith@rodsbooks.com)
+
+SEE ALSO
+mvrefind (8),
+refind-install (8)
+
+http://www.rodsbooks.com/refind/
+
+AVAILABILITY
+The mkrlconf command is part of the rEFInd package and is
+available from Roderick W. Smith.
+

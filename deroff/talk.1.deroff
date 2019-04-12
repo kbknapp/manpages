@@ -1,0 +1,42 @@
+
+
+NAME
+talk - Talk client
+SYNOPSIS
+talk
+[,OPTION/...] ,person /[,ttyname/]
+DESCRIPTION
+Talk to another user.
+
+-?, --help
+give this help list
+
+--usage
+give a short usage message
+
+-V, --version
+print program version
+AUTHOR
+Written by Kipp Hickman, Clem Cole, and Peter Moore.
+REPORTING BUGS
+Report bugs to <bug-inetutils@gnu.org>.
+COPYRIGHT
+Copyright © 2015 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+SEE ALSO
+talkd(1)
+
+The full documentation for
+talk
+is maintained as a Texinfo manual.  If the
+info
+and
+talk
+programs are properly installed at your site, the command
+info talk
+
+should give you access to the complete manual.
+

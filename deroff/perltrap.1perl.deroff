@@ -1,0 +1,277 @@
+
+{
+NAME
+perltrap   Perl traps for the unwary
+DESCRIPTION
+
+The biggest trap of all is forgetting to use warnings(fR or use the  w
+switch; see warnings and perlrun. The second biggest trap is not
+making your entire program runnable under use strict(fR.  The third biggest
+trap is not reading the list of changes in this version of Perl; see
+perldelta.
+Awk Traps
+
+Accustomed awk users should take special note of the following:
+o 4
+A Perl program executes only once, not once for each input line.  You can
+do an implicit loop with ( n(fR or ( p(fR.
+o 4
+The English module, loaded via
+    use English;
+allows you to refer to special variables (like $/) with names (like
+$RS), as though they were in awk; see perlvar for details.
+o 4
+Semicolons are required after all simple statements in Perl (except
+at the end of a block).  Newline is not a statement delimiter.
+o 4
+Curly brackets are required on if(fRs and while(fRs.
+o 4
+Variables begin with $, @ or % in Perl.
+o 4
+Arrays index from 0.  Likewise string positions in substr() and
+index().
+o 4
+You have to decide whether your array has numeric or string indices.
+o 4
+Hash values do not spring into existence upon mere reference.
+o 4
+You have to decide whether you want to use string or numeric
+comparisons.
+o 4
+Reading an input line does not split it for you.  You get to split it
+to an array yourself.  And the split() operator has different
+arguments than awk's.
+o 4
+The current input line is normally in $_, not $0.  It generally does
+not have the newline stripped.  ($0 is the name of the program
+executed.)  See perlvar.
+o 4
+$<digit> does not refer to fieldsit refers to substrings matched
+by the last match pattern.
+o 4
+The print() statement does not add field and record separators unless
+you set $, and $((fR.  You can set $OFS and $ORS if you're using
+the English module.
+o 4
+You must open your files before you print to them.
+o 4
+The range operator is .., not comma.  The comma operator works as in
+C.
+o 4
+The match operator is =~, not ~.  (~ is the one's complement
+operator, as in C.)
+o 4
+The exponentiation operator is WW, not ^.  ^ is the XOR
+operator, as in C.  (You know, one could get the feeling that awk is
+basically incompatible with C.)
+o 4
+The concatenation operator is ., not the null string.  (Using the
+null string would render /pat/ /pat/(fR unparsable, because the third slash
+would be interpreted as a division operatorthe tokenizer is in fact
+slightly context sensitive for operators like /, ?, and >.
+And in fact, . itself can be the beginning of a number.)
+o 4
+The next(fR, exit(fR, and continue(fR keywords work differently.
+o 4
+The following variables work differently:
+      Awk       Perl
+      ARGC      scalar @ARGV (compare with $#ARGV)
+      ARGV[0]   $0
+      FILENAME  $ARGV
+      FNR       $.   something
+      FS        (whatever you like)
+      NF        $#Fld, or some such
+      NR        $.
+      OFMT      $#
+      OFS       $,
+      ORS       $(
+      RLENGTH   length($&)
+      RS        $/
+      RSTART    length($`)
+      SUBSEP    $;
+
+o 4
+You cannot set $RS to a pattern, only a string.
+o 4
+When in doubt, run the awk construct through a2p and see what it
+gives you.
+C/C .1v'++.1v'
+Cerebral C and C .1v'++.1v'o 4
+Curly brackets are required on if(fR's and while(fR's.
+o 4
+You must use elsif(fR rather than else if(fR.
+o 4
+The break(fR and continue(fR keywords from C become in Perl last(fR
+and next(fR, respectively.  Unlike in C, these do not work within a
+do { } while(fR construct.  See Loop Control in perlsyn.
+o 4
+The switch statement is called given(fR/when(fR and only available in
+perl 5.10 or newer.  See Switch Statements in perlsyn.
+o 4
+Variables begin with $, @ or % in Perl.
+o 4
+Comments begin with #, not /W or //.  Perl may interpret C/C .1v'++.1v'comments as division operators, unterminated regular expressions or
+the defined or operator.
+o 4
+You can't take the address of anything, although a similar operator
+in Perl is the backslash, which creates a reference.
+o 4
+ARGV(fR must be capitalized.  $ARGV[0] is C's argv[1](fR, and argv[0](fR
+ends up in $0.
+o 4
+System calls such as link(), unlink(), rename(), etc. return nonzero for
+success, not 0. (system(), however, returns zero for success.)
+o 4
+Signal handlers deal with signal names, not numbers.  Use kill  l(fR
+to find their names on your system.
+JavaScript Traps
+
+Judicious JavaScript programmers should take note of the following:
+o 4
+In Perl, binary +(fR is always addition.  $string1 + $string2(fR converts
+both strings to numbers and then adds them.  To concatenate two strings,
+use the .(fR operator.
+o 4
+The +(fR unary operator doesn't do anything in Perl.  It exists to avoid
+syntactic ambiguities.
+o 4
+Unlike for...in(fR, Perl's for(fR (also spelled foreach(fR) does not allow
+the left hand side to be an arbitrary expression.  It must be a variable:
+   for my $variable (keys %hash) {
+        ...
+   }
+Furthermore, don't forget the keys(fR in there, as
+foreach my $kv (%hash) {}(fR iterates over the keys and values, and is
+generally not useful ($kv would be a key, then a value, and so on).
+o 4
+To iterate over the indices of an array, use foreach my $i (0 .. $#array)
+{}(fR.  foreach my $v (@array) {}(fR iterates over the values.
+o 4
+Perl requires braces following if(fR, while(fR, foreach(fR, etc.
+o 4
+In Perl, else if(fR is spelled elsif(fR.
+o 4
+? :(fR has higher precedence than assignment.  In JavaScript, one can
+write:
+    condition ? do_something() : variable = 3
+and the variable is only assigned if the condition is false.  In Perl, you
+need parentheses:
+    $condition ? do_something() : ($variable = 3);
+Or just use if(fR.
+o 4
+Perl requires semicolons to separate statements.
+o 4
+Variables declared with my(fR only affect code after the declaration.
+You cannot write $x = 1; my $x;(fR and expect the first assignment to
+affect the same variable.  It will instead assign to an $x declared
+previously in an outer scope, or to a global variable.
+
+Note also that the variable is not visible until the following
+statement.  This means that in my $x = 1 + $x(fR the second $x refers
+to one declared previously.
+o 4
+my(fR variables are scoped to the current block, not to the current
+function.  If you write {my $x;} $x;(fR, the second $x does not refer to
+the one declared inside the block.
+o 4
+An object's members cannot be made accessible as variables.  The closest
+Perl equivalent to with(object) { method() }(fR is for(fR, which can alias
+$_ to the object:
+    for ($object) {
+        $_ >method;
+    }
+
+o 4
+The object or class on which a method is called is passed as one of the
+method's arguments, not as a separate this(fR value.
+Sed Traps
+
+Seasoned sed programmers should take note of the following:
+o 4
+A Perl program executes only once, not once for each input line.  You can
+do an implicit loop with ( n(fR or ( p(fR.
+o 4
+Backreferences in substitutions use $ rather than (e.
+o 4
+The pattern matching metacharacters (, ), and | do not have backslashes
+in front.
+o 4
+The range operator is ...(fR, rather than comma.
+Shell Traps
+
+Sharp shell programmers should take note of the following:
+o 4
+The backtick operator does variable interpolation without regard to
+the presence of single quotes in the command.
+o 4
+The backtick operator does no translation of the return value, unlike csh.
+o 4
+Shells (especially csh) do several levels of substitution on each
+command line.  Perl does substitution in only certain constructs
+such as double quotes, backticks, angle brackets, and search patterns.
+o 4
+Shells interpret scripts a little bit at a time.  Perl compiles the
+entire program before executing it (except for BEGIN(fR blocks, which
+execute at compile time).
+o 4
+The arguments are available via @ARGV, not $1, $2, etc.
+o 4
+The environment is not automatically made available as separate scalar
+variables.
+o 4
+The shell's test(fR uses =, !=, < etc for string comparisons and ( eq,
+( ne, ( lt etc for numeric comparisons. This is the reverse of Perl, which
+uses eq(fR, ne(fR, lt(fR for string comparisons, and ==(fR, !=(fR <(fR etc
+for numeric comparisons.
+Perl Traps
+
+Practicing Perl Programmers should take note of the following:
+o 4
+Remember that many operations behave differently in a list
+context than they do in a scalar one.  See perldata for details.
+o 4
+Avoid barewords if you can, especially all lowercase ones.
+You can't tell by just looking at it whether a bareword is
+a function or a string.  By using quotes on strings and
+parentheses on function calls, you won't ever get them confused.
+o 4
+You cannot discern from mere inspection which builtins
+are unary operators (like chop() and chdir())
+and which are list operators (like print() and unlink()).
+(Unless prototyped, user defined subroutines can only be list
+operators, never unary ones.)  See perlop and perlsub.
+o 4
+People have a hard time remembering that some functions
+default to $_, or @ARGV, or whatever, but that others which
+you might expect to do not.
+o 4
+The <FH> construct is not the name of the filehandle, it is a readline
+operation on that handle.  The data read is assigned to $_ only if the
+file read is the sole condition in a while loop:
+    while (<FH>)      { }
+    while (defined($_ = <FH>)) { }..
+    <FH>;  # data discarded!
+
+o 4
+Remember not to use =(fR when you need =~(fR;
+these two constructs are quite different:
+    $x =  /foo/;
+    $x =~ /foo/;
+
+o 4
+The do {}(fR construct isn't a real loop that you can use
+loop control on.
+o 4
+Use my()(fR for local variables whenever you can get away with
+it (but see perlform for where you can't).
+Using local()(fR actually gives a local value to a global
+variable, which leaves you open to unforeseen side effects
+of dynamic scoping.
+o 4
+If you localize an exported variable in a module, its exported value will
+not change.  The local name becomes an alias to a new value but the
+external name is still an alias for the original.
+
+As always, if any of these are ever officially declared as bugs,
+they'll be fixed and removed.
+

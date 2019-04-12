@@ -1,0 +1,38 @@
+
+The
+utility prints the compiler and linker flags required
+to compile and link programs that use the
+Application Programmer Interface.
+
+The following options are available:
+Print the compiler flags that are needed to find the
+
+C include files and defines to ensure that the ImageMagick data structures match between
+your program and the installed libraries.
+
+Print the directory under which target specific binaries and executables are installed.
+
+Print the linker flags that are needed to link with the
+
+library.
+
+Print the version of the
+
+distribution to standard output.
+
+Print the path where the
+
+coder modules are installed.
+
+Print the path where the
+
+filter modules are installed.
+To print the version of the installed distribution of
+use:
+To compile a program that calls the
+
+Application Programmer Interface, use:
+is licensed with a derived Apache license 2.0. See
+http://imagemagick.org/script/license.php for more details.
+The
+suite and this manual page where written by

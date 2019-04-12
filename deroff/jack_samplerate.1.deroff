@@ -1,0 +1,7 @@
+
+NAME
+jack_samplerate - JACK toolkit client to print current samplerate
+SYNOPSIS
+jack_samplerate
+DESCRIPTION
+jack_samplerate prints the current samplerate, and exits.

@@ -1,0 +1,16 @@
+
+sndfile-play plays one or more sound files on various operating systems using standard audio
+output APIs. The following table summarizes which audio API is used where:
+ALSA or OSS
+
+sndio
+
+/dev/dsp (OSS)
+
+/dev/audio
+
+CoreAudio
+
+AudioToolbox
+
+waveOut

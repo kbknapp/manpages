@@ -1,0 +1,1277 @@
+
+{
+NAME
+ffmpeg utils   FFmpeg utilities
+DESCRIPTION
+
+This document describes some generic features and utilities provided
+by the libavutil library.
+SYNTAX
+
+This section documents the syntax and formats employed by the FFmpeg
+libraries and tools.
+Quoting and escaping
+
+FFmpeg adopts the following quoting and escaping mechanism, unless
+explicitly specified. The following rules are applied:
+o 4
+' and ( are special characters (respectively used for
+quoting and escaping). In addition to them, there might be other
+special characters depending on the specific syntax where the escaping
+and quoting are employed.
+o 4
+A special character is escaped by prefixing it with a (.
+o 4
+All characters enclosed between '' are included literally in the
+parsed string. The quote character ' itself cannot be quoted,
+so you may need to close the quote and escape it.
+o 4
+Leading and trailing whitespaces, unless escaped or quoted, are
+removed from the parsed string.
+
+Note that you may need to add a second level of escaping when using
+the command line or a script, which depends on the syntax of the
+adopted shell language.
+
+The function av_get_token(fR defined in
+libavutil/avstring.h can be used to parse a token quoted or
+escaped according to the rules defined above.
+
+The tool tools/ffescape in the FFmpeg source tree can be used
+to automatically quote or escape a string in a script.
+
+Examples
+
+o 4
+Escape the string Crime dAmour(fR containing the (W(Aq(fR special
+character:
+        Crime d(Amour
+
+o 4
+The string above contains a quote, so the (W(Aq(fR needs to be escaped
+when quoting it:
+        Crime d(e(W(AqAmour
+
+o 4
+Include leading or trailing whitespaces using quoting:
+          this string starts and ends with whitespaces  
+
+o 4
+Escaping and quoting can be mixed together:
+         The string (estring((W(Aq is a string 
+
+o 4
+To include a literal ( you can use either escaping or quoting:
+        c:(foo can be written as c:((foo
+
+Date
+
+The accepted syntax is:
+        [(YYYY MM DD|YYYYMMDD)[T|t| ]]((HH:MM:SS[.m...]]])|(HHMMSS[.m...]]]))[Z]
+        now
+If the value is now it takes the current time.
+
+Time is local time unless Z is appended, in which case it is
+interpreted as UTC.
+If the year month day part is not specified it takes the current
+year month day.
+Time duration
+
+There are two accepted syntaxes for expressing time duration.
+        [ ][<HH>:]<MM>:<SS>[.<m>...]
+HH expresses the number of hours, MM the number of minutes
+for a maximum of 2 digits, and SS the number of seconds for a
+maximum of 2 digits. The m at the end expresses decimal value for
+SS.
+
+or
+        [ ]<S>+[.<m>...]
+S expresses the number of seconds, with the optional decimal part
+m.
+
+In both expressions, the optional   indicates negative duration.
+
+Examples
+The following examples are all valid time duration:
+55 4
+
+55 seconds
+12:03:45 4
+
+12 hours, 03 minutes and 45 seconds
+23.189 4
+
+23.189 seconds
+Video size
+
+Specify the size of the sourced video, it may be a string of the form
+widthxheight, or the name of a size abbreviation.
+
+The following abbreviations are recognized:
+ntsc 4
+
+720x480
+pal 4
+
+720x576
+qntsc 4
+
+352x240
+qpal 4
+
+352x288
+sntsc 4
+
+640x480
+spal 4
+
+768x576
+film 4
+
+352x240
+ntsc film 4
+
+352x240
+sqcif 4
+
+128x96
+qcif 4
+
+176x144
+cif 4
+
+352x288
+4cif 4
+
+704x576
+16cif 4
+
+1408x1152
+qqvga 4
+
+160x120
+qvga 4
+
+320x240
+vga 4
+
+640x480
+svga 4
+
+800x600
+xga 4
+
+1024x768
+uxga 4
+
+1600x1200
+qxga 4
+
+2048x1536
+sxga 4
+
+1280x1024
+qsxga 4
+
+2560x2048
+hsxga 4
+
+5120x4096
+wvga 4
+
+852x480
+wxga 4
+
+1366x768
+wsxga 4
+
+1600x1024
+wuxga 4
+
+1920x1200
+woxga 4
+
+2560x1600
+wqsxga 4
+
+3200x2048
+wquxga 4
+
+3840x2400
+whsxga 4
+
+6400x4096
+whuxga 4
+
+7680x4800
+cga 4
+
+320x200
+ega 4
+
+640x350
+hd480 4
+
+852x480
+hd720 4
+
+1280x720
+hd1080 4
+
+1920x1080
+2k 4
+
+2048x1080
+2kflat 4
+
+1998x1080
+2kscope 4
+
+2048x858
+4k 4
+
+4096x2160
+4kflat 4
+
+3996x2160
+4kscope 4
+
+4096x1716
+nhd 4
+
+640x360
+hqvga 4
+
+240x160
+wqvga 4
+
+400x240
+fwqvga 4
+
+432x240
+hvga 4
+
+480x320
+qhd 4
+
+960x540
+2kdci 4
+
+2048x1080
+4kdci 4
+
+4096x2160
+uhd2160 4
+
+3840x2160
+uhd4320 4
+
+7680x4320
+Video rate
+
+Specify the frame rate of a video, expressed as the number of frames
+generated per second. It has to be a string in the format
+frame_rate_num/frame_rate_den, an integer number, a float
+number or a valid video frame rate abbreviation.
+
+The following abbreviations are recognized:
+ntsc 4
+
+30000/1001
+pal 4
+
+25/1
+qntsc 4
+
+30000/1001
+qpal 4
+
+25/1
+sntsc 4
+
+30000/1001
+spal 4
+
+25/1
+film 4
+
+24/1
+ntsc film 4
+
+24000/1001
+Ratio
+
+A ratio can be expressed as an expression, or in the form
+numerator:denominator.
+
+Note that a ratio with infinite (1/0) or negative value is
+considered valid, so you should check on the returned value if you
+want to exclude those values.
+
+The undefined value can be expressed using the 0:0 string.
+Color
+
+It can be the name of a color as defined below (case insensitive match) or a
+[0x|#]RRGGBB[AA](fR sequence, possibly followed by @ and a string
+representing the alpha component.
+
+The alpha component may be a string composed by 0x followed by an
+hexadecimal number or a decimal number between 0.0 and 1.0, which
+represents the opacity value (0x00 or 0.0 means completely
+transparent, 0xff or 1.0 completely opaque). If the alpha
+component is not specified then 0xff is assumed.
+
+The string random will result in a random color.
+
+The following names of colors are recognized:
+AliceBlue 4
+
+0xF0F8FF
+AntiqueWhite 4
+
+0xFAEBD7
+Aqua 4
+
+0x00FFFF
+Aquamarine 4
+
+0x7FFFD4
+Azure 4
+
+0xF0FFFF
+Beige 4
+
+0xF5F5DC
+Bisque 4
+
+0xFFE4C4
+Black 4
+
+0x000000
+BlanchedAlmond 4
+
+0xFFEBCD
+Blue 4
+
+0x0000FF
+BlueViolet 4
+
+0x8A2BE2
+Brown 4
+
+0xA52A2A
+BurlyWood 4
+
+0xDEB887
+CadetBlue 4
+
+0x5F9EA0
+Chartreuse 4
+
+0x7FFF00
+Chocolate 4
+
+0xD2691E
+Coral 4
+
+0xFF7F50
+CornflowerBlue 4
+
+0x6495ED
+Cornsilk 4
+
+0xFFF8DC
+Crimson 4
+
+0xDC143C
+Cyan 4
+
+0x00FFFF
+DarkBlue 4
+
+0x00008B
+DarkCyan 4
+
+0x008B8B
+DarkGoldenRod 4
+
+0xB8860B
+DarkGray 4
+
+0xA9A9A9
+DarkGreen 4
+
+0x006400
+DarkKhaki 4
+
+0xBDB76B
+DarkMagenta 4
+
+0x8B008B
+DarkOliveGreen 4
+
+0x556B2F
+Darkorange 4
+
+0xFF8C00
+DarkOrchid 4
+
+0x9932CC
+DarkRed 4
+
+0x8B0000
+DarkSalmon 4
+
+0xE9967A
+DarkSeaGreen 4
+
+0x8FBC8F
+DarkSlateBlue 4
+
+0x483D8B
+DarkSlateGray 4
+
+0x2F4F4F
+DarkTurquoise 4
+
+0x00CED1
+DarkViolet 4
+
+0x9400D3
+DeepPink 4
+
+0xFF1493
+DeepSkyBlue 4
+
+0x00BFFF
+DimGray 4
+
+0x696969
+DodgerBlue 4
+
+0x1E90FF
+FireBrick 4
+
+0xB22222
+FloralWhite 4
+
+0xFFFAF0
+ForestGreen 4
+
+0x228B22
+Fuchsia 4
+
+0xFF00FF
+Gainsboro 4
+
+0xDCDCDC
+GhostWhite 4
+
+0xF8F8FF
+Gold 4
+
+0xFFD700
+GoldenRod 4
+
+0xDAA520
+Gray 4
+
+0x808080
+Green 4
+
+0x008000
+GreenYellow 4
+
+0xADFF2F
+HoneyDew 4
+
+0xF0FFF0
+HotPink 4
+
+0xFF69B4
+IndianRed 4
+
+0xCD5C5C
+Indigo 4
+
+0x4B0082
+Ivory 4
+
+0xFFFFF0
+Khaki 4
+
+0xF0E68C
+Lavender 4
+
+0xE6E6FA
+LavenderBlush 4
+
+0xFFF0F5
+LawnGreen 4
+
+0x7CFC00
+LemonChiffon 4
+
+0xFFFACD
+LightBlue 4
+
+0xADD8E6
+LightCoral 4
+
+0xF08080
+LightCyan 4
+
+0xE0FFFF
+LightGoldenRodYellow 4
+
+0xFAFAD2
+LightGreen 4
+
+0x90EE90
+LightGrey 4
+
+0xD3D3D3
+LightPink 4
+
+0xFFB6C1
+LightSalmon 4
+
+0xFFA07A
+LightSeaGreen 4
+
+0x20B2AA
+LightSkyBlue 4
+
+0x87CEFA
+LightSlateGray 4
+
+0x778899
+LightSteelBlue 4
+
+0xB0C4DE
+LightYellow 4
+
+0xFFFFE0
+Lime 4
+
+0x00FF00
+LimeGreen 4
+
+0x32CD32
+Linen 4
+
+0xFAF0E6
+Magenta 4
+
+0xFF00FF
+Maroon 4
+
+0x800000
+MediumAquaMarine 4
+
+0x66CDAA
+MediumBlue 4
+
+0x0000CD
+MediumOrchid 4
+
+0xBA55D3
+MediumPurple 4
+
+0x9370D8
+MediumSeaGreen 4
+
+0x3CB371
+MediumSlateBlue 4
+
+0x7B68EE
+MediumSpringGreen 4
+
+0x00FA9A
+MediumTurquoise 4
+
+0x48D1CC
+MediumVioletRed 4
+
+0xC71585
+MidnightBlue 4
+
+0x191970
+MintCream 4
+
+0xF5FFFA
+MistyRose 4
+
+0xFFE4E1
+Moccasin 4
+
+0xFFE4B5
+NavajoWhite 4
+
+0xFFDEAD
+Navy 4
+
+0x000080
+OldLace 4
+
+0xFDF5E6
+Olive 4
+
+0x808000
+OliveDrab 4
+
+0x6B8E23
+Orange 4
+
+0xFFA500
+OrangeRed 4
+
+0xFF4500
+Orchid 4
+
+0xDA70D6
+PaleGoldenRod 4
+
+0xEEE8AA
+PaleGreen 4
+
+0x98FB98
+PaleTurquoise 4
+
+0xAFEEEE
+PaleVioletRed 4
+
+0xD87093
+PapayaWhip 4
+
+0xFFEFD5
+PeachPuff 4
+
+0xFFDAB9
+Peru 4
+
+0xCD853F
+Pink 4
+
+0xFFC0CB
+Plum 4
+
+0xDDA0DD
+PowderBlue 4
+
+0xB0E0E6
+Purple 4
+
+0x800080
+Red 4
+
+0xFF0000
+RosyBrown 4
+
+0xBC8F8F
+RoyalBlue 4
+
+0x4169E1
+SaddleBrown 4
+
+0x8B4513
+Salmon 4
+
+0xFA8072
+SandyBrown 4
+
+0xF4A460
+SeaGreen 4
+
+0x2E8B57
+SeaShell 4
+
+0xFFF5EE
+Sienna 4
+
+0xA0522D
+Silver 4
+
+0xC0C0C0
+SkyBlue 4
+
+0x87CEEB
+SlateBlue 4
+
+0x6A5ACD
+SlateGray 4
+
+0x708090
+Snow 4
+
+0xFFFAFA
+SpringGreen 4
+
+0x00FF7F
+SteelBlue 4
+
+0x4682B4
+Tan 4
+
+0xD2B48C
+Teal 4
+
+0x008080
+Thistle 4
+
+0xD8BFD8
+Tomato 4
+
+0xFF6347
+Turquoise 4
+
+0x40E0D0
+Violet 4
+
+0xEE82EE
+Wheat 4
+
+0xF5DEB3
+White 4
+
+0xFFFFFF
+WhiteSmoke 4
+
+0xF5F5F5
+Yellow 4
+
+0xFFFF00
+YellowGreen 4
+
+0x9ACD32
+Channel Layout
+
+A channel layout specifies the spatial disposition of the channels in
+a multi channel audio stream. To specify a channel layout, FFmpeg
+makes use of a special syntax.
+
+Individual channels are identified by an id, as given by the table
+below:
+FL 4
+
+front left
+FR 4
+
+front right
+FC 4
+
+front center
+LFE 4
+
+low frequency
+BL 4
+
+back left
+BR 4
+
+back right
+FLC 4
+
+front left of center
+FRC 4
+
+front right of center
+BC 4
+
+back center
+SL 4
+
+side left
+SR 4
+
+side right
+TC 4
+
+top center
+TFL 4
+
+top front left
+TFC 4
+
+top front center
+TFR 4
+
+top front right
+TBL 4
+
+top back left
+TBC 4
+
+top back center
+TBR 4
+
+top back right
+DL 4
+
+downmix left
+DR 4
+
+downmix right
+WL 4
+
+wide left
+WR 4
+
+wide right
+SDL 4
+
+surround direct left
+SDR 4
+
+surround direct right
+LFE2 4
+
+low frequency 2
+
+Standard channel layout compositions can be specified by using the
+following identifiers:
+mono 4
+
+FC
+stereo 4
+
+FL+FR
+2.1 4
+
+FL+FR+LFE
+3.0 4
+
+FL+FR+FC
+3.0(back) 4
+
+FL+FR+BC
+4.0 4
+
+FL+FR+FC+BC
+quad 4
+
+FL+FR+BL+BR
+quad(side) 4
+
+FL+FR+SL+SR
+3.1 4
+
+FL+FR+FC+LFE
+5.0 4
+
+FL+FR+FC+BL+BR
+5.0(side) 4
+
+FL+FR+FC+SL+SR
+4.1 4
+
+FL+FR+FC+LFE+BC
+5.1 4
+
+FL+FR+FC+LFE+BL+BR
+5.1(side) 4
+
+FL+FR+FC+LFE+SL+SR
+6.0 4
+
+FL+FR+FC+BC+SL+SR
+6.0(front) 4
+
+FL+FR+FLC+FRC+SL+SR
+hexagonal 4
+
+FL+FR+FC+BL+BR+BC
+6.1 4
+
+FL+FR+FC+LFE+BC+SL+SR
+6.1 4
+
+FL+FR+FC+LFE+BL+BR+BC
+6.1(front) 4
+
+FL+FR+LFE+FLC+FRC+SL+SR
+7.0 4
+
+FL+FR+FC+BL+BR+SL+SR
+7.0(front) 4
+
+FL+FR+FC+FLC+FRC+SL+SR
+7.1 4
+
+FL+FR+FC+LFE+BL+BR+SL+SR
+7.1(wide) 4
+
+FL+FR+FC+LFE+BL+BR+FLC+FRC
+7.1(wide side) 4
+
+FL+FR+FC+LFE+FLC+FRC+SL+SR
+octagonal 4
+
+FL+FR+FC+BL+BR+BC+SL+SR
+downmix 4
+
+DL+DR
+
+A custom channel layout can be specified as a sequence of terms, separated by
+'+' or '|'. Each term can be:
+o 4
+the name of a standard channel layout (e.g. mono,
+stereo, 4.0, quad, 5.0, etc.)
+o 4
+the name of a single channel (e.g. FL, FR, FC, LFE, etc.)
+o 4
+a number of channels, in decimal, followed by 'c', yielding the default channel
+layout for that number of channels (see the function
+av_get_default_channel_layout(fR). Note that not all channel counts have a
+default layout.
+o 4
+a number of channels, in decimal, followed by 'C', yielding an unknown channel
+layout with the specified number of channels. Note that not all channel layout
+specification strings support unknown channel layouts.
+o 4
+a channel layout mask, in hexadecimal starting with 0x (see the
+AV_CH_W(fR macros in libavutil/channel_layout.h.
+
+Before libavutil version 53 the trailing character c to specify a number of
+channels was optional, but now it is required, while a channel layout mask can
+also be specified as a decimal number (if and only if not followed by c or C).
+
+See also the function av_get_channel_layout(fR defined in
+libavutil/channel_layout.h.
+EXPRESSION EVALUATION
+
+When evaluating an arithmetic expression, FFmpeg uses an internal
+formula evaluator, implemented through the libavutil/eval.h
+interface.
+
+An expression may contain unary, binary operators, constants, and
+functions.
+
+Two expressions expr1 and expr2 can be combined to form
+another expression "expr1;expr2".
+expr1 and expr2 are evaluated in turn, and the new
+expression evaluates to the value of expr2.
+
+The following binary operators are available: +(fR, ( (fR,
+W(fR, /(fR, ^(fR.
+
+The following unary operators are available: +(fR, ( (fR.
+
+The following functions are available:
+abs(x) 4
+
+Compute absolute value of x.
+acos(x) 4
+
+Compute arccosine of x.
+asin(x) 4
+
+Compute arcsine of x.
+atan(x) 4
+
+Compute arctangent of x.
+atan2(x, y) 4
+
+Compute principal value of the arc tangent of y/x.
+between(x, min, max) 4
+
+Return 1 if x is greater than or equal to min and lesser than or
+equal to max, 0 otherwise.
+bitand(x, y) 4
+bitor(x, y) 4
+Compute bitwise and/or operation on x and y.
+
+The results of the evaluation of x and y are converted to
+integers before executing the bitwise operation.
+
+Note that both the conversion to integer and the conversion back to
+floating point can lose precision. Beware of unexpected results for
+large numbers (usually 2^53 and larger).
+ceil(expr) 4
+
+Round the value of expression expr upwards to the nearest
+integer. For example, ceil(1.5) is 2.0.
+clip(x, min, max) 4
+
+Return the value of x clipped between min and max.
+cos(x) 4
+
+Compute cosine of x.
+cosh(x) 4
+
+Compute hyperbolic cosine of x.
+eq(x, y) 4
+
+Return 1 if x and y are equivalent, 0 otherwise.
+exp(x) 4
+
+Compute exponential of x (with base e(fR, the Euler's number).
+floor(expr) 4
+
+Round the value of expression expr downwards to the nearest
+integer. For example, floor( 1.5) is ( 2.0.
+gauss(x) 4
+
+Compute Gauss function of x, corresponding to
+exp( xWx/2) / sqrt(2WPI)(fR.
+gcd(x, y) 4
+
+Return the greatest common divisor of x and y. If both x and
+y are 0 or either or both are less than zero then behavior is undefined.
+gt(x, y) 4
+
+Return 1 if x is greater than y, 0 otherwise.
+gte(x, y) 4
+
+Return 1 if x is greater than or equal to y, 0 otherwise.
+hypot(x, y) 4
+
+This function is similar to the C function with the same name; it returns
+"sqrt(xWx + yWy)", the length of the hypotenuse of a
+right triangle with sides of length x and y, or the distance of the
+point (x, y) from the origin.
+if(x, y) 4
+
+Evaluate x, and if the result is non zero return the result of
+the evaluation of y, return 0 otherwise.
+if(x, y, z) 4
+
+Evaluate x, and if the result is non zero return the evaluation
+result of y, otherwise the evaluation result of z.
+ifnot(x, y) 4
+
+Evaluate x, and if the result is zero return the result of the
+evaluation of y, return 0 otherwise.
+ifnot(x, y, z) 4
+
+Evaluate x, and if the result is zero return the evaluation
+result of y, otherwise the evaluation result of z.
+isinf(x) 4
+
+Return 1.0 if x is +/ INFINITY, 0.0 otherwise.
+isnan(x) 4
+
+Return 1.0 if x is NAN, 0.0 otherwise.
+ld(var) 4
+
+Load the value of the internal variable with number
+var, which was previously stored with st(var, expr).
+The function returns the loaded value.
+lerp(x, y, z) 4
+
+Return linear interpolation between x and y by amount of z.
+log(x) 4
+
+Compute natural logarithm of x.
+lt(x, y) 4
+
+Return 1 if x is lesser than y, 0 otherwise.
+lte(x, y) 4
+
+Return 1 if x is lesser than or equal to y, 0 otherwise.
+max(x, y) 4
+
+Return the maximum between x and y.
+min(x, y) 4
+
+Return the minimum between x and y.
+mod(x, y) 4
+
+Compute the remainder of division of x by y.
+not(expr) 4
+
+Return 1.0 if expr is zero, 0.0 otherwise.
+pow(x, y) 4
+
+Compute the power of x elevated y, it is equivalent to
+"(x)^(y)".
+print(t) 4
+print(t, l) 4
+Print the value of expression t with loglevel l. If
+l is not specified then a default log level is used.
+Returns the value of the expression printed.
+
+Prints t with loglevel l
+random(x) 4
+
+Return a pseudo random value between 0.0 and 1.0. x is the index of the
+internal variable which will be used to save the seed/state.
+root(expr, max) 4
+
+Find an input value for which the function represented by expr
+with argument ld(0) is 0 in the interval 0..max.
+
+The expression in expr must denote a continuous function or the
+result is undefined.
+
+ld(0) is used to represent the function input value, which means
+that the given expression will be evaluated multiple times with
+various input values that the expression can access through
+ld(0). When the expression evaluates to 0 then the
+corresponding input value will be returned.
+round(expr) 4
+
+Round the value of expression expr to the nearest integer. For example, round(1.5) is 2.0.
+sin(x) 4
+
+Compute sine of x.
+sinh(x) 4
+
+Compute hyperbolic sine of x.
+sqrt(expr) 4
+
+Compute the square root of expr. This is equivalent to
+"(expr)^.5".
+squish(x) 4
+
+Compute expression 1/(1 + exp(4Wx))(fR.
+st(var, expr) 4
+
+Store the value of the expression expr in an internal
+variable. var specifies the number of the variable where to
+store the value, and it is a value ranging from 0 to 9. The function
+returns the value stored in the internal variable.
+Note, Variables are currently not shared between expressions.
+tan(x) 4
+
+Compute tangent of x.
+tanh(x) 4
+
+Compute hyperbolic tangent of x.
+taylor(expr, x) 4
+taylor(expr, x, id) 4
+Evaluate a Taylor series at x, given an expression representing
+the ld(id)(fR th derivative of a function at 0.
+
+When the series does not converge the result is undefined.
+
+ld(id) is used to represent the derivative order in expr,
+which means that the given expression will be evaluated multiple times
+with various input values that the expression can access through
+ld(id)(fR. If id is not specified then 0 is assumed.
+
+Note, when you have the derivatives at y instead of 0,
+taylor(expr, x y)(fR can be used.
+time(0) 4
+
+Return the current (wallclock) time in seconds.
+trunc(expr) 4
+
+Round the value of expression expr towards zero to the nearest
+integer. For example, trunc( 1.5) is ( 1.0.
+while(cond, expr) 4
+
+Evaluate expression expr while the expression cond is
+non zero, and returns the value of the last expr evaluation, or
+NAN if cond was always false.
+
+The following constants are available:
+PI 4
+
+area of the unit disc, approximately 3.14
+E 4
+
+exp(1) (Euler's number), approximately 2.718
+PHI 4
+
+golden ratio (1+sqrt(5))/2, approximately 1.618
+
+Assuming that an expression is considered true if it has a non zero
+value, note that:
+
+W(fR works like AND
+
++(fR works like OR
+
+For example the construct:
+        if (A AND B) then C
+is equivalent to:
+        if(AWB, C)
+In your C code, you can extend the list of unary and binary functions,
+and define recognized constants, so that they are available for your
+expressions.
+
+The evaluator also recognizes the International System unit prefixes.
+If 'i' is appended after the prefix, binary prefixes are used, which
+are based on powers of 1024 instead of powers of 1000.
+The 'B' postfix multiplies the value by 8, and can be appended after a
+unit prefix or used alone. This allows using for example 'KB', 'MiB',
+'G' and 'B' as number postfix.
+
+The list of available International System prefixes follows, with
+indication of the corresponding powers of 10 and of 2.
+y 4
+
+10^ 24 / 2^ 80
+z 4
+
+10^ 21 / 2^ 70
+a 4
+
+10^ 18 / 2^ 60
+f 4
+
+10^ 15 / 2^ 50
+p 4
+
+10^ 12 / 2^ 40
+n 4
+
+10^ 9 / 2^ 30
+u 4
+
+10^ 6 / 2^ 20
+m 4
+
+10^ 3 / 2^ 10
+c 4
+
+10^ 2
+d 4
+
+10^ 1
+h 4
+
+10^2
+k 4
+
+10^3 / 2^10
+K 4
+
+10^3 / 2^10
+M 4
+
+10^6 / 2^20
+G 4
+
+10^9 / 2^30
+T 4
+
+10^12 / 2^40
+P 4
+
+10^15 / 2^40
+E 4
+
+10^18 / 2^50
+Z 4
+
+10^21 / 2^60
+Y 4
+
+10^24 / 2^70
+SEE ALSO
+
+ffmpeg(1), ffplay(1), ffprobe(1), libavutil(3)
+AUTHORS
+
+The FFmpeg developers.
+
+For details about the authorship, see the Git history of the project
+(git://source.ffmpeg.org/ffmpeg), e.g. by typing the command
+git log in the FFmpeg source directory, or browsing the
+online repository at <http://source.ffmpeg.org>.
+
+Maintainers for the specific components are listed in the file
+MAINTAINERS in the source code tree.
+

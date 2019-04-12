@@ -1,0 +1,166 @@
+
+pkgconf 
+pkgconf is a program which helps to configure compiler and linker flags for
+development libraries.
+This allows build systems to detect other dependencies and use them with the
+system toolchain.
+Display the supported pkg-config version and exit.
+
+Exit with error if we do not support the requested pkg-config version.
+
+Print all errors on the main output stream instead of the error output stream.
+
+Do not display any errors at all.
+
+Walk all directories listed in the
+
+environmental variable and display information on packages which have registered
+information there.
+
+Simulates resolving a dependency graph based on the requested modules on the
+command line.
+Dumps a series of trees denoting pkgconf's resolver state.
+
+Skip caching packages when they are loaded into the internal resolver.
+This may result in an alternate dependency graph being computed.
+
+Ignore
+
+rules in modules.
+
+Learn about pkgconf's configuration strictly from environmental variables.
+
+Impose a limit on the allowed depth in the dependency graph.
+For example, a depth of 2 will restrict the resolver from acting on child
+dependencies of modules added to the resolver's solution.
+
+Compute a deeper dependency graph and use compiler/linker flags intended for
+static linking.
+
+Treats the computed dependency graph as if it were pure.
+This is mainly intended for use with the
+
+flag.
+
+Ignore
+
+rules in modules when resolving dependencies.
+
+Adds a new module search path to pkgconf's dependency resolver.
+Paths added in this way are given preference before other paths.
+
+Attempts to determine the prefix variable to use for CFLAGS and LIBS entry relocations.
+This is mainly useful for platforms where framework SDKs are relocatable, such as Windows.
+
+Disables the
+
+feature.
+
+Sets the
+
+variable used by the
+
+feature.
+
+Relocates a path using the pkgconf_path_relocate API.
+This is mainly used by the testsuite to provide a guaranteed interface
+to the system's path relocation backend.
+
+Disables the path relocation feature.
+Exit with error if a module's version is less than the specified version.
+
+Exit with error if a module's version is not exactly the specified version.
+
+Exit with error if a module's version is greater than the specified version.
+
+Exit with a non-zero result if the dependency resolver was unable to find all of
+the requested modules.
+
+Exit with a non-zero result if the dependency resolver uses an
+
+module as part of it's solution.
+
+Forbids the dependency resolver from considering 'uninstalled' modules as part
+of a solution.
+Display either all CFLAGS, only
+
+CFLAGS or only CFLAGS that are not
+Display either all linker flags, only
+
+linker flags, only
+
+linker flags or only linker flags that are not
+
+or
+Keep CFLAGS or linker flag fragments that would be filtered due to being
+included by default in the compiler.
+
+Define
+
+as
+
+Variables are used in query output, and some modules' results may change based
+on the presence of a variable definition.
+
+Print all seen variables for a module to the output channel.
+
+Print all relevant
+
+entries for a module to the output channel.
+
+Print the value of
+Print the modules included in either the
+
+field or the
+
+field.
+
+Dump the dependency resolver's solution as a graphviz
+
+file.
+This can be used with graphviz to visualize module interdependencies.
+
+Display the filenames of the
+
+files used by the dependency resolver for a given dependency set.
+
+Print the requested values as variable declarations in a similar format as the
+
+command.
+
+Filter the fragment lists for the specified types.
+List of secondary directories where
+
+files are looked up.
+
+List of primary directories where
+
+files are looked up.
+directory, will be prepended to every path defined in
+
+Useful for cross compilation.
+
+Provides an alternative setting for the
+
+global variable.
+
+If set, enables the same behaviour as the
+
+flag.
+
+List of paths that are considered system include paths by the toolchain.
+This is a pkgconf-specific extension.
+
+List of paths that are considered system library paths by the toolchain.
+This is a pkgconf-specific extension.
+
+If set, enables the same behaviour as the
+
+flag.
+which is used for dumping audit information concerning installed module versions.
+
+If set, enables additional debug logging.
+The format of the debug log messages is implementation-specific.
+
+If set, disables the path relocation feature.
+Displaying the CFLAGS of a package:

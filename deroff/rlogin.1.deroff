@@ -1,0 +1,68 @@
+
+
+NAME
+rlogin - Remote login
+SYNOPSIS
+rlogin
+[,OPTION/...] ,HOST/
+DESCRIPTION
+Starts a terminal session on a remote host.
+
+-4, --ipv4
+use only IPv4
+
+-6, --ipv6
+use only IPv6
+
+-8, --8-bit
+allows an eight-bit input data path at all times
+
+-d, --debug
+set the SO_DEBUG option
+
+-e, --escape=,CHAR/
+allows user specification of the escape character,
+which is ``~'' by default
+
+-E, --no-escape
+stops any character from being recognized as an
+escape character
+
+-l, --user=,USER/
+run as USER on the remote system
+
+-?, --help
+give this help list
+
+--usage
+give a short usage message
+
+-V, --version
+print program version
+
+Mandatory or optional arguments to long options are also mandatory or optional
+for any corresponding short options.
+AUTHOR
+Written by many authors.
+REPORTING BUGS
+Report bugs to <bug-inetutils@gnu.org>.
+COPYRIGHT
+Copyright © 2015 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+SEE ALSO
+rlogind(1)
+
+The full documentation for
+rlogin
+is maintained as a Texinfo manual.  If the
+info
+and
+rlogin
+programs are properly installed at your site, the command
+info rlogin
+
+should give you access to the complete manual.
+

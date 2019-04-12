@@ -1,0 +1,73 @@
+
+
+NAME
+rcp - Remote copy
+SYNOPSIS
+rcp
+[,OPTION/...] ,SOURCE DEST/
+
+rcp
+[,OPTION/...] ,SOURCE/... ,DIRECTORY/
+
+rcp
+[,OPTION/...] ,--target-directory=DIRECTORY SOURCE/...
+DESCRIPTION
+Remote copy SOURCE to DEST, or multiple SOURCE(s) to DIRECTORY.
+
+-4, --ipv4
+use only IPv4
+
+-6, --ipv6
+use only IPv6
+
+-d, --target-directory[=,DIRECTORY/]
+copy all SOURCE arguments into DIRECTORY
+
+-f, --from
+copying from remote host (server use only)
+
+-p, --preserve
+attempt to preserve (duplicate) in its copies the
+modification times and modes of the source files
+
+-r, --recursive
+if any of the source files are directories, copies
+each subtree rooted at that name; in this case the
+destination must be a directory
+
+-t, --to
+copying to remote host (server use only)
+
+-?, --help
+give this help list
+
+--usage
+give a short usage message
+
+-V, --version
+print program version
+
+Mandatory or optional arguments to long options are also mandatory or optional
+for any corresponding short options.
+AUTHOR
+Written by many authors.
+REPORTING BUGS
+Report bugs to <bug-inetutils@gnu.org>.
+COPYRIGHT
+Copyright © 2015 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+SEE ALSO
+The full documentation for
+rcp
+is maintained as a Texinfo manual.  If the
+info
+and
+rcp
+programs are properly installed at your site, the command
+info rcp
+
+should give you access to the complete manual.
+

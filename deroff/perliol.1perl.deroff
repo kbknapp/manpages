@@ -1,0 +1,815 @@
+
+{
+NAME
+perliol   C API for Perl's implementation of IO in Layers.
+SYNOPSIS
+    /W Defining a layer ... W/
+    #include <perliol.h>
+
+DESCRIPTION
+
+This document describes the behavior and implementation of the PerlIO
+abstraction described in perlapio when USE_PERLIO(fR is defined.
+History and Background
+
+The PerlIO abstraction was introduced in perl5.003_02 but languished as
+just an abstraction until perl5.7.0. However during that time a number
+of perl extensions switched to using it, so the API is mostly fixed to
+maintain (source) compatibility.
+
+The aim of the implementation is to provide the PerlIO API in a flexible
+and platform neutral manner. It is also a trial of an Object Oriented
+C, with vtables approach which may be applied to Perl 6.
+Basic Structure
+
+PerlIO is a stack of layers.
+
+The low levels of the stack work with the low level operating system
+calls (file descriptors in C) getting bytes in and out, the higher
+layers of the stack buffer, filter, and otherwise manipulate the I/O,
+and return characters (or bytes) to Perl.  Terms above and below
+are used to refer to the relative positioning of the stack layers.
+
+A layer contains a vtable, the table of I/O operations (at C level
+a table of function pointers), and status flags.  The functions in the
+vtable implement operations like open, read, and write.
+
+When I/O, for example read, is requested, the request goes from Perl
+first down the stack using read functions of each layer, then at the
+bottom the input is requested from the operating system services, then
+the result is returned up the stack, finally being interpreted as Perl
+data.
+
+The requests do not necessarily go always all the way down to the
+operating system: that's where PerlIO buffering comes into play.
+
+When you do an open() and specify extra PerlIO layers to be deployed,
+the layers you specify are pushed on top of the already existing
+default stack.  One way to see it is that operating system is
+on the left and Perl is on the right.
+
+What exact layers are in this default stack depends on a lot of
+things: your operating system, Perl version, Perl compile time
+configuration, and Perl runtime configuration.  See PerlIO,
+(s 1PERLIO(s0 in perlrun, and open for more information.
+
+binmode() operates similarly to open(): by default the specified
+layers are pushed on top of the existing stack.
+
+However, note that even as the specified layers are pushed on top
+for open() and binmode(), this doesn't mean that the effects are
+limited to the top: PerlIO layers can be very 'active' and inspect
+and affect layers also deeper in the stack.  As an example there
+is a layer called raw which repeatedly pops layers until
+it reaches the first layer that has declared itself capable of
+handling binary data.  The pushed layers are processed in left to right
+order.
+
+sysopen() operates (unsurprisingly) at a lower level in the stack than
+open().  For example in Unix or Unix like systems sysopen() operates
+directly at the level of file descriptors: in the terms of PerlIO
+layers, it uses only the unix layer, which is a rather thin wrapper
+on top of the Unix file descriptors.
+Layers vs Disciplines
+
+Initial discussion of the ability to modify IO streams behaviour used
+the term discipline for the entities which were added. This came (I
+believe) from the use of the term in sfio, which in turn borrowed it
+from line disciplines on Unix terminals. However, this document (and
+the C code) uses the term layer.
+
+This is, I hope, a natural term given the implementation, and should
+avoid connotations that are inherent in earlier uses of discipline
+for things which are rather different.
+Data Structures
+
+The basic data structure is a PerlIOl:
+        typedef struct _PerlIO PerlIOl;
+        typedef struct _PerlIO_funcs PerlIO_funcs;
+        typedef PerlIOl WPerlIO;
+
+        struct _PerlIO
+        {
+         PerlIOl W      next;       /W Lower layer W/
+         PerlIO_funcs W tab;        /W Functions for this layer W/
+         U32            flags;      /W Various flags for state W/
+        };
+A PerlIOl W(fR is a pointer to the struct, and the application
+level PerlIO W(fR is a pointer to a PerlIOl W(fR   i.e. a pointer
+to a pointer to the struct. This allows the application level PerlIO W(fR
+to remain constant while the actual PerlIOl W(fR underneath
+changes. (Compare perl's SV W(fR which remains constant while its
+sv_any(fR field changes as the scalar's type changes.) An IO stream is
+then in general represented as a pointer to this linked list of
+layers.
+
+It should be noted that because of the double indirection in a PerlIO W(fR,
+a &(perlio >next)(fR is a PerlIO W(fR, and so to some degree
+at least one layer can use the standard API on the next layer down.
+
+A layer is composed of two parts:
+1. 4
+The functions and attributes of the layer class.
+2. 4
+The per instance data for a particular handle.
+Functions and Attributes
+
+The functions and attributes are accessed via the tab (for table)
+member of PerlIOl(fR. The functions (methods of the layer class) are
+fixed, and are defined by the PerlIO_funcs(fR type. They are broadly the
+same as the public PerlIO_xxxxx(fR functions:
+ struct _PerlIO_funcs
+ {
+  Size_t     fsize;
+  char W     name;
+  Size_t     size;
+  IV         kind;
+  IV         (WPushed)(pTHX_ PerlIO Wf,
+                             const char Wmode,
+                             SV Warg,
+                             PerlIO_funcs Wtab);
+  IV         (WPopped)(pTHX_ PerlIO Wf);
+  PerlIO W   (WOpen)(pTHX_ PerlIO_funcs Wtab,
+                           PerlIO_list_t Wlayers, IV n,
+                           const char Wmode,
+                           int fd, int imode, int perm,
+                           PerlIO Wold,
+                           int narg, SV WWargs);
+  IV         (WBinmode)(pTHX_ PerlIO Wf);
+  SV W       (WGetarg)(pTHX_ PerlIO Wf, CLONE_PARAMS Wparam, int flags)
+  IV         (WFileno)(pTHX_ PerlIO Wf);
+  PerlIO W   (WDup)(pTHX_ PerlIO Wf,
+                          PerlIO Wo,
+                          CLONE_PARAMS Wparam,
+                          int flags)
+  /W Unix like functions   cf sfio line disciplines W/
+  SSize_t    (WRead)(pTHX_ PerlIO Wf, void Wvbuf, Size_t count);
+  SSize_t    (WUnread)(pTHX_ PerlIO Wf, const void Wvbuf, Size_t count);
+  SSize_t    (WWrite)(pTHX_ PerlIO Wf, const void Wvbuf, Size_t count);
+  IV         (WSeek)(pTHX_ PerlIO Wf, Off_t offset, int whence);
+  Off_t      (WTell)(pTHX_ PerlIO Wf);
+  IV         (WClose)(pTHX_ PerlIO Wf);
+  /W Stdio like buffered IO functions W/
+  IV         (WFlush)(pTHX_ PerlIO Wf);
+  IV         (WFill)(pTHX_ PerlIO Wf);
+  IV         (WEof)(pTHX_ PerlIO Wf);
+  IV         (WError)(pTHX_ PerlIO Wf);
+  void       (WClearerr)(pTHX_ PerlIO Wf);
+  void       (WSetlinebuf)(pTHX_ PerlIO Wf);
+  /W Perls snooping functions W/
+  STDCHAR W  (WGet_base)(pTHX_ PerlIO Wf);
+  Size_t     (WGet_bufsiz)(pTHX_ PerlIO Wf);
+  STDCHAR W  (WGet_ptr)(pTHX_ PerlIO Wf);
+  SSize_t    (WGet_cnt)(pTHX_ PerlIO Wf);
+  void       (WSet_ptrcnt)(pTHX_ PerlIO Wf,STDCHAR Wptr,SSize_t cnt);
+ };
+The first few members of the struct give a function table size for
+compatibility check name for the layer, the  size to malloc(fR for the per instance data,
+and some flags which are attributes of the class as whole (such as whether it is a buffering
+layer), then follow the functions which fall into four basic groups:
+1. 4
+Opening and setup functions
+2. 4
+Basic IO operations
+3. 4
+Stdio class buffering options.
+4. 4
+Functions to support Perl's traditional fast access to the buffer.
+
+A layer does not have to implement all the functions, but the whole
+table has to be present. Unimplemented slots can be NULL (which will
+result in an error when called) or can be filled in with stubs to
+inherit behaviour from a base class. This inheritance is fixed
+for all instances of the layer, but as the layer chooses which stubs
+to populate the table, limited multiple inheritance is possible.
+Per instance Data
+
+The per instance data are held in memory beyond the basic PerlIOl
+struct, by making a PerlIOl the first member of the layer's struct
+thus:
+        typedef struct
+        {
+         struct _PerlIO base;       /W Base "class" info W/
+         STDCHAR W      buf;        /W Start of buffer W/
+         STDCHAR W      end;        /W End of valid part of buffer W/
+         STDCHAR W      ptr;        /W Current position in buffer W/
+         Off_t          posn;       /W Offset of buf into the file W/
+         Size_t         bufsiz;     /W Real size of buffer W/
+         IV             oneword;    /W Emergency buffer W/
+        } PerlIOBuf;
+In this way (as for perl's scalars) a pointer to a PerlIOBuf can be
+treated as a pointer to a PerlIOl.
+Layers in action.
+                table           perlio          unix
+            |           |
+            +           +    +          +    +        +
+   PerlIO  >|           |   >|  next    |   >|  NULL  |
+            +           +    +          +    +        +
+            |           |    |  buffer  |    |   fd   |
+            +           +    |          |    +        +
+            |           |    +          +
+The above attempts to show how the layer scheme works in a simple case.
+The application's PerlIO W(fR points to an entry in the table(s)
+representing open (allocated) handles. For example the first three slots
+in the table correspond to stdin(fR,stdout(fR and stderr(fR. The table
+in turn points to the current top layer for the handle   in this case
+an instance of the generic buffering layer perlio. That layer in turn
+points to the next layer down   in this case the low level unix layer.
+
+The above is roughly equivalent to a stdio buffered stream, but with
+much more flexibility:
+o 4
+If Unix level read(fR/write(fR/lseek(fR is not appropriate for (say)
+sockets then the unix layer can be replaced (at open time or even
+dynamically) with a socket layer.
+o 4
+Different handles can have different buffering schemes. The top
+layer could be the mmap layer if reading disk files was quicker
+using mmap(fR than read(fR. An unbuffered stream can be implemented
+simply by not having a buffer layer.
+o 4
+Extra layers can be inserted to process the data as it flows through.
+This was the driving need for including the scheme in perl 5.7.0+   we
+needed a mechanism to allow data to be translated between perl's
+internal encoding (conceptually at least Unicode as UTF 8), and the
+native format used by the system. This is provided by the
+:encoding(xxxx) layer which typically sits above the buffering layer.
+o 4
+A layer can be added that does (en to CRLF translation. This layer
+can be used on any platform, not just those that normally do such
+things.
+Per instance flag bits
+
+The generic flag bits are a hybrid of O_XXXXX(fR style flags deduced
+from the mode string passed to PerlIO_open()(fR, and state bits for
+typical buffer layers.
+PERLIO_F_EOF 4
+
+End of file.
+PERLIO_F_CANWRITE 4
+
+Writes are permitted, i.e. opened as w or r+ or a, etc.
+PERLIO_F_CANREAD 4
+
+Reads are permitted i.e. opened r or w+ (or even a+   ick).
+PERLIO_F_ERROR 4
+
+An error has occurred (for PerlIO_error()(fR).
+PERLIO_F_TRUNCATE 4
+
+Truncate file suggested by open mode.
+PERLIO_F_APPEND 4
+
+All writes should be appends.
+PERLIO_F_CRLF 4
+
+Layer is performing Win32 like (en mapped to CR,LF for output and CR,LF
+mapped to (en for input. Normally the provided crlf layer is the only
+layer that need bother about this. PerlIO_binmode()(fR will mess with this
+flag rather than add/remove layers if the PERLIO_K_CANCRLF(fR bit is set
+for the layers class.
+PERLIO_F_UTF8 4
+
+Data written to this layer should be UTF 8 encoded; data provided
+by this layer should be considered UTF 8 encoded. Can be set on any layer
+by :utf8 dummy layer. Also set on :encoding layer.
+PERLIO_F_UNBUF 4
+
+Layer is unbuffered   i.e. write to next layer down should occur for
+each write to this layer.
+PERLIO_F_WRBUF 4
+
+The buffer for this layer currently holds data written to it but not sent
+to next layer.
+PERLIO_F_RDBUF 4
+
+The buffer for this layer currently holds unconsumed data read from
+layer below.
+PERLIO_F_LINEBUF 4
+
+Layer is line buffered. Write data should be passed to next layer down
+whenever a (en is seen. Any data beyond the (en should then be
+processed.
+PERLIO_F_TEMP 4
+
+File has been unlink()(fRed, or should be deleted on close()(fR.
+PERLIO_F_OPEN 4
+
+Handle is open.
+PERLIO_F_FASTGETS 4
+
+This instance of this layer supports the "fast gets(fR" interface.
+Normally set based on PERLIO_K_FASTGETS(fR for the class and by the
+existence of the function(s) in the table. However a class that
+normally provides that interface may need to avoid it on a
+particular instance. The pending layer needs to do this when
+it is pushed above a layer which does not support the interface.
+(Perl's sv_gets()(fR does not expect the streams fast gets(fR behaviour
+to change during one get.)
+Methods in Detail
+
+fsize 4
+        Size_t fsize;
+Size of the function table. This is compared against the value PerlIO
+code knows as a compatibility check. Future versions may be able
+to tolerate layers compiled against an old version of the headers.
+name 4
+        char W name;
+The name of the layer whose open() method Perl should invoke on
+open().  For example if the layer is called APR, you will call:
+  open $fh, ">:APR", ...
+and Perl knows that it has to invoke the PerlIOAPR_open() method
+implemented by the APR layer.
+size 4
+        Size_t size;
+The size of the per instance data structure, e.g.:
+  sizeof(PerlIOAPR)
+If this field is zero then PerlIO_pushed(fR does not malloc anything
+and assumes layer's Pushed function will do any required layer stack
+manipulation   used to avoid malloc/free overhead for dummy layers.
+If the field is non zero it must be at least the size of PerlIOl(fR,
+PerlIO_pushed(fR will allocate memory for the layer's data structures
+and link new layer onto the stream's stack. (If the layer's Pushed
+method returns an error indication the layer is popped again.)
+kind 4
+        IV kind;
+o 4
+PERLIO_K_BUFFERED
+
+The layer is buffered.
+o 4
+PERLIO_K_RAW
+
+The layer is acceptable to have in a binmode(FH) stack   i.e. it does not
+(or will configure itself not to) transform bytes passing through it.
+o 4
+PERLIO_K_CANCRLF
+
+Layer can translate between (en and CRLF line ends.
+o 4
+PERLIO_K_FASTGETS
+
+Layer allows buffer snooping.
+o 4
+PERLIO_K_MULTIARG
+
+Used when the layer's open() accepts more arguments than usual. The
+extra arguments should come not before the MODE(fR argument. When this
+flag is used it's up to the layer to validate the args.
+Pushed 4
+ IV     (WPushed)(pTHX_ PerlIO Wf,const char Wmode, SV Warg);
+The only absolutely mandatory method. Called when the layer is pushed
+onto the stack.  The mode(fR argument may be NULL if this occurs
+post open. The arg(fR will be non NULL(fR if an argument string was
+passed. In most cases this should call PerlIOBase_pushed()(fR to
+convert mode(fR into the appropriate PERLIO_F_XXXXX(fR flags in
+addition to any actions the layer itself takes.  If a layer is not
+expecting an argument it need neither save the one passed to it, nor
+provide Getarg()(fR (it could perhaps Perl_warn(fR that the argument
+was un expected).
+
+Returns 0 on success. On failure returns  1 and should set errno.
+Popped 4
+        IV      (WPopped)(pTHX_ PerlIO Wf);
+Called when the layer is popped from the stack. A layer will normally
+be popped after Close()(fR is called. But a layer can be popped
+without being closed if the program is dynamically managing layers on
+the stream. In such cases Popped()(fR should free any resources
+(buffers, translation tables, ...) not held directly in the layer's
+struct.  It should also Unread()(fR any unconsumed data that has been
+read and buffered from the layer below back to that layer, so that it
+can be re provided to what ever is now above.
+
+Returns 0 on success and failure.  If Popped()(fR returns true then
+perlio.c assumes that either the layer has popped itself, or the
+layer is super special and needs to be retained for other reasons.
+In most cases it should return false.
+Open 4
+        PerlIO W        (WOpen)(...);
+The Open()(fR method has lots of arguments because it combines the
+functions of perl's open(fR, PerlIO_open(fR, perl's sysopen(fR,
+PerlIO_fdopen(fR and PerlIO_reopen(fR.  The full prototype is as
+follows:
+ PerlIO W       (WOpen)(pTHX_ PerlIO_funcs Wtab,
+                        PerlIO_list_t Wlayers, IV n,
+                        const char Wmode,
+                        int fd, int imode, int perm,
+                        PerlIO Wold,
+                        int narg, SV WWargs);
+Open should (perhaps indirectly) call PerlIO_allocate()(fR to allocate
+a slot in the table and associate it with the layers information for
+the opened file, by calling PerlIO_push(fR.  The layers is an
+array of all the layers destined for the PerlIO W(fR, and any
+arguments passed to them, n is the index into that array of the
+layer being called. The macro PerlIOArg(fR will return a (possibly
+NULL(fR) SV W for the argument passed to the layer.
+
+Where a layer opens or takes ownership of a file descriptor, that layer is
+responsible for getting the file descriptor's close on exec flag into the
+correct state.  The flag should be clear for a file descriptor numbered
+less than or equal to PL_maxsysfd(fR, and set for any file descriptor
+numbered higher.  For thread safety, when a layer opens a new file
+descriptor it should if possible open it with the close on exec flag
+initially set.
+
+The mode string is an "fopen()(fR like" string which would match
+the regular expression /^[I#]?[rwa](+?[bt]?$/(fR.
+
+The I(fR prefix is used during creation of stdin(fR..stderr(fR via
+special PerlIO_fdopen(fR calls; the #(fR prefix means that this is
+sysopen(fR and that imode and perm should be passed to
+PerlLIO_open3(fR; r(fR means read, w(fR means write and
+a(fR means append. The +(fR suffix means that both reading and
+writing/appending are permitted.  The b(fR suffix means file should
+be binary, and t(fR means it is text. (Almost all layers should do
+the IO in binary mode, and ignore the b/t bits. The :crlf(fR layer
+should be pushed to handle the distinction.)
+
+If old is not NULL(fR then this is a PerlIO_reopen(fR. Perl itself
+does not use this (yet?) and semantics are a little vague.
+
+If fd not negative then it is the numeric file descriptor fd,
+which will be open in a manner compatible with the supplied mode
+string, the call is thus equivalent to PerlIO_fdopen(fR. In this case
+nargs will be zero.
+The file descriptor may have the close on exec flag either set or clear;
+it is the responsibility of the layer that takes ownership of it to get
+the flag into the correct state.
+
+If nargs is greater than zero then it gives the number of arguments
+passed to open(fR, otherwise it will be 1 if for example
+PerlIO_open(fR was called.  In simple cases SvPV_nolen(Wargs) is the
+pathname to open.
+
+If a layer provides Open()(fR it should normally call the Open()(fR
+method of next layer down (if any) and then push itself on top if that
+succeeds.  PerlIOBase_open(fR is provided to do exactly that, so in
+most cases you don't have to write your own Open()(fR method.  If this
+method is not defined, other layers may have difficulty pushing
+themselves on top of it during open.
+
+If PerlIO_push(fR was performed and open has failed, it must
+PerlIO_pop(fR itself, since if it's not, the layer won't be removed
+and may cause bad problems.
+
+Returns NULL(fR on failure.
+Binmode 4
+        IV        (WBinmode)(pTHX_ PerlIO Wf);
+Optional. Used when :raw(fR layer is pushed (explicitly or as a result
+of binmode(FH)). If not present layer will be popped. If present
+should configure layer as binary (or pop itself) and return 0.
+If it returns  1 for error binmode(fR will fail with layer
+still on the stack.
+Getarg 4
+        SV W      (WGetarg)(pTHX_ PerlIO Wf,
+                            CLONE_PARAMS Wparam, int flags);
+Optional. If present should return an SV W representing the string
+argument passed to the layer when it was
+pushed. e.g. :encoding(ascii) would return an SvPV with value
+ascii. (param and flags arguments can be ignored in most
+cases)
+
+Dup(fR uses Getarg(fR to retrieve the argument originally passed to
+Pushed(fR, so you must implement this function if your layer has an
+extra argument to Pushed(fR and will ever be Dup(fRed.
+Fileno 4
+        IV        (WFileno)(pTHX_ PerlIO Wf);
+Returns the Unix/Posix numeric file descriptor for the handle. Normally
+PerlIOBase_fileno()(fR (which just asks next layer down) will suffice
+for this.
+
+Returns  1 on error, which is considered to include the case where the
+layer cannot provide such a file descriptor.
+Dup 4
+        PerlIO W (WDup)(pTHX_ PerlIO Wf, PerlIO Wo,
+                        CLONE_PARAMS Wparam, int flags);
+XXX: Needs more docs.
+
+Used as part of the clone process when a thread is spawned (in which
+case param will be non NULL) and when a stream is being duplicated via
+'&' in the open(fR.
+
+Similar to Open(fR, returns PerlIOW on success, NULL(fR on failure.
+Read 4
+        SSize_t (WRead)(pTHX_ PerlIO Wf, void Wvbuf, Size_t count);
+Basic read operation.
+
+Typically will call Fill(fR and manipulate pointers (possibly via the
+API).  PerlIOBuf_read()(fR may be suitable for derived classes which
+provide fast gets methods.
+
+Returns actual bytes read, or  1 on an error.
+Unread 4
+        SSize_t (WUnread)(pTHX_ PerlIO Wf,
+                          const void Wvbuf, Size_t count);
+A superset of stdio's ungetc()(fR. Should arrange for future reads to
+see the bytes in vbuf(fR. If there is no obviously better implementation
+then PerlIOBase_unread()(fR provides the function by pushing a fake
+pending layer above the calling layer.
+
+Returns the number of unread chars.
+Write 4
+        SSize_t (WWrite)(PerlIO Wf, const void Wvbuf, Size_t count);
+Basic write operation.
+
+Returns bytes written or  1 on an error.
+Seek 4
+        IV      (WSeek)(pTHX_ PerlIO Wf, Off_t offset, int whence);
+Position the file pointer. Should normally call its own Flush(fR
+method and then the Seek(fR method of next layer down.
+
+Returns 0 on success,  1 on failure.
+Tell 4
+        Off_t   (WTell)(pTHX_ PerlIO Wf);
+Return the file pointer. May be based on layers cached concept of
+position to avoid overhead.
+
+Returns  1 on failure to get the file pointer.
+Close 4
+        IV      (WClose)(pTHX_ PerlIO Wf);
+Close the stream. Should normally call PerlIOBase_close()(fR to flush
+itself and close layers below, and then deallocate any data structures
+(buffers, translation tables, ...) not  held directly in the data
+structure.
+
+Returns 0 on success,  1 on failure.
+Flush 4
+        IV      (WFlush)(pTHX_ PerlIO Wf);
+Should make stream's state consistent with layers below. That is, any
+buffered write data should be written, and file position of lower layers
+adjusted for data read from below but not actually consumed.
+(Should perhaps Unread()(fR such data to the lower layer.)
+
+Returns 0 on success,  1 on failure.
+Fill 4
+        IV      (WFill)(pTHX_ PerlIO Wf);
+The buffer for this layer should be filled (for read) from layer
+below.  When you subclass PerlIOBuf layer, you want to use its
+_read method and to supply your own fill method, which fills the
+PerlIOBuf's buffer.
+
+Returns 0 on success,  1 on failure.
+Eof 4
+        IV      (WEof)(pTHX_ PerlIO Wf);
+Return end of file indicator. PerlIOBase_eof()(fR is normally sufficient.
+
+Returns 0 on end of file, 1 if not end of file,  1 on error.
+Error 4
+        IV      (WError)(pTHX_ PerlIO Wf);
+Return error indicator. PerlIOBase_error()(fR is normally sufficient.
+
+Returns 1 if there is an error (usually when PERLIO_F_ERROR(fR is set),
+0 otherwise.
+Clearerr 4
+        void    (WClearerr)(pTHX_ PerlIO Wf);
+Clear end of file and error indicators. Should call PerlIOBase_clearerr()(fR
+to set the PERLIO_F_XXXXX(fR flags, which may suffice.
+Setlinebuf 4
+        void    (WSetlinebuf)(pTHX_ PerlIO Wf);
+Mark the stream as line buffered. PerlIOBase_setlinebuf()(fR sets the
+PERLIO_F_LINEBUF flag and is normally sufficient.
+Get_base 4
+        STDCHAR W       (WGet_base)(pTHX_ PerlIO Wf);
+Allocate (if not already done so) the read buffer for this layer and
+return pointer to it. Return NULL on failure.
+Get_bufsiz 4
+        Size_t  (WGet_bufsiz)(pTHX_ PerlIO Wf);
+Return the number of bytes that last Fill()(fR put in the buffer.
+Get_ptr 4
+        STDCHAR W       (WGet_ptr)(pTHX_ PerlIO Wf);
+Return the current read pointer relative to this layer's buffer.
+Get_cnt 4
+        SSize_t (WGet_cnt)(pTHX_ PerlIO Wf);
+Return the number of bytes left to be read in the current buffer.
+Set_ptrcnt 4
+        void    (WSet_ptrcnt)(pTHX_ PerlIO Wf,
+                              STDCHAR Wptr, SSize_t cnt);
+Adjust the read pointer and count of bytes to match ptr(fR and/or cnt(fR.
+The application (or layer above) must ensure they are consistent.
+(Checking is allowed by the paranoid.)
+Utilities
+
+To ask for the next layer down use PerlIONext(PerlIO Wf).
+
+To check that a PerlIOW is valid use PerlIOValid(PerlIO Wf).  (All
+this does is really just to check that the pointer is non NULL and
+that the pointer behind that is non NULL.)
+
+PerlIOBase(PerlIO Wf) returns the Base pointer, or in other words,
+the PerlIOlW(fR pointer.
+
+PerlIOSelf(PerlIOW f, type) return the PerlIOBase cast to a type.
+
+Perl_PerlIO_or_Base(PerlIOW f, callback, base, failure, args) either
+calls the callback from the functions of the layer f (just by
+the name of the IO function, like Read) with the args, or if
+there is no such callback, calls the base version of the callback
+with the same args, or if the f is invalid, set errno to EBADF and
+return failure.
+
+Perl_PerlIO_or_fail(PerlIOW f, callback, failure, args) either calls
+the callback of the functions of the layer f with the args,
+or if there is no such callback, set errno to EINVAL.  Or if the f is
+invalid, set errno to EBADF and return failure.
+
+Perl_PerlIO_or_Base_void(PerlIOW f, callback, base, args) either calls
+the callback of the functions of the layer f with the args,
+or if there is no such callback, calls the base version of the
+callback with the same args, or if the f is invalid, set errno to
+EBADF.
+
+Perl_PerlIO_or_fail_void(PerlIOW f, callback, args) either calls the
+callback of the functions of the layer f with the args, or if
+there is no such callback, set errno to EINVAL.  Or if the f is
+invalid, set errno to EBADF.
+Implementing PerlIO Layers
+
+If you find the implementation document unclear or not sufficient,
+look at the existing PerlIO layer implementations, which include:
+o 4
+C implementations
+
+The perlio.c and perliol.h in the Perl core implement the
+unix, perlio, stdio, crlf, utf8, byte, raw, pending
+layers, and also the mmap and win32 layers if applicable.
+(The win32 is currently unfinished and unused, to see what is used
+instead in Win32, see Querying the layers of filehandles in PerlIO .)
+
+PerlIO::encoding, PerlIO::scalar, PerlIO::via in the Perl core.
+
+PerlIO::gzip and APR::PerlIO (mod_perl 2.0) on CPAN.
+o 4
+Perl implementations
+
+PerlIO::via::QuotedPrint in the Perl core and PerlIO::via::W on CPAN.
+
+If you are creating a PerlIO layer, you may want to be lazy, in other
+words, implement only the methods that interest you.  The other methods
+you can either replace with the blank methods
+    PerlIOBase_noop_ok
+    PerlIOBase_noop_fail
+(which do nothing, and return zero and  1, respectively) or for
+certain methods you may assume a default behaviour by using a NULL
+method.  The Open method looks for help in the 'parent' layer.
+The following table summarizes the behaviour:
+    method      behaviour with NULL
+
+    Clearerr    PerlIOBase_clearerr
+    Close       PerlIOBase_close
+    Dup         PerlIOBase_dup
+    Eof         PerlIOBase_eof
+    Error       PerlIOBase_error
+    Fileno      PerlIOBase_fileno
+    Fill        FAILURE
+    Flush       SUCCESS
+    Getarg      SUCCESS
+    Get_base    FAILURE
+    Get_bufsiz  FAILURE
+    Get_cnt     FAILURE
+    Get_ptr     FAILURE
+    Open        INHERITED
+    Popped      SUCCESS
+    Pushed      SUCCESS
+    Read        PerlIOBase_read
+    Seek        FAILURE
+    Set_cnt     FAILURE
+    Set_ptrcnt  FAILURE
+    Setlinebuf  PerlIOBase_setlinebuf
+    Tell        FAILURE
+    Unread      PerlIOBase_unread
+    Write       FAILURE
+
+ FAILURE        Set errno (to EINVAL in Unixish, to LIB$_INVARG in VMS)
+                and return  1 (for numeric return values) or NULL (for
+                pointers)
+ INHERITED      Inherited from the layer below
+ SUCCESS        Return 0 (for numeric return values) or a pointer
+
+Core Layers
+
+The file perlio.c(fR provides the following layers:
+A basic non buffered layer which calls Unix/POSIX read()(fR, write()(fR,
+lseek()(fR, close()(fR. No buffering. Even on platforms that distinguish
+between O_TEXT and O_BINARY this layer is always O_BINARY.
+A very complete generic buffering layer which provides the whole of
+PerlIO API. It is also intended to be used as a base class for other
+layers. (For example its Read()(fR method is implemented in terms of
+the Get_cnt()(fR/Get_ptr()(fR/Set_ptrcnt()(fR methods).
+
+perlio over unix provides a complete replacement for stdio as seen
+via PerlIO API. This is the default for USE_PERLIO when system's stdio
+does not permit perl's fast gets access, and which do not
+distinguish between O_TEXT(fR and O_BINARY(fR.
+A layer which provides the PerlIO API via the layer scheme, but
+implements it by calling system's stdio. This is (currently) the default
+if system's stdio provides sufficient access to allow perl's fast gets
+access and which do not distinguish between O_TEXT(fR and O_BINARY(fR.
+A layer derived using perlio as a base class. It provides Win32 like
+(en to CR,LF translation. Can either be applied above perlio or serve
+as the buffer layer itself. crlf over unix is the default if system
+distinguishes between O_TEXT(fR and O_BINARY(fR opens. (At some point
+unix will be replaced by a native Win32 IO layer on that platform,
+as Win32's read/write layer has various drawbacks.) The crlf layer is
+a reasonable model for a layer which transforms data in some way.
+If Configure detects mmap()(fR functions this layer is provided (with
+perlio as a base) which does read operations by mmap()ing the
+file. Performance improvement is marginal on modern systems, so it is
+mainly there as a proof of concept. It is likely to be unbundled from
+the core at some point. The mmap layer is a reasonable model for a
+minimalist derived layer.
+An internal derivative of perlio which can be used to provide
+Unread() function for layers which have no buffer or cannot be
+bothered.  (Basically this layer's Fill()(fR pops itself off the stack
+and so resumes reading from layer below.)
+A dummy layer which never exists on the layer stack. Instead when
+pushed it actually pops the stack removing itself, it then calls
+Binmode function table entry on all the layers in the stack   normally
+this (via PerlIOBase_binmode) removes any layers which do not have
+PERLIO_K_RAW(fR bit set. Layers can modify that behaviour by defining
+their own Binmode entry.
+Another dummy layer. When pushed it pops itself and sets the
+PERLIO_F_UTF8(fR flag on the layer which was (and now is once more)
+the top of the stack.
+
+In addition perlio.c also provides a number of PerlIOBase_xxxx()(fR
+functions which are intended to be used in the table slots of classes
+which do not need to do anything special for a particular method.
+Extension Layers
+
+Layers can be made available by extension modules. When an unknown layer
+is encountered the PerlIO code will perform the equivalent of :
+   use PerlIO layer;
+Where layer is the unknown layer. PerlIO.pm will then attempt to:
+   require PerlIO::layer;
+If after that process the layer is still not defined then the open(fR
+will fail.
+
+The following extension layers are bundled with perl:
+   use Encoding;
+makes this layer available, although PerlIO.pm knows where to
+find it.  It is an example of a layer which takes an argument as it is
+called thus:
+   open( $fh, "<:encoding(iso 8859 7)", $pathname );
+Provides support for reading data from and writing data to a scalar.
+   open( $fh, "+<:scalar", ($scalar );
+When a handle is so opened, then reads get bytes from the string value
+of $scalar, and writes change the value. In both cases the position
+in $scalar starts as zero but can be altered via seek(fR, and
+determined via tell(fR.
+
+Please note that this layer is implied when calling open() thus:
+   open( $fh, "+<", ($scalar );
+Provided to allow layers to be implemented as Perl code.  For instance:
+   use PerlIO::via::StripHTML;
+   open( my $fh, "<:via(StripHTML)", "index.html" );
+See PerlIO::via for details.
+TODO
+
+Things that need to be done to improve this document.
+o 4
+Explain how to make a valid fh without going through open()(i.e. apply
+a layer). For example if the file is not opened through perl, but we
+want to get back a fh, like it was opened by Perl.
+
+How PerlIO_apply_layera fits in, where its docs, was it made public?
+
+Currently the example could be something like this:
+  PerlIO Wfoo_to_PerlIO(pTHX_ char Wmode, ...)
+  {
+      char Wmode; /W "w", "r", etc W/
+      const char Wlayers = ":APR"; /W the layer name W/
+      PerlIO Wf = PerlIO_allocate(aTHX);
+      if (!f) {
+          return NULL;
+      }
+
+      PerlIO_apply_layers(aTHX_ f, mode, layers);
+
+      if (f) {
+          PerlIOAPR Wst = PerlIOSelf(f, PerlIOAPR);
+          /W fill in the st struct, as in _open() W/
+          st >file = file;
+          PerlIOBase(f) >flags |= PERLIO_F_OPEN;
+
+          return f;
+      }
+      return NULL;
+  }
+
+o 4
+fix/add the documentation in places marked as XXX.
+o 4
+The handling of errors by the layer is not specified. e.g. when $!
+should be set explicitly, when the error handling should be just
+delegated to the top layer.
+
+Probably give some hints on using SETERRNO() or pointers to where they
+can be found.
+o 4
+I think it would help to give some concrete examples to make it easier
+to understand the API. Of course I agree that the API has to be
+concise, but since there is no second document that is more of a
+guide, I think that it'd make it easier to start with the doc which is
+an API, but has examples in it in places where things are unclear, to
+a person who is not a PerlIO guru (yet).
+

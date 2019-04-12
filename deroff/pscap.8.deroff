@@ -1,0 +1,17 @@
+
+NAME
+pscap - a program to see capabilities
+SYNOPSIS
+pscap [ -a ]
+DESCRIPTION
+pscap is a program that prints out a report of process capabilities. If the application has any capabilities, it will be in the report with the exception of init. By giving the -a command line option, init will be included, too. If a process is not in the report, it has dropped all capabilities. If the process has partial capabilities, it is further examined to see if it has an open-ended bounding set. If this is found to be true, a '+' symbol is added.
+
+SEE ALSO
+netcap (8),
+filecap (8),
+capabilities (7),
+ps (8).
+
+AUTHOR
+Steve Grubb
+

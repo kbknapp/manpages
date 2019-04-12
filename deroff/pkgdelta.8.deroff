@@ -1,0 +1,78 @@
+
+NAME
+pkgdelta - package delta generation utility
+SYNOPSIS
+
+pkgdelta [options] <package1> <package2>
+DESCRIPTION
+
+pkgdelta is used to create package delta files between two versions of the same package. These files are essentially binary patches. pacman(8) can download deltas instead of full package upgrades, and use them with the previous versions of packages (in the package cache) to synthesize the upgraded version of the packages. This likely reduces download sizes for upgrades significantly.
+
+pkgdelta requires xdelta3(1) to do its job.
+OPTIONS
+
+--max-delta-size <ratio>
+
+Only create delta files if the delta is smaller than ratio * package_size. Possible values: 0.0 to 2.0. Recommended values: 0.2 to 0.9. Default value: 0.7
+--min-pkg-size <size>
+
+Minimal size of the package file in bytes to be considered for delta creation. Default value: 1048576 bytes = 1 MiB. This may be any absolute size in bytes or a human-readable value such as
+4MiB
+or
+3.5MB.
+-q, --quiet
+
+Be quiet. Do not output anything but warnings and errors.
+
+EXAMPLES
+$ pkgdelta libreoffice-3.3.2-1-x86_64.pkg.tar.xz libreoffice-3.3.2-2-x86_64.pkg.tar.xz
+SEE ALSO
+
+pacman(8), xdelta3(1)
+
+See the pacman website at https://www.archlinux.org/pacman/ for current information on pacman and its related tools.
+BUGS
+
+Bugs? You must be kidding; there are no bugs in this software. But if we happen to be wrong, send us an email with as much detail as possible to pacman-dev@archlinux.org.
+AUTHORS
+
+Current maintainers:
+oc
+o 2.3
+
+Allan McRae <allan@archlinux.org>
+oc
+o 2.3
+
+Andrew Gregory <andrew.gregory.8@gmail.com>
+oc
+o 2.3
+
+Dan McGee <dan@archlinux.org>
+oc
+o 2.3
+
+Dave Reisner <dreisner@archlinux.org>
+Past major contributors:
+oc
+o 2.3
+
+Judd Vinet <jvinet@zeroflux.org>
+oc
+o 2.3
+
+Aurelien Foret <aurelien@archlinux.org>
+oc
+o 2.3
+
+Aaron Griffin <aaron@archlinux.org>
+oc
+o 2.3
+
+Xavier Chantry <shiningxc@gmail.com>
+oc
+o 2.3
+
+Nagy Gabor <ngaba@bibl.u-szeged.hu>
+For additional contributors, use git shortlog -s on the pacman.git repository.
+

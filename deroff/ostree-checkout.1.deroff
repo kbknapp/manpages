@@ -1,0 +1,46 @@
+
+NAME
+ostree-checkout - Check out a commit into a filesystem
+SYNOPSIS
+
+ostree checkout [OPTIONS...] {COMMIT} [DESTINATION]
+DESCRIPTION
+
+Checks out the given commit into the filesystem under directory DESTINATION. If DESTINATION is not specified, the COMMIT will become the destination checkout target. If COMMIT destination already exists, command will error unless
+--union
+option is selected.
+OPTIONS
+
+--user-mode, -u
+
+Do not change file ownership or initialize extended attributes.
+--subpath="PATH"
+
+Checkout sub-directory PATH.
+--union
+
+Keep existing directories and unchanged files, overwrite existing files.
+--union-add
+
+Keep existing directories and files.
+--union-identical
+
+Like
+--union, but error out if a file would be replaced with a different file. Add new files and directories, ignore identical files, and keep existing directories. Requires
+-H.
+--allow-noent
+
+Do nothing if specified path does not exist.
+--from-stdin
+
+Process many checkouts from standard input.
+--from-file="FILE"
+
+Process many checkouts from input file.
+
+EXAMPLE
+
+$ ostree checkout my-branch
+
+$ ls
+        file1    file2    my-branch

@@ -1,0 +1,107 @@
+
+transmission-daemon 
+transmission-daemon is a daemon-based Transmission session that can be controlled
+via RPC commands from transmission's web interface or
+Allow RPC access to a comma-delimited whitelist of IP addresses.
+Wildcards can be specified in an address by using '*'.
+Default: "127.0.0.1"
+Example: "127.0.0.*,192.168.1.*"
+
+Enable peer blocklists. Transmission understands the bluetack blocklist file format.
+New blocklists can be added by copying them into the config-dir's "blocklists" subdirectory.
+
+Directory to watch for new .torrent files to be added. As they are added to this directory,
+the daemon will load them into Transmission.
+
+Do not watch for new .torrent files.
+
+Disble blocklists.
+
+Dump transmission-daemon's settings to stderr.
+
+Run in the foreground and print errors to stderr.
+
+Where to look for configuration files. This can be used to swap between using the cli, daemon, gtk, and qt clients.
+See https://github.com/transmission/transmission/wiki/Configuration-Files for more information.
+
+Encrypt all peer connections.
+
+Prefer encrypted peer connections.
+
+Prefer unencrypted peer connections.
+
+All torrents, unless overridden by a per-torrent setting, should seed until a specific
+All torrents, unless overridden by a per-torrent setting, should seed regardless of ratio
+
+Print command-line option descriptions.
+
+When adding new torrents, store their contents in
+
+until the torrent is done.
+
+Don't store incomplete torrents in a different directory.
+
+Listen for IPv4 BitTorrent connections on a specific address. Only one IPv4 listening address is allowed. Default: 0.0.0.0 (All addresses)
+
+Listen for IPv6 BitTorrent connections on a specific address. Only one IPv6 listening address is allowed. Default: :: (All addresses)
+
+Listen for RPC connections on a specific address. This must be an IPv4 address. Only one RPC listening address is allowed. Default: 0.0.0.0 (All addresses)
+
+Pause all torrents on startup
+
+Overall peer limit. Useful on embedded systems where the default might be unsuitable. Default: 240
+
+Peer limit per torrent. Useful on embedded systems where the default might be unsuitable. Default: 60
+
+Enable portmapping via NAT-PMP or UPnP
+
+Disable portmapping
+
+Enable distributed hash table (DHT).
+
+Disable distribued hash table (DHT).
+
+Port to open and listen for RPC requests on. Default: 9091
+
+Port to listen for incoming peers on. Default: 51413
+
+Require clients to authenticate themselves.
+This doesn't do much good unless
+
+and
+
+are also set.
+
+Don't require authentication from clients.
+
+Used for client authentication.
+
+Used for client authentication.
+
+Show version number and exit
+
+Enable uTP for peer connections.
+
+Disable uTP for peer connections.
+
+Where to store downloaded data.
+
+Where to store transmission's log messages.
+
+Show error messages
+
+Show error and info messages
+
+Show error, info, and debug messages
+libcurl uses this environment variable when performing tracker announces.
+
+Sets the default config-dir.
+The config-dir used when neither
+
+nor
+
+is specified.
+See https://github.com/transmission/transmission/wiki/Configuration-Files for more information.
+and
+https://transmissionbt.com/
+

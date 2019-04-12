@@ -1,0 +1,65 @@
+
+
+NAME
+talkd - Talk server
+SYNOPSIS
+talkd
+[,OPTION/...]
+DESCRIPTION
+Talk daemon, using service `ntalk'.
+
+-a, --acl=,FILE/
+read site-wide ACLs from FILE
+
+-d, --debug
+enable debugging
+
+-i, --idle-timeout=,SECONDS/ set idle timeout value to SECONDS
+
+-l, --logging
+enable more syslog reporting
+
+-r, --request-ttl=,SECONDS/
+set request time-to-live value to SECONDS
+
+-S, --strict-policy
+apply strict ACL policy
+
+-t, --timeout=,SECONDS/
+set timeout value to SECONDS
+
+-?, --help
+give this help list
+
+--usage
+give a short usage message
+
+-V, --version
+print program version
+
+Mandatory or optional arguments to long options are also mandatory or optional
+for any corresponding short options.
+AUTHOR
+Written by Sergey Poznyakoff.
+REPORTING BUGS
+Report bugs to <bug-inetutils@gnu.org>.
+COPYRIGHT
+Copyright © 2015 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+SEE ALSO
+talk(1)
+
+The full documentation for
+talkd
+is maintained as a Texinfo manual.  If the
+info
+and
+talkd
+programs are properly installed at your site, the command
+info talkd
+
+should give you access to the complete manual.
+

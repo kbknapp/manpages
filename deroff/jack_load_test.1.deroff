@@ -1,0 +1,9 @@
+
+NAME
+jack_load_test - JACK toolkit client which occupies the cpu for some time in process.
+SYNOPSIS
+jack_load_test -t time
+DESCRIPTION
+jack_load_test
+jack_load_test is a client without ports, which just occupies the cpu for time
+miliseconds. It is quite useful to test jackd behaviour under load.

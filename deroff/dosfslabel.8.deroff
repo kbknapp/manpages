@@ -1,0 +1,39 @@
+
+NAME
+fatlabel - set or get MS-DOS filesystem label
+
+SYNOPSIS
+fatlabel DEVICE [LABEL]
+
+DESCRIPTION
+fatlabel set or gets a MS-DOS filesystem label from a given device.
+
+If LABEL is omitted, then the label name of the specified device is
+written on the standard output.
+A label can't be longer than 11 bytes.
+
+OPTIONS
+-h, --help 4
+Displays a help message.
+-V, --version 4
+Shows version.
+
+SEE ALSO
+fsck.fat(8)
+
+mkfs.fat(8)
+
+HOMEPAGE
+The home for the dosfstools project is its
+
+GitHub project page
+AUTHORS
+dosfstools were written by
+
+Werner Almesberger
+Roman Hodek
+
+and others.
+The current maintainer is
+
+Andreas Bombe

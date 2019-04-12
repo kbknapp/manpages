@@ -1,0 +1,2921 @@
+
+{
+NAME
+perlmodlib   constructing new Perl modules and finding existing ones
+THE PERL MODULE LIBRARY
+
+Many modules are included in the Perl distribution.  These are described
+below, and all end in .pm.  You may discover compiled library
+files (usually ending in .so) or small pieces of modules to be
+autoloaded (ending in .al); these were automatically generated
+by the installation process.  You may also discover files in the
+library directory that end in either .pl or .ph.  These are
+old libraries supplied so that old programs that use them still
+run.  The .pl files will all eventually be converted into standard
+modules, and the .ph files made by h2ph will probably end up
+as extension modules made by h2xs.  (Some .ph values may
+already be available through the POSIX, Errno, or Fcntl modules.)
+The pl2pm file in the distribution may help in your conversion,
+but it's just a mechanical process and therefore far from bulletproof.
+Pragmatic Modules
+
+They work somewhat like compiler directives (pragmata) in that they
+tend to affect the compilation of your program, and thus will usually
+work well only when used within a use(fR, or no(fR.  Most of these
+are lexically scoped, so an inner BLOCK may countermand them
+by saying:
+    no integer;
+    no strict refs;
+    no warnings;
+which lasts until the end of that BLOCK.
+
+Some pragmas are lexically scopedtypically those that affect the
+$^H hints variable.  Others affect the current package instead,
+like use vars(fR and use subs(fR, which allow you to predeclare a
+variables or subroutines within a particular file rather than
+just a block.  Such declarations are effective for the entire file
+for which they were declared.  You cannot rescind them with no
+vars(fR or no subs(fR.
+
+The following pragmas are defined (and have their own documentation).
+arybase 12
+
+Set indexing base via $[
+attributes 12
+
+Get/set subroutine or variable attributes
+autodie 12
+
+Replace functions with ones that succeed or die with lexical scope
+autodie::exception 12
+
+Exceptions from autodying functions.
+autodie::exception::system 12
+
+Exceptions from autodying system().
+autodie::hints 12
+
+Provide hints about user subroutines to autodie
+autodie::skip 12
+
+Skip a package when throwing autodie exceptions
+autouse 12
+
+Postpone load of modules until a function is used
+base 12
+
+Establish an ISA relationship with base classes at compile time
+bigint 12
+
+Transparent BigInteger support for Perl
+bignum 12
+
+Transparent BigNumber support for Perl
+bigrat 12
+
+Transparent BigNumber/BigRational support for Perl
+blib 12
+
+Use MakeMaker's uninstalled version of a package
+bytes 12
+
+Expose the individual bytes of characters
+charnames 12
+
+Access to Unicode character names and named character sequences; also define character names
+constant 12
+
+Declare constants
+deprecate 12
+
+Perl pragma for deprecating the core version of a module
+diagnostics 12
+
+Produce verbose warning diagnostics
+encoding 12
+
+Allows you to write your script in non ASCII and non UTF 8
+encoding::warnings 12
+
+Warn on implicit encoding conversions
+experimental 12
+
+Experimental features made easy
+feature 12
+
+Enable new features
+fields 12
+
+Compile time class fields
+filetest 12
+
+Control the filetest permission operators
+if 12
+
+use(fR a Perl module if a condition holds
+integer 12
+
+Use integer arithmetic instead of floating point
+less 12
+
+Request less of something
+lib 12
+
+Manipulate @INC at compile time
+locale 12
+
+Use or avoid POSIX locales for built in operations
+mro 12
+
+Method Resolution Order
+ok 12
+
+Alternative to Test::More::use_ok
+open 12
+
+Set default PerlIO layers for input and output
+ops 12
+
+Restrict unsafe operations when compiling
+overload 12
+
+Package for overloading Perl operations
+overloading 12
+
+Lexically control overloading
+parent 12
+
+Establish an ISA relationship with base classes at compile time
+re 12
+
+Alter regular expression behaviour
+sigtrap 12
+
+Enable simple signal handling
+sort 12
+
+Control sort() behaviour
+strict 12
+
+Restrict unsafe constructs
+subs 12
+
+Predeclare subroutine names
+threads 12
+
+Perl interpreter based threads
+threads::shared 12
+
+Perl extension for sharing data structures between threads
+utf8 12
+
+Enable/disable UTF 8 (or UTF EBCDIC) in source code
+vars 12
+
+Predeclare global variable names
+version 12
+
+Perl extension for Version Objects
+vmsish 12
+
+Control VMS specific language features
+warnings::register 12
+
+Warnings import function
+Standard Modules
+
+Standard, bundled modules are all expected to behave in a well defined
+manner with respect to namespace pollution because they use the
+Exporter module.  See their own documentation for details.
+
+It's possible that not all modules listed below are installed on your
+system. For example, the GDBM_File module will not be installed if you
+don't have the gdbm library.
+Amiga::ARexx 12
+
+Perl extension for ARexx support
+Amiga::Exec 12
+
+Perl extension for low level amiga support
+AnyDBM_File 12
+
+Provide framework for multiple DBMs
+App::Cpan 12
+
+Easily interact with CPAN from the command line
+App::Prove 12
+
+Implements the prove(fR command.
+App::Prove::State 12
+
+State storage for the prove(fR command.
+App::Prove::State::Result 12
+
+Individual test suite results.
+App::Prove::State::Result::Test 12
+
+Individual test results.
+Archive::Tar 12
+
+Module for manipulations of tar archives
+Archive::Tar::File 12
+
+A subclass for in memory extracted file from Archive::Tar
+Attribute::Handlers 12
+
+Simpler definition of attribute handlers
+AutoLoader 12
+
+Load subroutines only on demand
+AutoSplit 12
+
+Split a package for autoloading
+B 12
+
+The Perl Compiler Backend
+B::Concise 12
+
+Walk Perl syntax tree, printing concise info about ops
+B::Debug 12
+
+Walk Perl syntax tree, printing debug info about ops
+B::Deparse 12
+
+Perl compiler backend to produce perl code
+B::Op_private 12
+ OP op_private flag definitions
+
+B::Showlex 12
+
+Show lexical variables used in functions or files
+B::Terse 12
+
+Walk Perl syntax tree, printing terse info about ops
+B::Xref 12
+
+Generates cross reference reports for Perl programs
+Benchmark 12
+
+Benchmark running times of Perl code
+Family neutral IP socket supporting both IPv4 and IPv6
+Networking constants and support functions
+CORE 12
+
+Namespace for Perl's core routines
+CPAN 12
+
+Query, download and build perl modules from CPAN sites
+CPAN::API::HOWTO 12
+
+A recipe book for programming with CPAN.pm
+CPAN::Debug 12
+
+Internal debugging for CPAN.pm
+CPAN::Distroprefs 12
+
+Read and match distroprefs
+CPAN::FirstTime 12
+
+Utility for CPAN::Config file Initialization
+CPAN::HandleConfig 12
+
+Internal configuration handling for CPAN.pm
+CPAN::Kwalify 12
+
+Interface between CPAN.pm and Kwalify.pm
+CPAN::Meta 12
+
+The distribution metadata for a CPAN dist
+CPAN::Meta::Converter 12
+
+Convert CPAN distribution metadata structures
+CPAN::Meta::Feature 12
+
+An optional feature provided by a CPAN distribution
+CPAN::Meta::History 12
+
+History of CPAN Meta Spec changes
+CPAN::Meta::History::Meta_1_0 12
+
+Version 1.0 metadata specification for META.yml
+CPAN::Meta::History::Meta_1_1 12
+
+Version 1.1 metadata specification for META.yml
+CPAN::Meta::History::Meta_1_2 12
+
+Version 1.2 metadata specification for META.yml
+CPAN::Meta::History::Meta_1_3 12
+
+Version 1.3 metadata specification for META.yml
+CPAN::Meta::History::Meta_1_4 12
+
+Version 1.4 metadata specification for META.yml
+CPAN::Meta::Merge 12
+
+Merging CPAN Meta fragments
+CPAN::Meta::Prereqs 12
+
+A set of distribution prerequisites by phase and type
+CPAN::Meta::Requirements 12
+
+A set of version requirements for a CPAN dist
+CPAN::Meta::Spec 12
+
+Specification for CPAN distribution metadata
+CPAN::Meta::Validator 12
+
+Validate CPAN distribution metadata structures
+CPAN::Meta::YAML 12
+
+Read and write a subset of YAML for CPAN Meta files
+CPAN::Nox 12
+
+Wrapper around CPAN.pm without using any XS module
+CPAN::Plugin 12
+
+Base class for CPAN shell extensions
+CPAN::Plugin::Specfile 12
+
+Proof of concept implementation of a trivial CPAN::Plugin
+CPAN::Queue 12
+
+Internal queue support for CPAN.pm
+CPAN::Tarzip 12
+
+Internal handling of tar archives for CPAN.pm
+CPAN::Version 12
+
+Utility functions to compare CPAN versions
+Carp 12
+
+Alternative warn and die for modules
+Class::Struct 12
+
+Declare struct like datatypes as Perl classes
+Compress::Raw::Bzip2 12
+
+Low Level Interface to bzip2 compression library
+Compress::Raw::Zlib 12
+
+Low Level Interface to zlib compression library
+Compress::Zlib 12
+
+Interface to zlib compression library
+Config 12
+
+Access Perl configuration information
+Config::Perl::V 12
+
+Structured data retrieval of perl  V output
+Cwd 12
+
+Get pathname of current working directory
+DB 12
+
+Programmatic interface to the Perl debugging API
+DBM_Filter 12
+
+Filter DBM keys/values
+DBM_Filter::compress 12
+
+Filter for DBM_Filter
+DBM_Filter::encode 12
+
+Filter for DBM_Filter
+DBM_Filter::int32 12
+
+Filter for DBM_Filter
+DBM_Filter::null 12
+
+Filter for DBM_Filter
+DBM_Filter::utf8 12
+
+Filter for DBM_Filter
+DB_File 12
+
+Perl5 access to Berkeley DB version 1.x
+Data::Dumper 12
+
+Stringified perl data structures, suitable for both printing and eval(fR
+Devel::PPPort 12
+
+Perl/Pollution/Portability
+Devel::Peek 12
+
+A data debugging tool for the XS programmer
+Devel::SelfStubber 12
+
+Generate stubs for a SelfLoading module
+Digest 12
+
+Modules that calculate message digests
+Digest::MD5 12
+
+Perl interface to the MD5 Algorithm
+Digest::SHA 12
+
+Perl extension for SHA 1/224/256/384/512
+Digest::base 12
+
+Digest base class
+Digest::file 12
+
+Calculate digests of files
+DirHandle 12
+
+(obsolete) supply object methods for directory handles
+Dumpvalue 12
+
+Provides screen dump of Perl data.
+DynaLoader 12
+
+Dynamically load C libraries into Perl code
+Encode 12
+
+Character encodings in Perl
+Encode::Alias 12
+
+Alias definitions to encodings
+Encode::Byte 12
+
+Single Byte Encodings
+Encode::CJKConstants 12
+
+Internally used by Encode::??::ISO_2022_W
+Encode::CN 12
+
+China based Chinese Encodings
+Encode::CN::HZ 12
+
+Internally used by Encode::CN
+Encode::Config 12
+
+Internally used by Encode
+Encode::EBCDIC 12
+
+EBCDIC Encodings
+Encode::Encoder 12
+
+Object Oriented Encoder
+Encode::Encoding 12
+
+Encode Implementation Base Class
+Encode::GSM0338 12
+
+ESTI GSM 03.38 Encoding
+Encode::Guess 12
+
+Guesses encoding from data
+Encode::JP 12
+
+Japanese Encodings
+Encode::JP::H2Z 12
+
+Internally used by Encode::JP::2022_JPW
+Encode::JP::JIS7 12
+
+Internally used by Encode::JP
+Encode::KR 12
+
+Korean Encodings
+Encode::KR::2022_KR 12
+
+Internally used by Encode::KR
+Encode::MIME::Header 12
+
+MIME encoding for an unstructured email header
+Encode::MIME::Name 12
+
+Internally used by Encode
+Encode::PerlIO 12
+
+A detailed document on Encode and PerlIO
+Encode::Supported 12
+
+Encodings supported by Encode
+Encode::Symbol 12
+
+Symbol Encodings
+Encode::TW 12
+
+Taiwan based Chinese Encodings
+Encode::Unicode 12
+
+Various Unicode Transformation Formats
+Encode::Unicode::UTF7 12
+
+UTF 7 encoding
+English 12
+
+Use nice English (or awk) names for ugly punctuation variables
+Env 12
+
+Perl module that imports environment variables as scalars or arrays
+Errno 12
+
+System errno constants
+Exporter 12
+
+Implements default import method for modules
+Exporter::Heavy 12
+
+Exporter guts
+ExtUtils::CBuilder 12
+
+Compile and link C code for Perl modules
+ExtUtils::CBuilder::Platform::Windows 12
+
+Builder class for Windows platforms
+ExtUtils::Command 12
+
+Utilities to replace common UNIX commands in Makefiles etc.
+ExtUtils::Command::MM 12
+
+Commands for the MM's to use in Makefiles
+ExtUtils::Constant 12
+
+Generate XS code to import C header constants
+ExtUtils::Constant::Base 12
+
+Base class for ExtUtils::Constant objects
+ExtUtils::Constant::Utils 12
+
+Helper functions for ExtUtils::Constant
+ExtUtils::Constant::XS 12
+
+Generate C code for XS modules' constants.
+ExtUtils::Embed 12
+
+Utilities for embedding Perl in C/C .1v'++.1v'ExtUtils::Install 12
+
+Install files from here to there
+ExtUtils::Installed 12
+
+Inventory management of installed modules
+ExtUtils::Liblist 12
+
+Determine libraries to use and how to use them
+ExtUtils::MM 12
+
+OS adjusted ExtUtils::MakeMaker subclass
+ExtUtils::MM_AIX 12
+
+AIX specific subclass of ExtUtils::MM_Unix
+ExtUtils::MM_Any 12
+
+Platform agnostic MM methods
+ExtUtils::MM_BeOS 12
+
+Methods to override UNWX behaviour in ExtUtils::MakeMaker
+ExtUtils::MM_Cygwin 12
+
+Methods to override UNWX behaviour in ExtUtils::MakeMaker
+ExtUtils::MM_DOS 12
+
+DOS specific subclass of ExtUtils::MM_Unix
+ExtUtils::MM_Darwin 12
+
+Special behaviors for OS X
+ExtUtils::MM_MacOS 12
+
+Once produced Makefiles for MacOS Classic
+ExtUtils::MM_NW5 12
+
+Methods to override UNWX behaviour in ExtUtils::MakeMaker
+ExtUtils::MM_OS2 12
+
+Methods to override UNWX behaviour in ExtUtils::MakeMaker
+ExtUtils::MM_QNX 12
+
+QNX specific subclass of ExtUtils::MM_Unix
+ExtUtils::MM_UWIN 12
+
+U/WIN specific subclass of ExtUtils::MM_Unix
+ExtUtils::MM_Unix 12
+
+Methods used by ExtUtils::MakeMaker
+ExtUtils::MM_VMS 12
+
+Methods to override UNWX behaviour in ExtUtils::MakeMaker
+ExtUtils::MM_VOS 12
+
+VOS specific subclass of ExtUtils::MM_Unix
+ExtUtils::MM_Win32 12
+
+Methods to override UNWX behaviour in ExtUtils::MakeMaker
+ExtUtils::MM_Win95 12
+
+Method to customize MakeMaker for Win9X
+ExtUtils::MY 12
+
+ExtUtils::MakeMaker subclass for customization
+ExtUtils::MakeMaker 12
+
+Create a module Makefile
+ExtUtils::MakeMaker::Config 12
+
+Wrapper around Config.pm
+ExtUtils::MakeMaker::FAQ 12
+
+Frequently Asked Questions About MakeMaker
+ExtUtils::MakeMaker::Locale 12
+
+Bundled Encode::Locale
+ExtUtils::MakeMaker::Tutorial 12
+
+Writing a module with MakeMaker
+ExtUtils::Manifest 12
+
+Utilities to write and check a MANIFEST file
+ExtUtils::Miniperl 12
+
+Write the C code for miniperlmain.c and perlmain.c
+ExtUtils::Mkbootstrap 12
+
+Make a bootstrap file for use by DynaLoader
+ExtUtils::Mksymlists 12
+
+Write linker options files for dynamic extension
+ExtUtils::Packlist 12
+
+Manage .packlist files
+ExtUtils::ParseXS 12
+
+Converts Perl XS code into C code
+ExtUtils::ParseXS::Constants 12
+
+Initialization values for some globals
+ExtUtils::ParseXS::Eval 12
+
+Clean package to evaluate code in
+ExtUtils::ParseXS::Utilities 12
+
+Subroutines used with ExtUtils::ParseXS
+ExtUtils::Typemaps 12
+
+Read/Write/Modify Perl/XS typemap files
+ExtUtils::Typemaps::Cmd 12
+
+Quick commands for handling typemaps
+ExtUtils::Typemaps::InputMap 12
+
+Entry in the INPUT section of a typemap
+ExtUtils::Typemaps::OutputMap 12
+
+Entry in the OUTPUT section of a typemap
+ExtUtils::Typemaps::Type 12
+
+Entry in the TYPEMAP section of a typemap
+ExtUtils::XSSymSet 12
+
+Keep sets of symbol names palatable to the VMS linker
+ExtUtils::testlib 12
+
+Add blib/W directories to @INC
+Fatal 12
+
+Replace functions with equivalents which succeed or die
+Fcntl 12
+
+Load the C Fcntl.h defines
+File::Basename 12
+
+Parse file paths into directory, filename and suffix.
+File::Compare 12
+
+Compare files or filehandles
+File::Copy 12
+
+Copy files or filehandles
+File::DosGlob 12
+
+DOS like globbing and then some
+File::Fetch 12
+
+A generic file fetching mechanism
+File::Find 12
+
+Traverse a directory tree.
+File::Glob 12
+
+Perl extension for BSD glob routine
+File::GlobMapper 12
+
+Extend File Glob to Allow Input and Output Files
+File::Path 12
+
+Create or remove directory trees
+File::Spec 12
+
+Portably perform operations on file names
+File::Spec::AmigaOS 12
+
+File::Spec for AmigaOS
+File::Spec::Cygwin 12
+
+Methods for Cygwin file specs
+File::Spec::Epoc 12
+
+Methods for Epoc file specs
+File::Spec::Functions 12
+
+Portably perform operations on file names
+File::Spec::Mac 12
+
+File::Spec for Mac OS (Classic)
+File::Spec::OS2 12
+
+Methods for OS/2 file specs
+File::Spec::Unix 12
+
+File::Spec for Unix, base for other File::Spec modules
+File::Spec::VMS 12
+
+Methods for VMS file specs
+File::Spec::Win32 12
+
+Methods for Win32 file specs
+File::Temp 12
+
+Return name and handle of a temporary file safely
+File::stat 12
+
+By name interface to Perl's built in stat() functions
+FileCache 12
+
+Keep more files open than the system permits
+FileHandle 12
+
+Supply object methods for filehandles
+Filter::Simple 12
+
+Simplified source filtering
+Filter::Util::Call 12
+
+Perl Source Filter Utility Module
+FindBin 12
+
+Locate directory of original perl script
+GDBM_File 12
+
+Perl5 access to the gdbm library.
+Getopt::Long 12
+
+Extended processing of command line options
+Getopt::Std 12
+
+Process single character switches with switch clustering
+HTTP::Tiny 12
+
+A small, simple, correct HTTP/1.1 client
+Hash::Util 12
+
+A selection of general utility hash subroutines
+Hash::Util::FieldHash 12
+
+Support for Inside Out Classes
+I18N::Collate 12
+
+Compare 8 bit scalar data according to the current locale
+I18N::LangTags 12
+
+Functions for dealing with RFC3066 style language tags
+I18N::LangTags::Detect 12
+
+Detect the user's language preferences
+I18N::LangTags::List 12
+
+Tags and names for human languages
+I18N::Langinfo 12
+
+Query locale information
+IO 12
+
+Load various IO modules
+IO::Compress::Base 12
+
+Base Class for IO::Compress modules
+IO::Compress::Bzip2 12
+
+Write bzip2 files/buffers
+IO::Compress::Deflate 12
+
+Write RFC 1950 files/buffers
+IO::Compress::FAQ 12
+
+Frequently Asked Questions about IO::Compress
+IO::Compress::Gzip 12
+
+Write RFC 1952 files/buffers
+IO::Compress::RawDeflate 12
+
+Write RFC 1951 files/buffers
+IO::Compress::Zip 12
+
+Write zip files/buffers
+IO::Dir 12
+
+Supply object methods for directory handles
+IO::File 12
+
+Supply object methods for filehandles
+IO::Handle 12
+
+Supply object methods for I/O handles
+IO::Pipe 12
+
+Supply object methods for pipes
+IO::Poll 12
+
+Object interface to system poll call
+IO::Seekable 12
+
+Supply seek based methods for I/O objects
+IO::Select 12
+
+OO interface to the select system call
+IO::Socket 12
+
+Object interface to socket communications
+IO::Socket::INET 12
+
+Object interface for AF_INET domain sockets
+IO::Socket::UNIX 12
+
+Object interface for AF_UNIX domain sockets
+IO::Uncompress::AnyInflate 12
+
+Uncompress zlib based (zip, gzip) file/buffer
+IO::Uncompress::AnyUncompress 12
+
+Uncompress gzip, zip, bzip2 or lzop file/buffer
+IO::Uncompress::Base 12
+
+Base Class for IO::Uncompress modules
+IO::Uncompress::Bunzip2 12
+
+Read bzip2 files/buffers
+IO::Uncompress::Gunzip 12
+
+Read RFC 1952 files/buffers
+IO::Uncompress::Inflate 12
+
+Read RFC 1950 files/buffers
+IO::Uncompress::RawInflate 12
+
+Read RFC 1951 files/buffers
+IO::Uncompress::Unzip 12
+
+Read zip files/buffers
+IO::Zlib 12
+
+IO:: style interface to Compress::Zlib
+IPC::Cmd 12
+
+Finding and running system commands made easy
+IPC::Msg 12
+
+SysV Msg IPC object class
+IPC::Open2 12
+
+Open a process for both reading and writing using open2()
+IPC::Open3 12
+
+Open a process for reading, writing, and error handling using open3()
+IPC::Semaphore 12
+
+SysV Semaphore IPC object class
+IPC::SharedMem 12
+
+SysV Shared Memory IPC object class
+IPC::SysV 12
+
+System V IPC constants and system calls
+Internals 12
+
+Reserved special namespace for internals related functions
+JSON::PP 12
+
+JSON::XS compatible pure Perl module.
+JSON::PP::Boolean 12
+
+Dummy module providing JSON::PP::Boolean
+List::Util 12
+
+A selection of general utility list subroutines
+List::Util::XS 12
+
+Indicate if List::Util was compiled with a C compiler
+Locale::Codes 12
+
+A distribution of modules to handle locale codes
+Locale::Codes::Changes 12
+
+Details changes to Locale::Codes
+Locale::Codes::Country 12
+
+Module for dealing with country code sets
+Locale::Codes::Currency 12
+
+Module for dealing with currency code sets
+Locale::Codes::LangExt 12
+
+Module for dealing with langext code sets
+Locale::Codes::LangFam 12
+
+Module for dealing with langfam code sets
+Locale::Codes::LangVar 12
+
+Module for dealing with langvar code sets
+Locale::Codes::Language 12
+
+Module for dealing with language code sets
+Locale::Codes::Script 12
+
+Module for dealing with script code sets
+Locale::Codes::Types 12
+
+Types of data sets supported
+Locale::Country 12
+
+Module for dealing with country code sets
+Locale::Currency 12
+
+Module for dealing with currency code sets
+Locale::Language 12
+
+Module for dealing with language code sets
+Locale::Maketext 12
+
+Framework for localization
+Locale::Maketext::Cookbook 12
+
+Recipes for using Locale::Maketext
+Locale::Maketext::Guts 12
+
+Deprecated module to load Locale::Maketext utf8 code
+Locale::Maketext::GutsLoader 12
+
+Deprecated module to load Locale::Maketext utf8 code
+Locale::Maketext::Simple 12
+
+Simple interface to Locale::Maketext::Lexicon
+Locale::Maketext::TPJ13 12
+
+Article about software localization
+Locale::Script 12
+
+Module for dealing with script code sets
+MIME::Base64 12
+
+Encoding and decoding of base64 strings
+MIME::QuotedPrint 12
+
+Encoding and decoding of quoted printable strings
+Math::BigFloat 12
+
+Arbitrary size floating point math package
+Math::BigInt 12
+
+Arbitrary size integer/float math package
+Math::BigInt::Calc 12
+
+Pure Perl module to support Math::BigInt
+Math::BigInt::CalcEmu 12
+
+Emulate low level math with BigInt code
+Math::BigInt::FastCalc 12
+
+Math::BigInt::Calc with some XS for more speed
+Math::BigInt::Lib 12
+
+Virtual parent class for Math::BigInt libraries
+Math::BigRat 12
+
+Arbitrary big rational numbers
+Math::Complex 12
+
+Complex numbers and associated mathematical functions
+Math::Trig 12
+
+Trigonometric functions
+Memoize 12
+
+Make functions faster by trading space for time
+Memoize::AnyDBM_File 12
+
+Glue to provide EXISTS for AnyDBM_File for Storable use
+Memoize::Expire 12
+
+Plug in module for automatic expiration of memoized values
+Memoize::ExpireFile 12
+
+Test for Memoize expiration semantics
+Memoize::ExpireTest 12
+
+Test for Memoize expiration semantics
+Memoize::NDBM_File 12
+
+Glue to provide EXISTS for NDBM_File for Storable use
+Memoize::SDBM_File 12
+
+Glue to provide EXISTS for SDBM_File for Storable use
+Memoize::Storable 12
+
+Store Memoized data in Storable database
+Module::CoreList 12
+
+What modules shipped with versions of perl
+Module::CoreList::Utils 12
+
+What utilities shipped with versions of perl
+Module::Load 12
+
+Runtime require of both modules and files
+Module::Load::Conditional 12
+
+Looking up module information / loading at runtime
+Module::Loaded 12
+
+Mark modules as loaded or unloaded
+Module::Metadata 12
+
+Gather package and POD information from perl module files
+NDBM_File 12
+
+Tied access to ndbm files
+NEXT 12
+
+Provide a pseudo class NEXT (et al) that allows method redispatch
+Net::Cmd 12
+
+Network Command class (as used by FTP, SMTP etc)
+Net::Config 12
+
+Local configuration data for libnet
+Net::Domain 12
+
+Attempt to evaluate the current host's internet name and domain
+Net::FTP 12
+
+FTP Client class
+Net::FTP::dataconn 12
+
+FTP Client data connection class
+Net::NNTP 12
+
+NNTP Client class
+Net::Netrc 12
+
+OO interface to users netrc file
+Net::POP3 12
+
+Post Office Protocol 3 Client class (RFC1939)
+Net::Ping 12
+
+Check a remote host for reachability
+Net::SMTP 12
+
+Simple Mail Transfer Protocol Client
+Net::Time 12
+
+Time and daytime network client interface
+Net::hostent 12
+
+By name interface to Perl's built in gethostW() functions
+Net::libnetFAQ 12
+
+Libnet Frequently Asked Questions
+Net::netent 12
+
+By name interface to Perl's built in getnetW() functions
+Net::protoent 12
+
+By name interface to Perl's built in getprotoW() functions
+Net::servent 12
+
+By name interface to Perl's built in getservW() functions
+O 12
+
+Generic interface to Perl Compiler backends
+ODBM_File 12
+
+Tied access to odbm files
+Opcode 12
+
+Disable named opcodes when compiling perl code
+POSIX 12
+
+Perl interface to IEEE Std 1003.1
+Params::Check 12
+
+A generic input parsing/checking mechanism.
+Parse::CPAN::Meta 12
+
+Parse META.yml and META.json CPAN metadata files
+Perl::OSType 12
+
+Map Perl operating system names to generic types
+PerlIO 12
+
+On demand loader for PerlIO layers and root of PerlIO::W name space
+PerlIO::encoding 12
+
+Encoding layer
+PerlIO::mmap 12
+
+Memory mapped IO
+PerlIO::scalar 12
+
+In memory IO, scalar IO
+PerlIO::via 12
+
+Helper class for PerlIO layers implemented in perl
+PerlIO::via::QuotedPrint 12
+
+PerlIO layer for quoted printable strings
+Pod::Checker 12
+
+Check pod documents for syntax errors
+Pod::Escapes 12
+
+For resolving Pod E<...> sequences
+Pod::Find 12
+
+Find POD documents in directory trees
+Pod::Functions 12
+
+Group Perl's functions a la perlfunc.pod
+Pod::Html 12
+
+Module to convert pod files to HTML
+Pod::InputObjects 12
+
+Objects representing POD input paragraphs, commands, etc.
+Pod::Man 12
+
+Convert POD data to formatted Wroff input
+Pod::ParseLink 12
+
+Parse an L<> formatting code in POD text
+Pod::ParseUtils 12
+
+Helpers for POD parsing and conversion
+Pod::Parser 12
+
+Base class for creating POD filters and translators
+Pod::Perldoc 12
+
+Look up Perl documentation in Pod format.
+Pod::Perldoc::BaseTo 12
+
+Base for Pod::Perldoc formatters
+Pod::Perldoc::GetOptsOO 12
+
+Customized option parser for Pod::Perldoc
+Pod::Perldoc::ToANSI 12
+
+Render Pod with ANSI color escapes
+Pod::Perldoc::ToChecker 12
+
+Let Perldoc check Pod for errors
+Pod::Perldoc::ToMan 12
+
+Let Perldoc render Pod as man pages
+Pod::Perldoc::ToNroff 12
+
+Let Perldoc convert Pod to nroff
+Pod::Perldoc::ToPod 12
+
+Let Perldoc render Pod as ... Pod!
+Pod::Perldoc::ToRtf 12
+
+Let Perldoc render Pod as RTF
+Pod::Perldoc::ToTerm 12
+
+Render Pod with terminal escapes
+Pod::Perldoc::ToText 12
+
+Let Perldoc render Pod as plaintext
+Pod::Perldoc::ToTk 12
+
+Let Perldoc use Tk::Pod to render Pod
+Pod::Perldoc::ToXml 12
+
+Let Perldoc render Pod as XML
+Pod::PlainText 12
+
+Convert POD data to formatted ASCII text
+Pod::Select 12
+
+Extract selected sections of POD from input
+Pod::Simple 12
+
+Framework for parsing Pod
+Pod::Simple::Checker 12
+
+Check the Pod syntax of a document
+Pod::Simple::Debug 12
+
+Put Pod::Simple into trace/debug mode
+Pod::Simple::DumpAsText 12
+
+Dump Pod parsing events as text
+Pod::Simple::DumpAsXML 12
+
+Turn Pod into XML
+Pod::Simple::HTML 12
+
+Convert Pod to HTML
+Pod::Simple::HTMLBatch 12
+
+Convert several Pod files to several HTML files
+Pod::Simple::LinkSection 12
+
+Represent section attributes of L codes
+Pod::Simple::Methody 12
+
+Turn Pod::Simple events into method calls
+Pod::Simple::PullParser 12
+
+A pull parser interface to parsing Pod
+Pod::Simple::PullParserEndToken 12
+
+End tokens from Pod::Simple::PullParser
+Pod::Simple::PullParserStartToken 12
+
+Start tokens from Pod::Simple::PullParser
+Pod::Simple::PullParserTextToken 12
+
+Text tokens from Pod::Simple::PullParser
+Pod::Simple::PullParserToken 12
+
+Tokens from Pod::Simple::PullParser
+Pod::Simple::RTF 12
+
+Format Pod as RTF
+Pod::Simple::Search 12
+
+Find POD documents in directory trees
+Pod::Simple::SimpleTree 12
+
+Parse Pod into a simple parse tree
+Pod::Simple::Subclassing 12
+
+Write a formatter as a Pod::Simple subclass
+Pod::Simple::Text 12
+
+Format Pod as plaintext
+Pod::Simple::TextContent 12
+
+Get the text content of Pod
+Pod::Simple::XHTML 12
+
+Format Pod as validating XHTML
+Pod::Simple::XMLOutStream 12
+
+Turn Pod into XML
+Pod::Text 12
+
+Convert POD data to formatted text
+Pod::Text::Color 12
+
+Convert POD data to formatted color ASCII text
+Pod::Text::Termcap 12
+
+Convert POD data to ASCII text with format escapes
+Pod::Usage 12
+
+Print a usage message from embedded pod documentation
+SDBM_File 12
+
+Tied access to sdbm files
+Safe 12
+
+Compile and execute code in restricted compartments
+Scalar::Util 12
+
+A selection of general utility scalar subroutines
+Search::Dict 12
+
+Look   search for key in dictionary file
+SelectSaver 12
+
+Save and restore selected file handle
+SelfLoader 12
+
+Load functions only on demand
+Storable 12
+
+Persistence for Perl data structures
+Sub::Util 12
+
+A selection of utility subroutines for subs and CODE references
+Symbol 12
+
+Manipulate Perl symbols and their names
+Sys::Hostname 12
+
+Try every conceivable way to get hostname
+Sys::Syslog 12
+
+Perl interface to the UNIX syslog(3) calls
+Sys::Syslog::Win32 12
+
+Win32 support for Sys::Syslog
+TAP::Base 12
+
+Base class that provides common functionality to TAP::Parser
+TAP::Formatter::Base 12
+
+Base class for harness output delegates
+TAP::Formatter::Color 12
+
+Run Perl test scripts with color
+TAP::Formatter::Console 12
+
+Harness output delegate for default console output
+TAP::Formatter::Console::ParallelSession 12
+
+Harness output delegate for parallel console output
+TAP::Formatter::Console::Session 12
+
+Harness output delegate for default console output
+TAP::Formatter::File 12
+
+Harness output delegate for file output
+TAP::Formatter::File::Session 12
+
+Harness output delegate for file output
+TAP::Formatter::Session 12
+
+Abstract base class for harness output delegate
+TAP::Harness 12
+
+Run test scripts with statistics
+TAP::Harness::Env 12
+
+Parsing harness related environmental variables where appropriate
+TAP::Object 12
+
+Base class that provides common functionality to all TAP::W(fR modules
+TAP::Parser 12
+
+Parse TAP output
+TAP::Parser::Aggregator 12
+
+Aggregate TAP::Parser results
+TAP::Parser::Grammar 12
+
+A grammar for the Test Anything Protocol.
+TAP::Parser::Iterator 12
+
+Base class for TAP source iterators
+TAP::Parser::Iterator::Array 12
+
+Iterator for array based TAP sources
+TAP::Parser::Iterator::Process 12
+
+Iterator for process based TAP sources
+TAP::Parser::Iterator::Stream 12
+
+Iterator for filehandle based TAP sources
+TAP::Parser::IteratorFactory 12
+
+Figures out which SourceHandler objects to use for a given Source
+TAP::Parser::Multiplexer 12
+
+Multiplex multiple TAP::Parsers
+TAP::Parser::Result 12
+
+Base class for TAP::Parser output objects
+TAP::Parser::Result::Bailout 12
+
+Bailout result token.
+TAP::Parser::Result::Comment 12
+
+Comment result token.
+TAP::Parser::Result::Plan 12
+
+Plan result token.
+TAP::Parser::Result::Pragma 12
+
+TAP pragma token.
+TAP::Parser::Result::Test 12
+
+Test result token.
+TAP::Parser::Result::Unknown 12
+
+Unknown result token.
+TAP::Parser::Result::Version 12
+
+TAP syntax version token.
+TAP::Parser::Result::YAML 12
+
+YAML result token.
+TAP::Parser::ResultFactory 12
+
+Factory for creating TAP::Parser output objects
+TAP::Parser::Scheduler 12
+
+Schedule tests during parallel testing
+TAP::Parser::Scheduler::Job 12
+
+A single testing job.
+TAP::Parser::Scheduler::Spinner 12
+
+A no op job.
+TAP::Parser::Source 12
+
+A TAP source & meta data about it
+TAP::Parser::SourceHandler 12
+
+Base class for different TAP source handlers
+TAP::Parser::SourceHandler::Executable 12
+
+Stream output from an executable TAP source
+TAP::Parser::SourceHandler::File 12
+
+Stream TAP from a text file.
+TAP::Parser::SourceHandler::Handle 12
+
+Stream TAP from an IO::Handle or a GLOB.
+TAP::Parser::SourceHandler::Perl 12
+
+Stream TAP from a Perl executable
+TAP::Parser::SourceHandler::RawTAP 12
+
+Stream output from raw TAP in a scalar/array ref.
+TAP::Parser::YAMLish::Reader 12
+
+Read YAMLish data from iterator
+TAP::Parser::YAMLish::Writer 12
+
+Write YAMLish data
+Term::ANSIColor 12
+
+Color screen output using ANSI escape sequences
+Term::Cap 12
+
+Perl termcap interface
+Term::Complete 12
+
+Perl word completion module
+Term::ReadLine 12
+
+Perl interface to various readline(fR packages.
+Test 12
+
+Provides a simple framework for writing test scripts
+Test2 12
+
+Framework for writing test tools that all work together.
+Test2::API 12
+
+Primary interface for writing Test2 based testing tools.
+Test2::API::Breakage 12
+
+What breaks at what version
+Test2::API::Context 12
+
+Object to represent a testing context.
+Test2::API::Instance 12
+
+Object used by Test2::API under the hood
+Test2::API::Stack 12
+
+Object to manage a stack of Test2::Hub
+Test2::Event 12
+
+Base class for events
+Test2::Event::Bail 12
+
+Bailout!
+Test2::Event::Diag 12
+
+Diag event type
+Test2::Event::Encoding 12
+
+Set the encoding for the output stream
+Test2::Event::Exception 12
+
+Exception event
+Test2::Event::Fail 12
+
+Event for a simple failed assertion
+Test2::Event::Generic 12
+
+Generic event type.
+Test2::Event::Note 12
+
+Note event type
+Test2::Event::Ok 12
+
+Ok event type
+Test2::Event::Pass 12
+
+Event for a simple passing assertion
+Test2::Event::Plan 12
+
+The event of a plan
+Test2::Event::Skip 12
+
+Skip event type
+Test2::Event::Subtest 12
+
+Event for subtest types
+Test2::Event::TAP::Version 12
+
+Event for TAP version.
+Test2::Event::V2 12
+
+Second generation event.
+Test2::Event::Waiting 12
+
+Tell all procs/threads it is time to be done
+Test2::EventFacet 12
+
+Base class for all event facets.
+Test2::EventFacet::About 12
+
+Facet with event details.
+Test2::EventFacet::Amnesty 12
+
+Facet for assertion amnesty.
+Test2::EventFacet::Assert 12
+
+Facet representing an assertion.
+Test2::EventFacet::Control 12
+
+Facet for hub actions and behaviors.
+Test2::EventFacet::Error 12
+
+Facet for errors that need to be shown.
+Test2::EventFacet::Info 12
+
+Facet for information a developer might care about.
+Test2::EventFacet::Meta 12
+
+Facet for meta data
+Test2::EventFacet::Parent 12
+
+Base class for all event facets.
+Test2::EventFacet::Plan 12
+
+Facet for setting the plan
+Test2::EventFacet::Render 12
+
+Facet that dictates how to render an event.
+Test2::EventFacet::Trace 12
+
+Debug information for events
+Test2::Formatter 12
+
+Namespace for formatters.
+Test2::Formatter::TAP 12
+
+Standard TAP formatter
+Test2::Hub 12
+
+The conduit through which all events flow.
+Test2::Hub::Interceptor 12
+
+Hub used by interceptor to grab results.
+Test2::Hub::Interceptor::Terminator 12
+
+Exception class used by
+Test2::Hub::Subtest 12
+
+Hub used by subtests
+Test2::IPC 12
+
+Turn on IPC for threading or forking support.
+Test2::IPC::Driver 12
+
+Base class for Test2 IPC drivers.
+Test2::IPC::Driver::Files 12
+
+Temp dir + Files concurrency model.
+Test2::Tools::Tiny 12
+
+Tiny set of tools for unfortunate souls who cannot use
+Test2::Transition 12
+
+Transition notes when upgrading to Test2
+Test2::Util 12
+
+Tools used by Test2 and friends.
+Test2::Util::ExternalMeta 12
+
+Allow third party tools to safely attach meta data
+Test2::Util::Facets2Legacy 12
+
+Convert facet data to the legacy event API.
+Test2::Util::HashBase 12
+
+Build hash based classes.
+Test2::Util::Trace 12
+
+Legacy wrapper fro Test2::EventFacet::Trace.
+Test::Builder 12
+
+Backend for building test libraries
+Test::Builder::Formatter 12
+
+Test::Builder subclass of Test2::Formatter::TAP
+Test::Builder::IO::Scalar 12
+
+A copy of IO::Scalar for Test::Builder
+Test::Builder::Module 12
+
+Base class for test modules
+Test::Builder::Tester 12
+
+Test testsuites that have been built with
+Test::Builder::Tester::Color 12
+
+Turn on colour in Test::Builder::Tester
+Test::Builder::TodoDiag 12
+
+Test::Builder subclass of Test2::Event::Diag
+Test::Harness 12
+
+Run Perl standard test scripts with statistics
+Test::Harness::Beyond 12
+
+Beyond make test
+Test::More 12
+
+Yet another framework for writing test scripts
+Test::Simple 12
+
+Basic utilities for writing tests.
+Test::Tester 12
+
+Ease testing test modules built with Test::Builder
+Test::Tester::Capture 12
+
+Help testing test modules built with Test::Builder
+Test::Tester::CaptureRunner 12
+
+Help testing test modules built with Test::Builder
+Test::Tutorial 12
+
+A tutorial about writing really basic tests
+Test::use::ok 12
+
+Alternative to Test::More::use_ok
+Text::Abbrev 12
+
+Abbrev   create an abbreviation table from a list
+Text::Balanced 12
+
+Extract delimited text sequences from strings.
+Text::ParseWords 12
+
+Parse text into an array of tokens or array of arrays
+Text::Tabs 12
+
+Expand and unexpand tabs like unix expand(1) and unexpand(1)
+Text::Wrap 12
+
+Line wrapping to form simple paragraphs
+Thread 12
+
+Manipulate threads in Perl (for old code only)
+Thread::Queue 12
+
+Thread safe queues
+Thread::Semaphore 12
+
+Thread safe semaphores
+Tie::Array 12
+
+Base class for tied arrays
+Tie::File 12
+
+Access the lines of a disk file via a Perl array
+Tie::Handle 12
+
+Base class definitions for tied handles
+Tie::Hash 12
+
+Base class definitions for tied hashes
+Tie::Hash::NamedCapture 12
+
+Named regexp capture buffers
+Tie::Memoize 12
+
+Add data to hash when needed
+Tie::RefHash 12
+
+Use references as hash keys
+Tie::Scalar 12
+
+Base class definitions for tied scalars
+Tie::StdHandle 12
+
+Base class definitions for tied handles
+Tie::SubstrHash 12
+
+Fixed table size, fixed key length hashing
+Time::HiRes 12
+
+High resolution alarm, sleep, gettimeofday, interval timers
+Time::Local 12
+
+Efficiently compute time from local and GMT time
+Time::Piece 12
+
+Object Oriented time objects
+Time::Seconds 12
+
+A simple API to convert seconds to other date values
+Time::gmtime 12
+
+By name interface to Perl's built in gmtime() function
+Time::localtime 12
+
+By name interface to Perl's built in localtime() function
+Time::tm 12
+
+Internal object used by Time::gmtime and Time::localtime
+UNIVERSAL 12
+
+Base class for ALL classes (blessed references)
+Unicode::Collate 12
+
+Unicode Collation Algorithm
+Unicode::Collate::CJK::Big5 12
+
+Weighting CJK Unified Ideographs
+Unicode::Collate::CJK::GB2312 12
+
+Weighting CJK Unified Ideographs
+Unicode::Collate::CJK::JISX0208 12
+
+Weighting JIS KANJI for Unicode::Collate
+Unicode::Collate::CJK::Korean 12
+
+Weighting CJK Unified Ideographs
+Unicode::Collate::CJK::Pinyin 12
+
+Weighting CJK Unified Ideographs
+Unicode::Collate::CJK::Stroke 12
+
+Weighting CJK Unified Ideographs
+Unicode::Collate::CJK::Zhuyin 12
+
+Weighting CJK Unified Ideographs
+Unicode::Collate::Locale 12
+
+Linguistic tailoring for DUCET via Unicode::Collate
+Unicode::Normalize 12
+
+Unicode Normalization Forms
+Unicode::UCD 12
+
+Unicode character database
+User::grent 12
+
+By name interface to Perl's built in getgrW() functions
+User::pwent 12
+
+By name interface to Perl's built in getpwW() functions
+VMS::DCLsym 12
+
+Perl extension to manipulate DCL symbols
+VMS::Filespec 12
+
+Convert between VMS and Unix file specification syntax
+VMS::Stdio 12
+
+Standard I/O functions via VMS extensions
+Win32 12
+
+Interfaces to some Win32 API Functions
+Win32API::File 12
+
+Low level access to Win32 system API calls for files/dirs.
+Win32CORE 12
+
+Win32 CORE function stubs
+XS::APItest 12
+
+Test the perl C API
+XS::Typemap 12
+
+Module to test the XS typemaps distributed with perl
+XSLoader 12
+
+Dynamically load C libraries into Perl code
+autodie::Scope::Guard 12
+
+Wrapper class for calling subs at end of scope
+autodie::Scope::GuardStack 12
+ Hook stack for managing scopes via %^H
+
+autodie::Util 12
+
+Internal Utility subroutines for autodie and Fatal
+version::Internals 12
+
+Perl extension for Version Objects
+
+To find out all modules installed on your system, including
+those without documentation or outside the standard release,
+just use the following command (under the default win32 shell,
+double quotes should be used instead of single quotes).
+    % perl  MFile::Find=find  MFile::Spec::Functions  Tlwe (
+      find { wanted => sub { print canonpath $_ if /(.pm(z/ },
+      no_chdir => 1 }, @INC
+(The  T is here to prevent '.' from being listed in @INC.)
+They should all have their own documentation installed and accessible
+via your system man(1) command.  If you do not have a find
+program, you can use the Perl find2perl program instead, which
+generates Perl code as output you can run through perl.  If you
+have a man program but it doesn't find your modules, you'll have
+to fix your manpath.  See perl for details.  If you have no
+system man command, you might try the perldoc program.
+
+Note also that the command perldoc perllocal(fR gives you a (possibly
+incomplete) list of the modules that have been further installed on
+your system. (The perllocal.pod file is updated by the standard MakeMaker
+install process.)
+Extension Modules
+
+Extension modules are written in C (or a mix of Perl and C).  They
+are usually dynamically loaded into Perl if and when you need them,
+but may also be linked in statically.  Supported extension modules
+include Socket, Fcntl, and POSIX.
+
+Many popular C extension modules do not come bundled (at least, not
+completely) due to their sizes, volatility, or simply lack of time
+for adequate testing and configuration across the multitude of
+platforms on which Perl was beta tested.  You are encouraged to
+look for them on CPAN (described below), or using web search engines
+like Alta Vista or Google.
+CPAN
+
+CPAN stands for Comprehensive Perl Archive Network; it's a globally
+replicated trove of Perl materials, including documentation, style
+guides, tricks and traps, alternate ports to non Unix systems and
+occasional binary distributions for these.   Search engines for
+CPAN can be found at http://www.cpan.org/
+
+Most importantly, CPAN includes around a thousand unbundled modules,
+some of which require a C compiler to build.  Major categories of
+modules are:
+o 4
+Language Extensions and Documentation Tools
+o 4
+Development Support
+o 4
+Operating System Interfaces
+o 4
+Networking, Device Control (modems) and InterProcess Communication
+o 4
+Data Types and Data Type Utilities
+o 4
+Database Interfaces
+o 4
+User Interfaces
+o 4
+Interfaces to / Emulations of Other Programming Languages
+o 4
+File Names, File Systems and File Locking (see also File Handles)
+o 4
+String Processing, Language Text Processing, Parsing, and Searching
+o 4
+Option, Argument, Parameter, and Configuration File Processing
+o 4
+Internationalization and Locale
+o 4
+Authentication, Security, and Encryption
+o 4
+World Wide Web, HTML, HTTP, CGI, MIME
+o 4
+Server and Daemon Utilities
+o 4
+Archiving and Compression
+o 4
+Images, Pixmap and Bitmap Manipulation, Drawing, and Graphing
+o 4
+Mail and Usenet News
+o 4
+Control Flow Utilities (callbacks and exceptions etc)
+o 4
+File Handle and Input/Output Stream Utilities
+o 4
+Miscellaneous Modules
+
+The list of the registered CPAN sites follows.
+Please note that the sorting order is alphabetical on fields:
+
+Continent
+   |
+   |  >Country
+         |
+         |  >[state/province]
+                   |
+                   |  >ftp
+                   |
+                   |  >[http]
+
+and thus the North American servers happen to be listed between the
+European and the South American sites.
+
+Registered CPAN sites
+Africa
+
+South Africa 4
+  http://mirror.is.co.za/pub/cpan/
+  ftp://ftp.is.co.za/pub/cpan/
+  http://cpan.mirror.ac.za/
+  ftp://cpan.mirror.ac.za/
+  http://cpan.saix.net/
+  ftp://ftp.saix.net/pub/CPAN/
+  http://ftp.wa.co.za/pub/CPAN/
+  ftp://ftp.wa.co.za/pub/CPAN/
+
+Uganda 4
+  http://mirror.ucu.ac.ug/cpan/
+
+Zimbabwe 4
+  http://mirror.zol.co.zw/CPAN/
+  ftp://mirror.zol.co.zw/CPAN/
+
+Asia
+
+Bangladesh 4
+  http://mirror.dhakacom.com/CPAN/
+  ftp://mirror.dhakacom.com/CPAN/
+
+China 4
+  http://cpan.communilink.net/
+  http://ftp.cuhk.edu.hk/pub/packages/perl/CPAN/
+  ftp://ftp.cuhk.edu.hk/pub/packages/perl/CPAN/
+  http://mirrors.hust.edu.cn/CPAN/
+  http://mirrors.neusoft.edu.cn/cpan/
+  http://mirror.lzu.edu.cn/CPAN/
+  http://mirrors.163.com/cpan/
+  http://mirrors.sohu.com/CPAN/
+  http://mirrors.ustc.edu.cn/CPAN/
+  ftp://mirrors.ustc.edu.cn/CPAN/
+  http://mirrors.xmu.edu.cn/CPAN/
+  ftp://mirrors.xmu.edu.cn/CPAN/
+  http://mirrors.zju.edu.cn/CPAN/
+
+India 4
+  http://cpan.excellmedia.net/
+  http://perlmirror.indialinks.com/
+
+Indonesia 4
+  http://kambing.ui.ac.id/cpan/
+  http://cpan.pesat.net.id/
+  http://mirror.poliwangi.ac.id/CPAN/
+  http://kartolo.sby.datautama.net.id/CPAN/
+  http://mirror.wanxp.id/cpan/
+
+Iran 4
+  http://mirror.yazd.ac.ir/cpan/
+
+Israel 4
+  http://biocourse.weizmann.ac.il/CPAN/
+
+Japan 4
+  http://ftp.jaist.ac.jp/pub/CPAN/
+  ftp://ftp.jaist.ac.jp/pub/CPAN/
+  http://mirror.jre655.com/CPAN/
+  ftp://mirror.jre655.com/CPAN/
+  ftp://ftp.kddilabs.jp/CPAN/
+  http://ftp.nara.wide.ad.jp/pub/CPAN/
+  ftp://ftp.nara.wide.ad.jp/pub/CPAN/
+  http://ftp.riken.jp/lang/CPAN/
+  ftp://ftp.riken.jp/lang/CPAN/
+  ftp://ftp.u aizu.ac.jp/pub/CPAN/
+  http://ftp.yz.yamagata u.ac.jp/pub/lang/cpan/
+  ftp://ftp.yz.yamagata u.ac.jp/pub/lang/cpan/
+
+Kazakhstan 4
+  http://mirror.neolabs.kz/CPAN/
+  ftp://mirror.neolabs.kz/CPAN/
+
+Philippines 4
+  http://mirror.pregi.net/CPAN/
+  ftp://mirror.pregi.net/CPAN/
+  http://mirror.rise.ph/cpan/
+  ftp://mirror.rise.ph/cpan/
+
+Qatar 4
+  http://mirror.qnren.qa/CPAN/
+  ftp://mirror.qnren.qa/CPAN/
+
+Republic of Korea 4
+  http://cpan.mirror.cdnetworks.com/
+  ftp://cpan.mirror.cdnetworks.com/CPAN/
+  http://ftp.kaist.ac.kr/pub/CPAN/
+  ftp://ftp.kaist.ac.kr/CPAN/
+  http://ftp.kr.freebsd.org/pub/CPAN/
+  ftp://ftp.kr.freebsd.org/pub/CPAN/
+  http://mirror.navercorp.com/CPAN/
+  http://ftp.neowiz.com/CPAN/
+  ftp://ftp.neowiz.com/CPAN/
+
+Singapore 4
+  http://cpan.mirror.choon.net/
+  http://mirror.0x.sg/CPAN/
+  ftp://mirror.0x.sg/CPAN/
+
+Taiwan 4
+  http://cpan.cdpa.nsysu.edu.tw/Unix/Lang/CPAN/
+  ftp://cpan.cdpa.nsysu.edu.tw/Unix/Lang/CPAN/
+  http://cpan.stu.edu.tw/
+  ftp://ftp.stu.edu.tw/CPAN/
+  http://ftp.yzu.edu.tw/CPAN/
+  ftp://ftp.yzu.edu.tw/CPAN/
+  http://cpan.nctu.edu.tw/
+  ftp://cpan.nctu.edu.tw/
+  http://ftp.ubuntu tw.org/mirror/CPAN/
+  ftp://ftp.ubuntu tw.org/mirror/CPAN/
+
+Turkey 4
+  http://cpan.ulak.net.tr/
+  ftp://ftp.ulak.net.tr/pub/perl/CPAN/
+  http://mirror.vit.com.tr/mirror/CPAN/
+  ftp://mirror.vit.com.tr/CPAN/
+
+Viet Nam 4
+  http://mirrors.digipower.vn/CPAN/
+  http://mirror.downloadvn.com/cpan/
+  http://mirrors.vinahost.vn/CPAN/
+
+Europe
+
+Austria 4
+  http://cpan.inode.at/
+  ftp://cpan.inode.at/
+  http://mirror.easyname.at/cpan/
+  ftp://mirror.easyname.at/cpan/
+  http://gd.tuwien.ac.at/languages/perl/CPAN/
+  ftp://gd.tuwien.ac.at/pub/CPAN/
+
+Belarus 4
+  http://ftp.byfly.by/pub/CPAN/
+  ftp://ftp.byfly.by/pub/CPAN/
+  http://mirror.datacenter.by/pub/CPAN/
+  ftp://mirror.datacenter.by/pub/CPAN/
+
+Belgium 4
+  http://ftp.belnet.be/ftp.cpan.org/
+  ftp://ftp.belnet.be/mirror/ftp.cpan.org/
+  http://cpan.cu.be/
+  http://lib.ugent.be/CPAN/
+  http://cpan.weepeetelecom.be/
+
+Bosnia and Herzegovina 4
+  http://cpan.mirror.ba/
+  ftp://ftp.mirror.ba/CPAN/
+
+Bulgaria 4
+  http://mirrors.neterra.net/CPAN/
+  ftp://mirrors.neterra.net/CPAN/
+  http://mirrors.netix.net/CPAN/
+  ftp://mirrors.netix.net/CPAN/
+
+Croatia 4
+  http://ftp.carnet.hr/pub/CPAN/
+  ftp://ftp.carnet.hr/pub/CPAN/
+
+Czech Republic 4
+  http://mirror.dkm.cz/cpan/
+  ftp://mirror.dkm.cz/cpan/
+  ftp://ftp.fi.muni.cz/pub/CPAN/
+  http://mirrors.nic.cz/CPAN/
+  ftp://mirrors.nic.cz/pub/CPAN/
+  http://cpan.mirror.vutbr.cz/
+  ftp://mirror.vutbr.cz/cpan/
+
+Denmark 4
+  http://www.cpan.dk/
+  http://mirrors.dotsrc.org/cpan/
+  ftp://mirrors.dotsrc.org/cpan/
+
+Finland 4
+  ftp://ftp.funet.fi/pub/languages/perl/CPAN/
+
+France 4
+  http://ftp.ciril.fr/pub/cpan/
+  ftp://ftp.ciril.fr/pub/cpan/
+  http://distrib coffee.ipsl.jussieu.fr/pub/mirrors/cpan/
+  ftp://distrib coffee.ipsl.jussieu.fr/pub/mirrors/cpan/
+  http://ftp.lip6.fr/pub/perl/CPAN/
+  ftp://ftp.lip6.fr/pub/perl/CPAN/
+  http://mirror.ibcp.fr/pub/CPAN/
+  ftp://ftp.oleane.net/pub/CPAN/
+  http://cpan.mirrors.ovh.net/ftp.cpan.org/
+  ftp://cpan.mirrors.ovh.net/ftp.cpan.org/
+  http://cpan.enstimac.fr/
+
+Germany 4
+  http://mirror.23media.de/cpan/
+  ftp://mirror.23media.de/cpan/
+  http://artfiles.org/cpan.org/
+  ftp://artfiles.org/cpan.org/
+  http://mirror.bibleonline.ru/cpan/
+  http://mirror.checkdomain.de/CPAN/
+  ftp://mirror.checkdomain.de/CPAN/
+  http://cpan.noris.de/
+  http://mirror.de.leaseweb.net/CPAN/
+  ftp://mirror.de.leaseweb.net/CPAN/
+  http://cpan.mirror.euserv.net/
+  ftp://mirror.euserv.net/cpan/
+  http://ftp stud.hs esslingen.de/pub/Mirrors/CPAN/
+  ftp://mirror.fraunhofer.de/CPAN/
+  ftp://ftp.freenet.de/pub/ftp.cpan.org/pub/CPAN/
+  http://ftp.hosteurope.de/pub/CPAN/
+  ftp://ftp.hosteurope.de/pub/CPAN/
+  ftp://ftp.fu berlin.de/unix/languages/perl/
+  http://ftp.gwdg.de/pub/languages/perl/CPAN/
+  ftp://ftp.gwdg.de/pub/languages/perl/CPAN/
+  http://ftp.hawo.stw.uni erlangen.de/CPAN/
+  ftp://ftp.hawo.stw.uni erlangen.de/CPAN/
+  http://cpan.mirror.iphh.net/
+  ftp://cpan.mirror.iphh.net/pub/CPAN/
+  ftp://ftp.mpi inf.mpg.de/pub/perl/CPAN/
+  http://cpan.netbet.org/
+  http://mirror.netcologne.de/cpan/
+  ftp://mirror.netcologne.de/cpan/
+  ftp://mirror.petamem.com/CPAN/
+  http://www.planet elektronik.de/CPAN/
+  http://ftp.halifax.rwth aachen.de/cpan/
+  ftp://ftp.halifax.rwth aachen.de/cpan/
+  http://mirror.softaculous.com/cpan/
+  http://ftp.u tx.net/CPAN/
+  ftp://ftp.u tx.net/CPAN/
+  http://mirror.reismil.ch/CPAN/
+
+Greece 4
+  http://cpan.cc.uoc.gr/mirrors/CPAN/
+  ftp://ftp.cc.uoc.gr/mirrors/CPAN/
+  http://ftp.ntua.gr/pub/lang/perl/
+  ftp://ftp.ntua.gr/pub/lang/perl/
+
+Hungary 4
+  http://mirror.met.hu/CPAN/
+
+Ireland 4
+  http://ftp.heanet.ie/mirrors/ftp.perl.org/pub/CPAN/
+  ftp://ftp.heanet.ie/mirrors/ftp.perl.org/pub/CPAN/
+
+Italy 4
+  http://bo.mirror.garr.it/mirrors/CPAN/
+  ftp://ftp.eutelia.it/CPAN_Mirror/
+  http://cpan.panu.it/
+  ftp://ftp.panu.it/pub/mirrors/perl/CPAN/
+  http://cpan.muzzy.it/
+
+Latvia 4
+  http://kvin.lv/pub/CPAN/
+
+Lithuania 4
+  http://ftp.litnet.lt/pub/CPAN/
+  ftp://ftp.litnet.lt/pub/CPAN/
+
+Moldova 4
+  http://mirror.as43289.net/pub/CPAN/
+  ftp://mirror.as43289.net/pub/CPAN/
+
+Netherlands 4
+  http://cpan.cs.uu.nl/
+  ftp://ftp.cs.uu.nl/pub/CPAN/
+  http://mirror.nl.leaseweb.net/CPAN/
+  ftp://mirror.nl.leaseweb.net/CPAN/
+  http://ftp.nluug.nl/languages/perl/CPAN/
+  ftp://ftp.nluug.nl/pub/languages/perl/CPAN/
+  http://mirror.transip.net/CPAN/
+  ftp://mirror.transip.net/CPAN/
+  http://cpan.mirror.triple it.nl/
+  http://ftp.tudelft.nl/cpan/
+  ftp://ftp.tudelft.nl/pub/CPAN/
+  ftp://download.xs4all.nl/pub/mirror/CPAN/
+
+Norway 4
+  http://cpan.uib.no/
+  ftp://cpan.uib.no/pub/CPAN/
+  ftp://ftp.uninett.no/pub/languages/perl/CPAN/
+  http://cpan.vianett.no/
+
+Poland 4
+  http://ftp.agh.edu.pl/CPAN/
+  ftp://ftp.agh.edu.pl/CPAN/
+  http://ftp.piotrkosoft.net/pub/mirrors/CPAN/
+  ftp://ftp.piotrkosoft.net/pub/mirrors/CPAN/
+  ftp://ftp.ps.pl/pub/CPAN/
+  http://sunsite.icm.edu.pl/pub/CPAN/
+  ftp://sunsite.icm.edu.pl/pub/CPAN/
+
+Portugal 4
+  http://cpan.dcc.fc.up.pt/
+  http://mirrors.fe.up.pt/pub/CPAN/
+  http://cpan.perl hackers.net/
+  http://cpan.perl.pt/
+
+Romania 4
+  http://mirrors.hostingromania.ro/cpan.org/
+  ftp://ftp.lug.ro/CPAN/
+  http://mirrors.m247.ro/CPAN/
+  http://mirrors.evowise.com/CPAN/
+  http://mirrors.teentelecom.net/CPAN/
+  ftp://mirrors.teentelecom.net/CPAN/
+  http://mirrors.xservers.ro/CPAN/
+
+Russian Federation 4
+  ftp://ftp.aha.ru/CPAN/
+  http://cpan.rinet.ru/
+  ftp://cpan.rinet.ru/pub/mirror/CPAN/
+  http://cpan mirror.rbc.ru/pub/CPAN/
+  http://mirror.rol.ru/CPAN/
+  http://cpan.uni altai.ru/
+  http://cpan.webdesk.ru/
+  ftp://cpan.webdesk.ru/cpan/
+  http://mirror.yandex.ru/mirrors/cpan/
+  ftp://mirror.yandex.ru/mirrors/cpan/
+
+Serbia 4
+  http://mirror.sbb.rs/CPAN/
+  ftp://mirror.sbb.rs/CPAN/
+
+Slovakia 4
+  http://cpan.lnx.sk/
+  http://tux.rainside.sk/CPAN/
+  ftp://tux.rainside.sk/CPAN/
+
+Slovenia 4
+  http://ftp.arnes.si/software/perl/CPAN/
+  ftp://ftp.arnes.si/software/perl/CPAN/
+
+Spain 4
+  http://mirrors.evowise.com/CPAN/
+  http://osl.ugr.es/CPAN/
+  http://ftp.rediris.es/mirror/CPAN/
+  ftp://ftp.rediris.es/mirror/CPAN/
+
+Sweden 4
+  http://ftp.acc.umu.se/mirror/CPAN/
+  ftp://ftp.acc.umu.se/mirror/CPAN/
+
+Switzerland 4
+  http://www.pirbot.com/mirrors/cpan/
+  http://mirror.switch.ch/ftp/mirror/CPAN/
+  ftp://mirror.switch.ch/mirror/CPAN/
+
+Ukraine 4
+  http://cpan.ip connect.vn.ua/
+  ftp://cpan.ip connect.vn.ua/mirror/cpan/
+
+United Kingdom 4
+  http://cpan.mirror.anlx.net/
+  ftp://ftp.mirror.anlx.net/CPAN/
+  http://mirror.bytemark.co.uk/CPAN/
+  ftp://mirror.bytemark.co.uk/CPAN/
+  http://mirrors.coreix.net/CPAN/
+  http://cpan.etla.org/
+  ftp://cpan.etla.org/pub/CPAN/
+  http://cpan.cpantesters.org/
+  http://mirror.sax.uk.as61049.net/CPAN/
+  http://mirror.sov.uk.goscomb.net/CPAN/
+  http://www.mirrorservice.org/sites/cpan.perl.org/CPAN/
+  ftp://ftp.mirrorservice.org/sites/cpan.perl.org/CPAN/
+  http://mirror.ox.ac.uk/sites/www.cpan.org/
+  ftp://mirror.ox.ac.uk/sites/www.cpan.org/
+  http://ftp.ticklers.org/pub/CPAN/
+  ftp://ftp.ticklers.org/pub/CPAN/
+  http://cpan.mirrors.uk2.net/
+  ftp://mirrors.uk2.net/pub/CPAN/
+  http://mirror.ukhost4u.com/CPAN/
+
+North America
+
+Canada 4
+  http://CPAN.mirror.rafal.ca/
+  ftp://CPAN.mirror.rafal.ca/pub/CPAN/
+  http://mirror.csclub.uwaterloo.ca/CPAN/
+  ftp://mirror.csclub.uwaterloo.ca/CPAN/
+  http://mirrors.gossamer threads.com/CPAN/
+  http://mirror.its.dal.ca/cpan/
+  ftp://mirror.its.dal.ca/cpan/
+  ftp://ftp.ottix.net/pub/CPAN/
+
+Costa Rica 4
+  http://mirrors.ucr.ac.cr/CPAN/
+
+Mexico 4
+  http://www.msg.com.mx/CPAN/
+  ftp://ftp.msg.com.mx/pub/CPAN/
+
+United States 4
+Alabama 8
+  http://mirror.teklinks.com/CPAN/
+
+Arizona 8
+  http://mirror.n5tech.com/CPAN/
+  http://mirrors.namecheap.com/CPAN/
+  ftp://mirrors.namecheap.com/CPAN/
+
+California 8
+  http://cpan.develooper.com/
+  http://httpupdate127.cpanel.net/CPAN/
+  http://mirrors.sonic.net/cpan/
+  ftp://mirrors.sonic.net/cpan/
+  http://www.perl.com/CPAN/
+  http://cpan.yimg.com/
+
+Idaho 8
+  http://mirrors.syringanetworks.net/CPAN/
+  ftp://mirrors.syringanetworks.net/CPAN/
+
+Illinois 8
+  http://cpan.mirrors.hoobly.com/
+  http://mirror.team cymru.org/CPAN/
+  ftp://mirror.team cymru.org/CPAN/
+
+Indiana 8
+  http://cpan.netnitco.net/
+  ftp://cpan.netnitco.net/pub/mirrors/CPAN/
+  ftp://ftp.uwsg.iu.edu/pub/perl/CPAN/
+
+Kansas 8
+  http://mirrors.concertpass.com/cpan/
+
+Massachusetts 8
+  http://mirrors.ccs.neu.edu/CPAN/
+
+Michigan 8
+  http://cpan.cse.msu.edu/
+  ftp://cpan.cse.msu.edu/
+  http://httpupdate118.cpanel.net/CPAN/
+  http://mirrors usa.go parts.com/cpan/
+  http://ftp.wayne.edu/CPAN/
+  ftp://ftp.wayne.edu/CPAN/
+
+New Hampshire 8
+  http://mirror.metrocast.net/cpan/
+
+New Jersey 8
+  http://mirror.datapipe.net/CPAN/
+  ftp://mirror.datapipe.net/pub/CPAN/
+  http://www.hoovism.com/CPAN/
+  ftp://ftp.hoovism.com/CPAN/
+  http://cpan.mirror.nac.net/
+
+New York 8
+  http://mirror.cc.columbia.edu/pub/software/cpan/
+  ftp://mirror.cc.columbia.edu/pub/software/cpan/
+  http://cpan.belfry.net/
+  http://cpan.erlbaum.net/
+  ftp://cpan.erlbaum.net/CPAN/
+  http://cpan.hexten.net/
+  ftp://cpan.hexten.net/
+  http://mirror.nyi.net/CPAN/
+  ftp://mirror.nyi.net/pub/CPAN/
+  http://noodle.portalus.net/CPAN/
+  ftp://noodle.portalus.net/CPAN/
+  http://mirrors.rit.edu/CPAN/
+  ftp://mirrors.rit.edu/CPAN/
+
+North Carolina 8
+  http://httpupdate140.cpanel.net/CPAN/
+  http://mirrors.ibiblio.org/CPAN/
+
+Oregon 8
+  http://ftp.osuosl.org/pub/CPAN/
+  ftp://ftp.osuosl.org/pub/CPAN/
+  http://mirror.uoregon.edu/CPAN/
+
+Pennsylvania 8
+  http://cpan.pair.com/
+  ftp://cpan.pair.com/pub/CPAN/
+  http://cpan.mirrors.ionfish.org/
+
+South Carolina 8
+  http://cpan.mirror.clemson.edu/
+
+Texas 8
+  http://mirror.uta.edu/CPAN/
+
+Utah 8
+  http://cpan.cs.utah.edu/
+  ftp://cpan.cs.utah.edu/CPAN/
+  ftp://mirror.xmission.com/CPAN/
+
+Virginia 8
+  http://mirror.cogentco.com/pub/CPAN/
+  ftp://mirror.cogentco.com/pub/CPAN/
+  http://mirror.jmu.edu/pub/CPAN/
+  ftp://mirror.jmu.edu/pub/CPAN/
+  http://mirror.us.leaseweb.net/CPAN/
+  ftp://mirror.us.leaseweb.net/CPAN/
+
+Washington 8
+  http://cpan.llarian.net/
+  ftp://cpan.llarian.net/pub/CPAN/
+
+Wisconsin 8
+  http://cpan.mirrors.tds.net/
+  ftp://cpan.mirrors.tds.net/pub/CPAN/
+Oceania
+
+Australia 4
+  http://mirror.as24220.net/pub/cpan/
+  ftp://mirror.as24220.net/pub/cpan/
+  http://cpan.mirrors.ilisys.com.au/
+  http://cpan.mirror.digitalpacific.com.au/
+  ftp://mirror.internode.on.net/pub/cpan/
+  http://mirror.optusnet.com.au/CPAN/
+  http://cpan.mirror.serversaustralia.com.au/
+  http://cpan.uberglobalmirror.com/
+  http://mirror.waia.asn.au/pub/cpan/
+
+New Caledonia 4
+  http://cpan.lagoon.nc/pub/CPAN/
+  ftp://cpan.lagoon.nc/pub/CPAN/
+  http://cpan.nautile.nc/CPAN/
+  ftp://cpan.nautile.nc/CPAN/
+
+New Zealand 4
+  ftp://ftp.auckland.ac.nz/pub/perl/CPAN/
+  http://cpan.catalyst.net.nz/CPAN/
+  ftp://cpan.catalyst.net.nz/pub/CPAN/
+  http://cpan.inspire.net.nz/
+  ftp://cpan.inspire.net.nz/cpan/
+  http://mirror.webtastix.net/CPAN/
+  ftp://mirror.webtastix.net/CPAN/
+
+South America
+
+Argentina 4
+  http://cpan.mmgdesigns.com.ar/
+
+Brazil 4
+  http://cpan.kinghost.net/
+  http://linorg.usp.br/CPAN/
+  http://mirror.nbtelecom.com.br/CPAN/
+
+Chile 4
+  http://cpan.dcc.uchile.cl/
+  ftp://cpan.dcc.uchile.cl/pub/lang/cpan/
+
+RSYNC Mirrors
+                rsync://ftp.is.co.za/IS Mirror/ftp.cpan.org/
+                rsync://mirror.ac.za/CPAN/
+                rsync://mirror.zol.co.zw/CPAN/
+                rsync://mirror.dhakacom.com/CPAN/
+                rsync://mirrors.ustc.edu.cn/CPAN/
+                rsync://mirrors.xmu.edu.cn/CPAN/
+                rsync://kambing.ui.ac.id/CPAN/
+                rsync://ftp.jaist.ac.jp/pub/CPAN/
+                rsync://mirror.jre655.com/CPAN/
+                rsync://ftp.kddilabs.jp/cpan/
+                rsync://ftp.nara.wide.ad.jp/cpan/
+                rsync://ftp.riken.jp/cpan/
+                rsync://mirror.neolabs.kz/CPAN/
+                rsync://mirror.qnren.qa/CPAN/
+                rsync://ftp.neowiz.com/CPAN/
+                rsync://mirror.0x.sg/CPAN/
+                rsync://ftp.yzu.edu.tw/pub/CPAN/
+                rsync://ftp.ubuntu tw.org/CPAN/
+                rsync://mirrors.digipower.vn/CPAN/
+                rsync://cpan.inode.at/CPAN/
+                rsync://ftp.byfly.by/CPAN/
+                rsync://mirror.datacenter.by/CPAN/
+                rsync://ftp.belnet.be/cpan/
+                rsync://cpan.mirror.ba/CPAN/
+                rsync://mirrors.neterra.net/CPAN/
+                rsync://mirrors.netix.net/CPAN/
+                rsync://mirror.dkm.cz/cpan/
+                rsync://mirrors.nic.cz/CPAN/
+                rsync://cpan.mirror.vutbr.cz/cpan/
+                rsync://rsync.nic.funet.fi/CPAN/
+                rsync://ftp.ciril.fr/pub/cpan/
+                rsync://distrib coffee.ipsl.jussieu.fr/pub/mirrors/cpan/
+                rsync://cpan.mirrors.ovh.net/CPAN/
+                rsync://mirror.de.leaseweb.net/CPAN/
+                rsync://mirror.euserv.net/cpan/
+                rsync://ftp stud.hs esslingen.de/CPAN/
+                rsync://ftp.gwdg.de/pub/languages/perl/CPAN/
+                rsync://ftp.hawo.stw.uni erlangen.de/CPAN/
+                rsync://cpan.mirror.iphh.net/CPAN/
+                rsync://mirror.netcologne.de/cpan/
+                rsync://ftp.halifax.rwth aachen.de/cpan/
+                rsync://ftp.ntua.gr/CPAN/
+                rsync://mirror.met.hu/CPAN/
+                rsync://ftp.heanet.ie/mirrors/ftp.perl.org/pub/CPAN/
+                rsync://rsync.panu.it/CPAN/
+                rsync://mirror.as43289.net/CPAN/
+                rsync://rsync.cs.uu.nl/CPAN/
+                rsync://mirror.nl.leaseweb.net/CPAN/
+                rsync://ftp.nluug.nl/CPAN/
+                rsync://mirror.transip.net/CPAN/
+                rsync://cpan.uib.no/cpan/
+                rsync://cpan.vianett.no/CPAN/
+                rsync://cpan.perl hackers.net/CPAN/
+                rsync://cpan.perl.pt/cpan/
+                rsync://mirrors.m247.ro/CPAN/
+                rsync://mirrors.teentelecom.net/CPAN/
+                rsync://cpan.webdesk.ru/CPAN/
+                rsync://mirror.yandex.ru/mirrors/cpan/
+                rsync://mirror.sbb.rs/CPAN/
+                rsync://ftp.acc.umu.se/mirror/CPAN/
+                rsync://rsync.pirbot.com/ftp/cpan/
+                rsync://cpan.ip connect.vn.ua/CPAN/
+                rsync://rsync.mirror.anlx.net/CPAN/
+                rsync://mirror.bytemark.co.uk/CPAN/
+                rsync://mirror.sax.uk.as61049.net/CPAN/
+                rsync://rsync.mirrorservice.org/cpan.perl.org/CPAN/
+                rsync://ftp.ticklers.org/CPAN/
+                rsync://mirrors.uk2.net/CPAN/
+                rsync://CPAN.mirror.rafal.ca/CPAN/
+                rsync://mirror.csclub.uwaterloo.ca/CPAN/
+                rsync://mirrors.namecheap.com/CPAN/
+                rsync://mirrors.syringanetworks.net/CPAN/
+                rsync://mirror.team cymru.org/CPAN/
+                rsync://debian.cse.msu.edu/cpan/
+                rsync://mirrors usa.go parts.com/mirrors/cpan/
+                rsync://rsync.hoovism.com/CPAN/
+                rsync://mirror.cc.columbia.edu/cpan/
+                rsync://noodle.portalus.net/CPAN/
+                rsync://mirrors.rit.edu/cpan/
+                rsync://mirrors.ibiblio.org/CPAN/
+                rsync://cpan.pair.com/CPAN/
+                rsync://cpan.cs.utah.edu/CPAN/
+                rsync://mirror.cogentco.com/CPAN/
+                rsync://mirror.jmu.edu/CPAN/
+                rsync://mirror.us.leaseweb.net/CPAN/
+                rsync://cpan.mirror.digitalpacific.com.au/cpan/
+                rsync://mirror.internode.on.net/cpan/
+                rsync://uberglobalmirror.com/cpan/
+                rsync://cpan.lagoon.nc/cpan/
+                rsync://mirrors.mmgdesigns.com.ar/CPAN/
+For an up to date listing of CPAN sites,
+see <http://www.cpan.org/SITES> or <ftp://www.cpan.org/SITES>.
+Modules: Creation, Use, and Abuse
+
+(The following section is borrowed directly from Tim Bunce's modules
+file, available at your nearest CPAN site.)
+
+Perl implements a class using a package, but the presence of a
+package doesn't imply the presence of a class.  A package is just a
+namespace.  A class is a package that provides subroutines that can be
+used as methods.  A method is just a subroutine that expects, as its
+first argument, either the name of a package (for static methods),
+or a reference to something (for virtual methods).
+
+A module is a file that (by convention) provides a class of the same
+name (sans the .pm), plus an import method in that class that can be
+called to fetch exported symbols.  This module may implement some of
+its methods by loading dynamic C or C .1v'++.1v'totally transparent to the user of the module.  Likewise, the module
+might set up an AUTOLOAD function to slurp in subroutine definitions on
+demand, but this is also transparent.  Only the .pm file is required to
+exist.  See perlsub, perlobj, and AutoLoader for details about
+the AUTOLOAD mechanism.
+Guidelines for Module Creation
+
+o 4
+Do similar modules already exist in some form?
+
+If so, please try to reuse the existing modules either in whole or
+by inheriting useful features into a new class.  If this is not
+practical try to get together with the module authors to work on
+extending or enhancing the functionality of the existing modules.
+A perfect example is the plethora of packages in perl4 for dealing
+with command line options.
+
+If you are writing a module to expand an already existing set of
+modules, please coordinate with the author of the package.  It
+helps if you follow the same naming scheme and module interaction
+scheme as the original author.
+o 4
+Try to design the new module to be easy to extend and reuse.
+
+Try to use warnings;(fR (or use warnings qw(...);(fR).
+Remember that you can add no warnings qw(...);(fR to individual blocks
+of code that need less warnings.
+
+Use blessed references.  Use the two argument form of bless to bless
+into the class name given as the first parameter of the constructor,
+e.g.,:
+ sub new {
+     my $class = shift;
+     return bless {}, $class;
+ }
+or even this if you'd like it to be used as either a static
+or a virtual method.
+ sub new {
+     my $self  = shift;
+     my $class = ref($self) || $self;
+     return bless {}, $class;
+ }
+Pass arrays as references so more parameters can be added later
+(it's also faster).  Convert functions into methods where
+appropriate.  Split large methods into smaller more flexible ones.
+Inherit methods from other modules if appropriate.
+
+Avoid class name tests like: die "Invalid" unless ref $ref eq FOO(W(C'.
+Generally you can delete the eq FOO(W(C' part with no harm at all.
+Let the objects look after themselves! Generally, avoid hard wired
+class names as far as possible.
+
+Avoid $r >Class::func()(fR where using @ISA=qw(... Class ...)(fR and
+$r >func()(fR would work.
+
+Use autosplit so little used or newly added functions won't be a
+burden to programs that don't use them. Add test functions to
+the module after __END__ either using AutoSplit or by saying:
+ eval join((W(Aq,<main::DATA>) || die $@ unless caller();
+Does your module pass the 'empty subclass' test? If you say
+@SUBCLASS::ISA = qw(YOURCLASS);(fR your applications should be able
+to use SUBCLASS in exactly the same way as YOURCLASS.  For example,
+does your application still work if you change:  $obj = YOURCLASS >new();(fR
+into: $obj = SUBCLASS >new();(fR ?
+
+Avoid keeping any state information in your packages. It makes it
+difficult for multiple other packages to use yours. Keep state
+information in objects.
+
+Always use  w.
+
+Try to use strict;(fR (or use strict qw(...);(fR).
+Remember that you can add no strict qw(...);(fR to individual blocks
+of code that need less strictness.
+
+Always use  w.
+
+Follow the guidelines in perlstyle.
+
+Always use  w.
+o 4
+Some simple style guidelines
+
+The perlstyle manual supplied with Perl has many helpful points.
+
+Coding style is a matter of personal taste. Many people evolve their
+style over several years as they learn what helps them write and
+maintain good code.  Here's one set of assorted suggestions that
+seem to be widely used by experienced developers:
+
+Use underscores to separate words.  It is generally easier to read
+$var_names_like_this than $VarNamesLikeThis, especially for
+non native speakers of English. It's also a simple rule that works
+consistently with VAR_NAMES_LIKE_THIS.
+
+Package/Module names are an exception to this rule. Perl informally
+reserves lowercase module names for 'pragma' modules like integer
+and strict. Other modules normally begin with a capital letter and
+use mixed case with no underscores (need to be short and portable).
+
+You may find it helpful to use letter case to indicate the scope
+or nature of a variable. For example:
+ $ALL_CAPS_HERE   constants only (beware clashes with Perl vars)
+ $Some_Caps_Here  package wide global/static
+ $no_caps_here    function scope my() or local() variables
+Function and method names seem to work best as all lowercase.
+e.g., $obj >as_string()(fR.
+
+You can use a leading underscore to indicate that a variable or
+function should not be used outside the package that defined it.
+o 4
+Select what to export.
+
+Do NOT export method names!
+
+Do NOT export anything else by default without a good reason!
+
+Exports pollute the namespace of the module user.  If you must
+export try to use @EXPORT_OK in preference to @EXPORT and avoid
+short or common names to reduce the risk of name clashes.
+
+Generally anything not exported is still accessible from outside the
+module using the ModuleName::item_name (or $blessed_ref >method(fR)
+syntax.  By convention you can use a leading underscore on names to
+indicate informally that they are 'internal' and not for public use.
+
+(It is actually possible to get private functions by saying:
+my $subref = sub { ... };  &$subref;(fR.  But there's no way to call that
+directly as a method, because a method must have a name in the symbol
+table.)
+
+As a general rule, if the module is trying to be object oriented
+then export nothing. If it's just a collection of functions then
+@EXPORT_OK anything but use @EXPORT with caution.
+o 4
+Select a name for the module.
+
+This name should be as descriptive, accurate, and complete as
+possible.  Avoid any risk of ambiguity. Always try to use two or
+more whole words.  Generally the name should reflect what is special
+about what the module does rather than how it does it.  Please use
+nested module names to group informally or categorize a module.
+There should be a very good reason for a module not to have a nested name.
+Module names should begin with a capital letter.
+
+Having 57 modules all called Sort will not make life easy for anyone
+(though having 23 called Sort::Quick is only marginally better : ).
+Imagine someone trying to install your module alongside many others.
+
+If you are developing a suite of related modules/classes it's good
+practice to use nested classes with a common prefix as this will
+avoid namespace clashes. For example: Xyz::Control, Xyz::View,
+Xyz::Model etc. Use the modules in this list as a naming guide.
+
+If adding a new module to a set, follow the original author's
+standards for naming modules and the interface to methods in
+those modules.
+
+If developing modules for private internal or project specific use,
+that will never be released to the public, then you should ensure
+that their names will not clash with any future public module. You
+can do this either by using the reserved Local::W category or by
+using a category name that includes an underscore like Foo_Corp::W.
+
+To be portable each component of a module name should be limited to
+11 characters. If it might be used on MS DOS then try to ensure each is
+unique in the first 8 characters. Nested modules make this easier.
+
+For additional guidance on the naming of modules, please consult:
+    http://pause.perl.org/pause/query?ACTION=pause_namingmodules
+or send mail to the <module authors@perl.org> mailing list.
+o 4
+Have you got it right?
+
+How do you know that you've made the right decisions? Have you
+picked an interface design that will cause problems later? Have
+you picked the most appropriate name? Do you have any questions?
+
+The best way to know for sure, and pick up many helpful suggestions,
+is to ask someone who knows. The <module authors@perl.org> mailing list
+is useful for this purpose; it's also accessible via news interface as
+perl.module authors at nntp.perl.org.
+
+All you need to do is post a short summary of the module, its
+purpose and interfaces. A few lines on each of the main methods is
+probably enough. (If you post the whole module it might be ignored
+by busy people   generally the very people you want to read it!)
+
+Don't worry about posting if you can't say when the module will be
+ready   just say so in the message. It might be worth inviting
+others to help you, they may be able to complete it for you!
+o 4
+README and other Additional Files.
+
+It's well known that software developers usually fully document the
+software they write. If, however, the world is in urgent need of
+your software and there is not enough time to write the full
+documentation please at least provide a README file containing:
+
+o 10
+A description of the module/package/extension etc.
+o 10
+A copyright notice   see below.
+o 10
+Prerequisites   what else you may need to have.
+o 10
+How to build it   possible changes to Makefile.PL etc.
+o 10
+How to install it.
+o 10
+Recent changes in this release, especially incompatibilities
+o 10
+Changes / enhancements you plan to make in the future.
+If the README file seems to be getting too large you may wish to
+split out some of the sections into separate files: INSTALL,
+Copying, ToDo etc.
+o 4
+Adding a Copyright Notice.
+
+How you choose to license your work is a personal decision.
+The general mechanism is to assert your Copyright and then make
+a declaration of how others may copy/use/modify your work.
+
+Perl, for example, is supplied with two types of licence: The GNU GPL
+and The Artistic Licence (see the files README, Copying, and Artistic,
+or perlgpl and perlartistic).  Larry has good reasons for NOT
+just using the GNU GPL.
+
+My personal recommendation, out of respect for Larry, Perl, and the
+Perl community at large is to state something simply like:
+ Copyright (c) 1995 Your Name. All rights reserved.
+ This program is free software; you can redistribute it and/or
+ modify it under the same terms as Perl itself.
+This statement should at least appear in the README file. You may
+also wish to include it in a Copying file and your source files.
+Remember to include the other words in addition to the Copyright.
+o 4
+Give the module a version/issue/release number.
+
+To be fully compatible with the Exporter and MakeMaker modules you
+should store your module's version number in a non my package
+variable called $VERSION.  This should be a positive floating point
+number with at least two digits after the decimal (i.e., hundredths,
+e.g, $VERSION = "0.01"(fR).  Don't use a 1.3.2 style version.
+See Exporter for details.
+
+It may be handy to add a function or method to retrieve the number.
+Use the number in announcements and archive file names when
+releasing the module (ModuleName 1.02.tar.Z).
+See perldoc ExtUtils::MakeMaker.pm for details.
+o 4
+How to release and distribute a module.
+
+If possible, register the module with CPAN. Follow the instructions
+and links on:
+   http://www.cpan.org/modules/04pause.html
+and upload to:
+   http://pause.perl.org/
+and notify <modules@perl.org>. This will allow anyone to install
+your module using the cpan(fR tool distributed with Perl.
+
+By using the WWW interface you can ask the Upload Server to mirror
+your modules from your ftp or WWW site into your own directory on
+CPAN!
+o 4
+Take care when changing a released module.
+
+Always strive to remain compatible with previous released versions.
+Otherwise try to add a mechanism to revert to the
+old behavior if people rely on it.  Document incompatible changes.
+Guidelines for Converting Perl 4 Library Scripts into Modules
+
+o 4
+There is no requirement to convert anything.
+
+If it ain't broke, don't fix it! Perl 4 library scripts should
+continue to work with no problems. You may need to make some minor
+changes (like escaping non array @'s in double quoted strings) but
+there is no need to convert a .pl file into a Module for just that.
+o 4
+Consider the implications.
+
+All Perl applications that make use of the script will need to
+be changed (slightly) if the script is converted into a module.  Is
+it worth it unless you plan to make other changes at the same time?
+o 4
+Make the most of the opportunity.
+
+If you are going to convert the script to a module you can use the
+opportunity to redesign the interface.  The guidelines for module
+creation above include many of the issues you should consider.
+o 4
+The pl2pm utility will get you started.
+
+This utility will read W.pl files (given as parameters) and write
+corresponding W.pm files. The pl2pm utilities does the following:
+
+o 10
+Adds the standard Module prologue lines
+o 10
+Converts package specifiers from ' to ::
+o 10
+Converts die(...) to croak(...)
+o 10
+Several other minor changes
+Being a mechanical process pl2pm is not bullet proof. The converted
+code will need careful checking, especially any package statements.
+Don't delete the original .pl file till the new .pm one works!
+
+Guidelines for Reusing Application Code
+
+o 4
+Complete applications rarely belong in the Perl Module Library.
+o 4
+Many applications contain some Perl code that could be reused.
+
+Help save the world! Share your code in a form that makes it easy
+to reuse.
+o 4
+Break out the reusable code into one or more separate module files.
+o 4
+Take the opportunity to reconsider and redesign the interfaces.
+o 4
+In some cases the 'application' can then be reduced to a small
+
+fragment of code built on top of the reusable modules. In these cases
+the application could invoked as:
+     % perl  e use Module::Name; method(@ARGV) ...
+or
+     % perl  mModule::Name ...    (in perl5.002 or higher)
+
+NOTE
+
+Perl does not enforce private and public parts of its modules as you may
+have been used to in other languages like C .1v'++.1v'doesn't have an infatuation with enforced privacy.  It would prefer
+that you stayed out of its living room because you weren't invited, not
+because it has a shotgun.
+
+The module and its user have a contract, part of which is common law,
+and part of which is written.  Part of the common law contract is
+that a module doesn't pollute any namespace it wasn't asked to.  The
+written contract for the module (A.K.A. documentation) may make other
+provisions.  But then you know when you use RedefineTheWorld(fR that
+you're redefining the world and willing to take the consequences.
+

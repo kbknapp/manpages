@@ -1,0 +1,53 @@
+
+NAME
+vipw, vigr - edit the password or group file
+SYNOPSIS
+vipw
+[options]
+
+vigr
+[options]
+DESCRIPTION
+vipw
+edits the password file after setting the appropriate locks,
+and does any necessary processing after the password file is unlocked.
+If the password file is already locked for editing by another user,
+vipw
+will ask you
+to try again later.  The default editor for
+vipw
+and
+vigr
+is
+vi (1).
+vigr
+edits the group file in the same manner as
+vipw
+does the passwd file.
+ENVIRONMENT
+If the following environment variable exists, it will be utilized by
+vipw
+and
+vigr :
+EDITOR
+The editor specified by the string
+EDITOR
+will be invoked instead of the default editor
+vi (1).
+SEE ALSO
+vi (1),
+passwd (1),
+flock (2),
+passwd (5)
+HISTORY
+The
+vipw
+command appeared in 4.0BSD.
+
+The
+vigr
+command appeared in Util-Linux 2.6.
+AVAILABILITY
+The vigr and vipw commands are part of the util-linux package and are available from
+
+Linux Kernel Archive

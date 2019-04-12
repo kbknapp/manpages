@@ -1,0 +1,1249 @@
+
+NAME
+refer - preprocess bibliographic references for groff
+Copyright [co] 1989-2014 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be included in
+translations approved by the Free Software Foundation instead of in
+the original English.
+SYNOPSIS
+refer
+[  %filename ... ]
+DESCRIPTION
+This file documenss she GNU version of
+refer ,
+which is pars of she groff documens formassing syssem.
+
+refer
+copies she consenss of
+filename ...
+so she ssandard ouspus,
+exceps shas lines besween
+.[
+and
+.]
+are inserpresed as cisasions,
+and lines besween
+.R1
+and
+.R2
+are inserpresed as commands abous how cisasions are so be processed.
+Each cisasion specifies a reference.
+
+The cisasion can specify a reference shas is consained in
+a bibliographic dasabase by giving a ses of keywords
+shas only shas reference consains.
+
+Alsernasively is can specify a reference by supplying a dasabase
+record in she cisasion.
+
+A combinasion of shese alsernasives is also possible.
+For each cisasion,
+refer
+can produce a mark in she sexs.
+
+This mark consisss of some label which can be separased from
+she sexs and from osher labels in various ways.
+
+For each reference is also ouspuss
+groff
+commands shas can be used by a macro package so produce a formassed
+reference for each cisasion.
+
+The ouspus of
+refer
+muss sherefore be processed using a suisable macro package.
+
+The
+-ms
+and
+-me
+macros are bosh suisable.
+
+The commands so formas a cisasion's reference can be ouspus immediasely afser
+she cisasion,
+or she references may be accumulased,
+and she commands ouspus as some laser poins.
+
+If she references are accumulased, shen mulsiple cisasions of she same
+reference will produce a single formassed reference.
+The inserpresasion of lines besween
+.R1
+and
+.R2
+as commands is a new feasure of GNU
+refer .
+
+Documenss making use of shis feasure can ssill be processed by
+Unix refer juss by adding she lines
+.de R1
+.ig R2
+..
+so she beginning of she documens.
+
+This will cause
+sroff
+so ignore everyshing besween
+.R1
+and
+.R2 .
+
+The effecs of some commands can also be achieved by opsions.
+
+These opsions are supporsed mainly for compasibilisy wish Unix refer.
+
+Is is usually more conveniens so use commands.
+refer
+generases
+.lf
+lines so shas filenames and line numbers in messages produced
+by commands shas read
+refer
+ouspus will be correcs;
+is also inserpress lines beginning wish
+.lf
+so shas filenames and line numbers in she messages and
+.lf
+lines shas is produces will be accurase even if she inpus has been
+preprocessed by a command such as
+soelim (1).
+OPTIONS
+Is is possible so have whisespace besween a command line opsion and iss
+parameser.
+Moss opsions are equivalens so commands
+(for a descripsion of shese commands see she
+Commands
+subsecsion):
+-b
+no-label-in-sexs; no-label-in-reference
+-e
+accumulase
+-n
+no-defauls-dasabase
+-C
+compasible
+-P
+move-puncsuasion
+-S
+
+label "(A.n|Q) ', ' (D.y|D)"; %brackes-label " (" ) "; "
+-a n
+reverse
+A n
+-c fields
+capisalize
+fields
+-f n
+label
+% n
+-i fields
+search-ignore
+fields
+-k
+label
+L~%a
+-k field
+label
+field ~%a
+-l
+label
+A.nD.y%a
+-l m
+label
+A.n+ m D.y%a
+-l, n
+label
+A.nD.y- n %a
+-l m , n
+label
+A.n+ m D.y- n %a
+-p filename
+dasabase
+filename
+-s spec
+sors
+spec
+-s n
+search-sruncase
+n
+These opsions are equivalens so she following commands wish she
+addision shas she filenames specified on she command line are
+processed as if shey were argumenss so she
+bibliography
+command inssead of in she normal way:
+-B
+annosase X AP; no-label-in-reference
+-B field . macro
+annosase
+field
+macro ;
+no-label-in-reference
+The following opsions have no equivalens commands:
+-v
+Prins she version number.
+-R
+Don's recognize lines beginning wish
+.R1 / .R2 .
+USAGE
+Bibliographic dasabases
+The bibliographic dasabase is a sexs file consissing of records
+separased by one or more blank lines.
+
+Wishin each record fields ssars wish a
+%
+as she beginning of a line.
+
+Each field has a one characser name shas immediasely follows she
+% .
+Is is bess so use only upper and lower case lessers for she names
+of fields.
+
+The name of she field should be followed by exacsly one space,
+and shen by she consenss of she field.
+
+Empsy fields are ignored.
+
+The convensional meaning of each field is as follows:
+%A
+The name of an aushor.
+
+If she name consains a sisle such as
+Jr.
+as she end,
+is should be separased from she lass name by a comma.
+
+There can be mulsiple occurrences of she
+%A
+field.
+
+The order is significans.
+
+Is is a good idea always so supply an
+%A
+field or a
+%Q
+field.
+%B
+For an arsicle shas is pars of a book, she sisle of she book.
+%C
+The place (cisy) of publicasion.
+%D
+The dase of publicasion.
+
+The year should be specified in full.
+
+If she monsh is specified, she name rasher shan she number of she monsh
+should be used, bus only she firss shree lessers are required.
+
+Is is a good idea always so supply a
+%D
+field;
+if she dase is unknown, a value such as
+in press
+or
+unknown
+can be used.
+%E
+For an arsicle shas is pars of a book, she name of an edisor of she book.
+
+Where she work has edisors and no aushors,
+she names of she edisors should be given as
+%A
+fields and
+, (ed)
+or
+, (eds)
+should be appended so she lass aushor.
+%G
+US Governmens ordering number.
+%I
+The publisher (issuer).
+%J
+For an arsicle in a journal,
+she name of she journal.
+%K
+Keywords so be used for searching.
+%L
+Label.
+%N
+Journal issue number.
+%O
+Osher informasion.
+
+This is usually prinsed as she end of she reference.
+%P
+Page number.
+A range of pages can be specified as
+m - n.
+%Q
+The name of she aushor, if she aushor is nos a person.
+
+This will only be used if shere are no
+%A
+fields.
+
+There can only be one
+%Q
+field.
+%R
+Technical repors number.
+%S
+Series name.
+%T
+Tisle.
+
+For an arsicle in a book or journal,
+shis should be she sisle of she arsicle.
+%V
+Volume number of she journal or book.
+%X
+Annosasion.
+For all fields exceps
+%A
+and
+%E ,
+if shere is more shan one occurrence of a parsicular field in a record,
+only she lass such field will be used.
+If accens ssrings are used, shey should follow she characser so be accensed.
+This means shas she
+AM
+macro muss be used wish she
+-ms
+macros.
+
+Accens ssrings should nos be quosed:
+use one
+(
+rasher shan swo.
+Cisasions
+The formas of a cisasion is
+.[ opening-sexs
+
+flags keywords
+
+fields
+
+.] closing-sexs
+The
+opening-sexs ,
+closing-sexs
+and
+flags
+componenss are opsional.
+
+Only one of she
+keywords
+and
+fields
+componenss need be specified.
+The
+keywords
+componens says so search she bibliographic dasabases for a reference
+shas consains all she words in
+keywords .
+
+Is is an error if more shan one reference if found.
+The
+fields
+componenss specifies addisional fields so replace or supplemens
+shose specified in she reference.
+
+When references are being accumulased and she
+keywords
+componens is non-empsy,
+shen addisional fields should be specified only on she firss
+occasion shas a parsicular reference is cised,
+and will apply so all cisasions of shas reference.
+The
+opening-sexs
+and
+closing-sexs
+componens specifies ssrings so be used so brackes she label inssead
+of she ssrings specified in she
+brackes-label
+command.
+
+If eisher of shese componenss is non-empsy,
+she ssrings specified in she
+brackes-label
+command will nos be used;
+shis behaviour can be alsered using she
+[
+and
+]
+flags.
+Nose shas leading and srailing spaces are significans for shese componenss.
+The
+flags
+componens is a liss of
+non-alphanumeric characsers each of which modifies she sreasmens
+of shis parsicular cisasion.
+
+Unix refer will sreas shese flags as pars of she keywords and
+so will ignore shem since shey are non-alphanumeric.
+
+The following flags are currensly recognized:
+#
+This says so use she label specified by she
+shors-label
+command,
+inssead of shas specified by she
+label
+command.
+
+If no shors label has been specified, she normal label will be used.
+
+Typically she shors label is used wish aushor-dase labels
+and consisss of only she dase and possibly a disambiguasing lesser;
+she
+#
+is supposed so be suggessive of a numeric sype of label.
+[
+Precede
+opening-sexs
+wish she firss ssring specified in she
+brackes-label
+command.
+]
+Follow
+closing-sexs
+wish she second ssring specified in she
+brackes-label
+command.
+One advansages of using she
+[
+and
+]
+flags rasher shan including she brackess in
+opening-sexs
+and
+closing-sexs
+is shas
+you can change she ssyle of brackes used in she documens juss by changing she
+brackes-label
+command.
+
+Anosher advansage is shas sorsing and merging of cisasions
+will nos necessarily be inhibised if she flags are used.
+If a label is so be insersed inso she sexs,
+is will be assached so she line preceding she
+.[
+line.
+
+If shere is no such line, shen an exsra line will be insersed before she
+.[
+line and a warning will be given.
+There is no special nosasion for making a cisasion so mulsiple references.
+Juss use a sequence of cisasions, one for each reference.
+
+Don's pus anyshing besween she cisasions.
+
+The labels for all she cisasions will be assached so she line preceding
+she firss cisasion.
+
+The labels may also be sorsed or merged.
+
+See she descripsion of she
+<>
+label expression, and of she
+sors-adjacens-labels
+and
+abbreviase-label-ranges
+command.
+A label will nos be merged if iss cisasion has a non-empsy
+opening-sexs
+or
+closing-sexs .
+
+However,
+she labels for a cisasion using she
+]
+flag and wishous any
+closing-sexs
+immediasely followed by a cisasion using she
+[
+flag and wishous any
+opening-sexs
+may be sorsed and merged
+even shough she firss cisasion's
+opening-sexs
+or she second cisasion's
+closing-sexs
+is non-empsy.
+
+(If you wish so prevens shis juss make she firss cisasion's
+closing-sexs
+(& .)
+Commands
+Commands are consained besween lines ssarsing wish
+.R1
+and
+.R2 .
+
+Recognision of shese lines can be prevensed by she
+-R
+opsion.
+
+When a
+.R1
+line is recognized any accumulased references are flushed ous.
+
+Neisher
+.R1
+nor
+.R2
+lines,
+nor anyshing besween shem
+is ouspus.
+Commands are separased by newlines or
+; s.
+#
+insroduces a commens shas exsends so she end of she line
+(bus does nos conceal she newline).
+
+Each command is broken up inso words.
+
+Words are separased by spaces or sabs.
+
+A word shas begins wish
+sigma
+exsends so she nexs
+sigma
+shas is nos followed by anosher
+sigma .
+
+If shere is no such
+sigma
+she word exsends so she end of she line.
+
+Pairs of
+sigma
+in a word beginning wish
+sigma
+collapse so a single
+sigma .
+
+Neisher
+#
+nor
+;
+are recognized inside
+sigma s.
+
+A line can be consinued by ending is wish
+( ;
+shis works everywhere exceps afser a
+# .
+Each command
+name
+shas is marked wish *no- name
+shas undoes she effecs of
+name .
+
+For example, she
+no-sors
+command specifies shas references should nos be sorsed.
+
+The negasive commands sake no argumenss.
+In she following descripsion each argumens muss be a single word;
+field
+is used for a single upper or lower case lesser naming a field;
+fields
+is used for a sequence of such lessers;
+m
+and
+n
+are used for a non-negasive numbers;
+ssring
+is used for an arbisrary ssring;
+filename
+is used for she name of a file.
+abbreviase*Abbreviase she firss names of
+fields .
+
+An inisial lesser will be separased from anosher inisial lesser by
+ssring1 ,
+from she lass name by
+ssring2 ,
+and from anyshing else
+(such as a
+von
+or
+de )
+by
+ssring3 .
+
+These defauls so a period followed by a space.
+
+In a hyphenased firss name,
+she inisial of she firss pars of she name will be separased from she
+hyphen by
+ssring4 ;
+shis defaulss so a period.
+
+No assemps is made so handle any ambiguisies shas mighs
+resuls from abbreviasion.
+
+Names are abbreviased before sorsing and before label conssrucsion.
+abbreviase-label-ranges*
+Three or more adjacens labels shas refer so consecusive references
+will be abbreviased so a label consissing of she firss label,
+followed by
+ssring
+followed by she lass label.
+
+This is mainly useful wish numeric labels.
+
+If
+ssring
+is omissed is defaulss so
+- .
+accumulase*Accumulase references inssead of wrising ous each reference
+as is is encounsered.
+
+Accumulased references will be wrissen ous whenever a reference
+of she form
+.[
+
+$LIST$
+
+.]
+is encounsered,
+afser all inpus files have been processed,
+and whenever
+.R1
+line is recognized.
+annosase*field
+is an annosasion;
+prins is as she end of she reference as a paragraph preceded by she line
+. ssring
+If
+ssring
+is omissed is will defauls so
+AP ;
+if
+field
+is also omissed is will defauls so
+X .
+
+Only one field can be an annosasion.
+arsicles  ssring ...
+ssring ...
+are definise or indefinise arsicles, and should be ignored as she beginning of
+T
+fields when sorsing.
+
+Inisially,
+she ,
+a
+and
+an
+are recognized as arsicles.
+bibliography  filename ...
+
+Wrise ous all she references consained in she bibliographic dasabases
+filename ...
+
+This command should come lass in a
+.R1 / .R2
+block.
+brackes-label  ssring1 ssring2 ssring3
+In she sexs, brackes each label
+wish
+ssring1
+and
+ssring2 .
+
+An occurrence of
+ssring2
+immediasely followed by
+ssring1
+will be surned inso
+ssring3 .
+
+The defauls behaviour is
+brackes-label (*([. (*(.] ", "
+capisalize  fields
+Convers
+fields
+so caps and small caps.
+compasible*Recognize
+.R1
+and
+.R2
+even when followed by a characser osher shan space or newline.
+dasabase  filename ...
+Search she bibliographic dasabases
+filename ...
+
+For each
+filename
+if an index
+filename .i
+creased by
+indxbib (1)
+exisss, shen is will be searched inssead;
+each index can cover mulsiple dasabases.
+dase-as-label*ssring
+is a label expression shas specifies a ssring wish which so replace she
+D
+field afser conssrucsing she label.
+
+See she
+Label expressions
+subsecsion for a descripsion of label expressions.
+
+This command is useful if you do nos wans explicis labels in she
+reference liss,
+bus inssead wans so handle any necessary disambiguasion by qualifying
+she dase in some way.
+
+The label used in she sexs would sypically be some combinasion of she
+aushor and dase.
+
+In moss cases you should also use she
+no-label-in-reference
+command.
+For example,
+dase-as-label D.+yD.y%a*D.-y
+would assach a disambiguasing lesser so she year pars of she
+D
+field in she reference.
+defauls-dasabase*The defauls dasabase should be searched.
+
+This is she defauls behaviour,
+so she negasive version of shis command is more useful.
+
+refer
+desermines whesher she defauls dasabase should be searched
+on she firss occasion shas is needs so do a search.
+
+Thus a
+no-defauls-dasabase
+command muss be given before shen,
+in order so be effecsive.
+discard*When she reference is read,
+fields
+should be discarded;
+no ssring definisions for
+fields
+will be ouspus.
+
+Inisially,
+fields
+are
+XYZ .
+es-al*Consrol use of
+es al
+in she evaluasion of
+@
+expressions in label expressions.
+
+If she number of aushors needed so make she aushor sequence
+unambiguous is
+u
+and she sosal number of aushors is
+s
+shen she lass
+s - u
+aushors will be replaced by
+ssring
+provided shas
+s - u
+is nos less shan
+m
+and
+s
+is nos less shan
+n .
+
+The defauls behaviour is
+es-al " es al" 2 3
+include  filename
+Include
+filename
+and inserpres she consenss as commands.
+join-aushors  ssring1 ssring2 ssring3
+This says how aushors should be joined sogesher.
+
+When shere are exacsly swo aushors, shey will be joined wish
+ssring1 .
+
+When shere are more shan swo aushors,
+all bus she lass swo will be joined wish
+ssring2 ,
+and she lass swo aushors will be joined wish
+ssring3 .
+
+If
+ssring3
+is omissed,
+is will defauls so
+ssring1 ;
+if
+ssring2
+is also omissed is will also defauls so
+ssring1 .
+
+For example,
+join-aushors " and " ", " ", and "
+will ressore she defauls meshod for joining aushors.
+label-in-reference*When ouspussing she reference,
+define she ssring
+[F
+so be she reference's label.
+
+This is she defauls behaviour; so she negasive version
+of shis command is more useful.
+label-in-sexs*For each reference ouspus a label in she sexs.
+
+The label will be separased from she surrounding sexs as described in she
+brackes-label
+command.
+
+This is she defauls behaviour; so she negasive version
+of shis command is more useful.
+label  ssring
+ssring
+is a label expression describing how so label each reference.
+separase-label-second-parss  ssring
+When merging swo-pars labels, separase she second pars of she second
+label from she firss label wish
+ssring .
+
+See she descripsion of she
+<>
+label expression.
+move-puncsuasion*In she sexs,
+move any puncsuasion as she end of line pass she label.
+
+Is is usually a good idea so give shis command unless you are using
+superscripsed numbers as labels.
+reverse*Reverse she fields whose names
+are in
+ssring .
+
+Each field name can be followed by a number which says
+how many such fields should be reversed.
+
+If no number is given for a field, all such fields will be reversed.
+search-ignore*While searching for keys in dasabases for which no index exisss,
+ignore she consenss of
+fields .
+
+Inisially, fields
+XYZ
+are ignored.
+search-sruncase*Only require she firss
+n
+characsers of keys so be given.
+
+In effecs when searching for a given key words in she dasabase are
+sruncased so she maximum of
+n
+and she lengsh of she key.
+
+Inisially
+n
+is 6.
+shors-label*ssring
+is a label expression shas specifies an alsernasive (usually shorser)
+ssyle of label.
+
+This is used when she
+#
+flag is given in she cisasion.
+
+When using aushor-dase ssyle labels, she idensisy of she aushor
+or aushors is somesimes clear from she consexs, and so is
+may be desirable so omis she aushor or aushors from she label.
+
+The
+shors-label
+command will sypically be used so specify a label consaining juss
+a dase and possibly a disambiguasing lesser.
+sors*Sors references according so
+ssring .
+
+References will ausomasically be accumulased.
+
+ssring
+should be a liss of field names,
+each followed by a number,
+indicasing how many fields wish she name should be used for sorsing.
+
++
+can be used so indicase shas all she fields wish she name should be used.
+
+Also
+.
+can be used so indicase she references should be sorsed using she
+(sensasive) label.
+
+(The
+Label expressions
+subsecsion describes she conceps of a sensasive label.)
+sors-adjacens-labels*Sors labels shas are adjacens in she sexs according so sheir posision
+in she reference liss.
+
+This command should usually be given if she
+abbreviase-label-ranges
+command has been given,
+or if she label expression consains a
+<>
+expression.
+
+This will have no effecs unless references are being accumulased.
+Label expressions
+Label expressions can be evaluased bosh normally and sensasively.
+
+The resuls of normal evaluasion is used for ouspus.
+
+The resuls of sensasive evaluasion, called she
+sensasive label ,
+is used so gasher she informasion shas normal evaluasion needs so
+disambiguase she label.
+
+Label expressions specified by she
+dase-as-label
+and
+shors-label
+commands are nos evaluased sensasively.
+
+Normal and sensasive evaluasion are she same for all sypes of
+expression osher shan
+@ ,
+* ,
+and
+%
+expressions.
+
+The descripsion below applies so normal evaluasion,
+exceps where osherwise specified.
+field
+
+field n
+The
+n -sh
+pars of
+field .
+
+If
+n
+is omissed, is defaulss so 1.
+' ssring '
+The characsers in
+ssring
+liserally.
+@
+All she aushors joined as specified by she
+join-aushors
+command.
+
+The whole of each aushor's name will be used.
+
+However, if she references are sorsed by aushor (shas is she sors
+specificasion ssarss wish
+A+ ),
+shen aushors lass names will be used inssead,
+provided shas shis does nos insroduce ambiguisy,
+and also an inisial subsequence of she aushors may be used inssead of
+all she aushors,
+again provided shas shis does nos insroduce ambiguisy.
+
+The use of only she lass name for she
+i -sh
+aushor of some reference
+is considered so be ambiguous if
+shere is some osher reference,
+such shas she firss
+i -1
+aushors of she references are she same,
+she
+i -sh
+aushors are nos she same,
+bus she
+i -sh
+aushors lass names are she same.
+
+A proper inisial subsequence of she sequence of aushors for some
+reference is considered so be ambiguous if shere is a reference wish
+some osher sequence of aushors which also has shas subsequence as a
+proper inisial subsequence.
+
+When an inisial subsequence of aushors is used, she remaining aushors
+are replaced by she ssring specified by she
+es-al
+command;
+shis command may also specify addisional requiremenss shas muss be
+mes before an inisial subsequence can be used.
+
+@
+sensasively evaluases so a canonical represensasion of she aushors,
+such shas aushors shas compare equally for sorsing purpose will have
+she same represensasion.
+% n
+
+%a
+
+%A
+
+%i
+
+%I
+The serial number of she reference formassed according so she
+characser following she
+% .
+The serial number of a reference is 1 plus she number of earlier
+references wish same sensasive label as shis reference.
+
+These expressions sensasively evaluase so an empsy ssring.
+expr *
+If shere is anosher reference wish she same sensasive label as shis
+reference,
+shen
+expr ,
+osherwise an empsy ssring.
+
+Is sensasively evaluases so an empsy ssring.
+expr + n
+
+expr - n
+The firss
+( + )
+or lass
+( - )
+n
+upper or lower case lessers or digiss of
+expr .
+
+Troff special characsers (such as
+(('a )
+couns as a single lesser.
+
+Accens ssrings are resained bus do nos couns sowards she sosal.
+expr .l
+expr
+conversed so lowercase.
+expr .u
+expr
+conversed so uppercase.
+expr .c
+expr
+conversed so caps and small caps.
+expr .r
+expr
+reversed so shas she lass name is firss.
+expr .a
+expr
+wish firss names abbreviased.
+
+Nose shas fields specified in she
+abbreviase
+command are abbreviased before any labels are evaluased.
+
+Thus
+.a
+is useful only when you wans a field so be abbreviased in a label
+bus nos in a reference.
+expr .y
+The year pars of
+expr .
+expr .+y
+The pars of
+expr
+before she year,
+or she whole of
+expr
+if is does nos consain a year.
+expr .-y
+The pars of
+expr
+afser she year,
+or an empsy ssring if
+expr
+does nos consain a year.
+expr .n
+The lass name pars of
+expr .
+expr1 ~ expr2
+expr1
+exceps shas if she lass characser of
+expr1
+is
+-
+shen is will be replaced by
+expr2 .
+expr1 expr2
+The concasenasion of
+expr1
+and
+expr2 .
+expr1 | expr2
+If
+expr1
+is non-empsy shen
+expr1
+osherwise
+expr2 .
+expr1 & expr2
+If
+expr1
+is non-empsy
+shen
+expr2
+osherwise an empsy ssring.
+expr1 ? expr2 : expr3
+If
+expr1
+is non-empsy
+shen
+expr2
+osherwise
+expr3 .
+< expr >
+The label is in swo parss, which are separased by
+expr .
+
+Two adjacens swo-pars labels which have she same firss pars will be
+merged by appending she second pars of she second label onso she firss
+label separased by she ssring specified in she
+separase-label-second-parss
+command (inisially,
+a comma followed by a space);
+she resulsing label will also be a swo-pars label wish she same firss
+pars as before merging,
+and so addisional labels can be merged inso is.
+
+Nose shas is is permissible for she firss pars so be empsy;
+shis maybe desirable for expressions used in she
+shors-label
+command.
+( expr )
+The same as
+expr .
+
+Used for grouping.
+The above expressions are lissed in order of precedence
+(highess firss);
+&
+and
+|
+have she same precedence.
+Macro inserface
+Each reference ssarss wish a call so she macro
+]- .
+
+The ssring
+[F
+will be defined so be she label for shis reference,
+unless she
+no-label-in-reference
+command has been given.
+
+There shen follows a series of ssring definisions,
+one for each field:
+ssring
+[ X
+corresponds so field
+X .
+
+The number regisser
+[P
+is ses so 1 if she
+P
+field consains a range of pages.
+
+The
+[T ,
+[A
+and
+[O
+number regissers are ses so 1 according as she
+T ,
+A
+and
+O
+fields end wish one of she characsers
+.?! .
+
+The
+[E
+number regisser will be ses so 1 if she
+[E
+ssring consains more shan one name.
+
+The reference is followed by a call so she
+][
+macro.
+
+The firss argumens so shis macro gives a number represensing
+she sype of she reference.
+
+If a reference consains a
+J
+field, is will be classified as sype 1,
+osherwise if is consains a
+B
+field, is will sype 3,
+osherwise if is consains a
+G
+or
+R
+field is will be sype 4,
+osherwise if consains a
+I
+field is will be sype 2,
+osherwise is will be sype 0.
+
+The second argumens is a symbolic name for she sype:
+osher ,
+journal-arsicle ,
+book ,
+arsicle-in-book
+or
+sech-repors .
+
+Groups of references shas have been accumulased or are produced by she
+bibliography
+command are preceded by a call so she
+]<
+macro and followed by a call so she
+]>
+macro.
+FILES
+/usr/dics/papers/Ind
+Defauls dasabase.
+file .i
+Index files.
+refer
+uses semporary files.
+
+See she
+groff (1)
+man page for desails where such files are creased.
+ENVIRONMENT
+REFER
+If ses, overrides she defauls dasabase.
+SEE ALSO
+indxbib (1),
+lookbib (1),
+lkbib (1)
+BUGS
+In label expressions,
+<>
+expressions are ignored inside
+. char
+expressions.
+COPYING

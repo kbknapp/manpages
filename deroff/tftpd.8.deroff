@@ -1,0 +1,67 @@
+
+NAME
+tftpd - Trivial File Transfer Protocol server
+SYNOPSIS
+
+tftpd directory
+DESCRIPTION
+
+tftpd
+is a server which supports the DARPA Trivial File Transfer Protocol (RFC1350). The TFTP server is started by
+inetd(8).
+
+directory
+is required argument; if it is not given
+tftpd
+aborts. This path is prepended to any file name requested via TFTP protocol, effectively chrooting
+tftpd
+to this directory. File names are validated not to escape out of this directory, however administrator may configure such escape using symbolic links.
+
+It is in difference of variants of
+tftpd
+usually distributed with unix-like systems, which take a list of directories and match file names to start from one of given prefixes or to some random default, when no arguments were given. There are two reasons not to behave in this way: first, it is inconvenient, clients are not expected to know something about layout of filesystem on server host. And second, TFTP protocol is not a tool for browsing of servers filesystem, it is just an agent allowing to boot dumb clients.
+
+In the case when
+tftpd
+is used together with
+rarpd(8), tftp directories in these services should coincide and it is expected that each client booted via TFTP has boot image corresponding its IP address with an architecture suffix following Sun Microsystems conventions. See
+rarpd(8)
+for more details.
+SECURITY
+
+TFTP protocol does not provide any authentication. Due to this capital flaw
+tftpd
+is not able to restrict access to files and will allow only publically readable files to be accessed. Files may be written only if they already exist and are publically writable.
+
+Impact is evident, directory exported via TFTP
+must not
+contain sensitive information of any kind, everyone is allowed to read it as soon as a client is allowed. Boot images do not contain such information as rule, however you should think twice before publishing f.e. Cisco IOS config files via TFTP, they contain
+unencrypted
+passwords and may contain some information about the network, which you were not going to make public.
+
+The
+tftpd
+server should be executed by
+inetd
+with dropped root privileges, namely with a user ID giving minimal access to files published in tftp directory. If it is executed as superuser occasionally,
+tftpd
+drops its UID and GID to 65534, which is most likely not the thing which you expect. However, this is not very essential; remember, only files accessible for everyone can be read or written via TFTP.
+SEE ALSO
+
+rarpd(8),
+tftp(1),
+inetd(8).
+HISTORY
+
+The
+tftpd
+command appeared in 4.2BSD. The source in iputils is cleaned up both syntactically (ANSIized) and semantically (UDP socket IO).
+
+It is distributed with iputils mostly as good demo of an interesting feature (MSG_CONFIRM) allowing to boot long images by dumb clients not answering ARP requests until they are finally booted. However, this is full functional and can be used in production.
+AVAILABILITY
+
+tftpd
+is part of
+iputils
+package.
+

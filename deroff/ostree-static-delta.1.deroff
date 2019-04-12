@@ -1,0 +1,39 @@
+
+NAME
+ostree-static-delta - Manage static delta files
+SYNOPSIS
+
+ostree static-delta list
+
+ostree static-delta show
+
+ostree static-delta delete
+
+ostree static-delta generate {--to=REV} [OPTIONS...]
+
+ostree static-delta apply-offline {PATH}
+DESCRIPTION
+
+List and manipulate static delta files.
+GENERATE OPTIONS
+
+--from="REV"
+
+Create delta from revision REV.
+--to="REV"
+
+Create delta to revision REV. (This option is required.) The delta is from the parent of REV, unless specified otherwise by
+--from
+or
+--empty.
+--empty
+
+Create delta from scratch.
+--max-usize=SIZE
+
+Maximum uncompressed size in megabytes.
+
+EXAMPLE
+
+$ ostree static-delta
+        (No static deltas)

@@ -1,0 +1,8 @@
+
+NAME
+jack_impulse_grabber - JACK toolkit client to grab an impulse (response)
+SYNOPSIS
+jack_impulse_grabber -d duration [-f (C|gnuplot)]
+DESCRIPTION
+jack_impulse_grabber is a JACK example client for collecting
+impulses recordings from JACK ports.

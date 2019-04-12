@@ -1,0 +1,75 @@
+
+displays bext and string metadata stored in an audio file.
+The following options specify what to print.
+all metadata
+
+description
+
+originator info
+
+originator reference
+
+Unique Material Identifier
+
+origination date
+
+origination time
+
+coding history
+
+title
+
+copyright
+
+artist
+
+comment
+
+creation date
+
+album
+
+license
+sets bext and string metadata in an audio file if the format supports it.
+If the file does not contain a BEXT chunk to be modified,
+the second synopsis must be used, where another output file
+capable of storing the metadata is created.
+This file is overwritten if it already exists.
+The following options take an argument specifying the metadata:
+description
+
+originator
+
+originator reference
+
+Unique Material Identifier
+
+origination date
+
+origination time
+
+coding history
+
+time reference
+
+comment
+
+title
+
+copyright
+
+artist
+
+date
+
+album
+
+license
+The following options take no argument:
+Set the BEXT time and date to current.
+
+Set the BEXT time to current.
+
+Set the BEXT date to current.
+
+Set the string date to current.

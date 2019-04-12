@@ -1,0 +1,40 @@
+
+NAME
+systemd-machined.service, systemd-machined - Virtual machine and container registration manager
+SYNOPSIS
+
+systemd-machined.service
+
+/usr/lib/systemd/systemd-machined
+DESCRIPTION
+
+systemd-machined
+is a system service that keeps track of virtual machines and containers, and processes belonging to them.
+
+See
+systemd-nspawn(1)
+for some examples on how to run containers with OS tools.
+
+Use
+nss-mymachines(8)
+to make the names of local containers known to
+systemd-machined
+locally resolvable as host names.
+
+See the
+m[blue]machined D-Bus API Documentationm[]\u[1]\d
+for information about the APIs
+systemd-machined
+provides.
+SEE ALSO
+
+systemd(1),
+machinectl(1),
+systemd-nspawn(1),
+nss-mymachines(8),
+systemd.special(7)
+NOTES
+ 1. 4
+machined D-Bus API Documentation
+
+%https://www.freedesktop.org/wiki/Software/systemd/machined

@@ -1,0 +1,10 @@
+
+transmission-show 
+transmission-show shows BitTorrent .torrent file metadata
+Show a short help page and exit.
+
+Show a magnet link for the specified .torrent file
+
+Ask the torrent's trackers how many peers are in the torrent's swarm
+https://transmissionbt.com/
+

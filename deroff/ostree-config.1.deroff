@@ -1,0 +1,23 @@
+
+NAME
+ostree-config - Change configuration settings
+SYNOPSIS
+
+ostree config get {SECTIONNAME.KEYNAME}
+
+ostree config get {--group=GROUPNAME} {KEYNAME}
+
+ostree config set {SECTIONNAME.KEYNAME} {VALUE}
+
+ostree config set {--group=GROUPNAME} {KEYNAME} {VALUE}
+DESCRIPTION
+
+Displays or changes a configuration setting.
+EXAMPLE
+
+$ ostree config get core.mode
+
+bare
+
+$ ostree config set --group=remote "myremote" url http://example.com/repo
+

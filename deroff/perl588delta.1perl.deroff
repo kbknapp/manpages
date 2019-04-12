@@ -1,0 +1,836 @@
+
+{
+NAME
+perl588delta   what is new for perl v5.8.8
+DESCRIPTION
+
+This document describes differences between the 5.8.7 release and
+the 5.8.8 release.
+Incompatible Changes
+
+There are no changes intentionally incompatible with 5.8.7. If any exist,
+they are bugs and reports are welcome.
+Core Enhancements
+
+o 4
+chdir(fR, chmod(fR and chown(fR can now work on filehandles as well as
+filenames, if the system supports respectively fchdir(fR, fchmod(fR and
+fchown(fR, thanks to a patch provided by Gisle Aas.
+Modules and Pragmata
+
+o 4
+Attribute::Handlers(fR upgraded to version 0.78_02
+
+o 4
+Documentation typo fix
+o 4
+attrs(fR upgraded to version 1.02
+
+o 4
+Internal cleanup only
+o 4
+autouse(fR upgraded to version 1.05
+
+o 4
+Simplified implementation
+o 4
+B(fR upgraded to version 1.09_01
+
+o 4
+The inheritance hierarchy of the B::(fR modules has been corrected;
+B::NV(fR now inherits from B::SV(fR (instead of B::IV(fR).
+o 4
+blib(fR upgraded to version 1.03
+
+o 4
+Documentation typo fix
+o 4
+ByteLoader(fR upgraded to version 0.06
+
+o 4
+Internal cleanup
+o 4
+CGI(fR upgraded to version 3.15
+
+o 4
+Extraneous ? from self_url()(fR removed
+o 4
+scrolling_list()(fR select attribute fixed
+o 4
+virtual_port(fR now works properly with the https protocol
+o 4
+upload_hook()(fR and append()(fR now works in function oriented mode
+o 4
+POST_MAX(fR doesn't cause the client to hang any more
+o 4
+Automatic tab indexes are now disabled and new ( tabindex(fR pragma has
+been added to turn automatic indexes back on
+o 4
+end_form()(fR doesn't emit empty (and non validating) <div>(fR
+o 4
+CGI::Carp(fR works better in certain mod_perl configurations
+o 4
+Setting $CGI::TMPDIRECTORY is now effective
+o 4
+Enhanced documentation
+o 4
+charnames(fR upgraded to version 1.05
+
+o 4
+viacode()(fR now accept hex strings and has been optimized.
+o 4
+CPAN(fR upgraded to version 1.76_02
+
+o 4
+1 minor bug fix for Win32
+o 4
+Cwd(fR upgraded to version 3.12
+
+o 4
+canonpath()(fR on Win32 now collapses foo(.. sections correctly.
+o 4
+Improved behaviour on Symbian OS.
+o 4
+Enhanced documentation and typo fixes
+o 4
+Internal cleanup
+o 4
+Data::Dumper(fR upgraded to version 2.121_08
+
+o 4
+A problem where Data::Dumper(fR would sometimes update the iterator state
+of hashes has been fixed
+o 4
+Numeric labels now work
+o 4
+Internal cleanup
+o 4
+DB(fR upgraded to version 1.01
+
+o 4
+A problem where the state of the regexp engine would sometimes get clobbered when running
+under the debugger has been fixed.
+o 4
+DB_File(fR upgraded to version 1.814
+
+o 4
+Adds support for Berkeley DB 4.4.
+o 4
+Devel::DProf(fR upgraded to version 20050603.00
+
+o 4
+Internal cleanup
+o 4
+Devel::Peek(fR upgraded to version 1.03
+
+o 4
+Internal cleanup
+o 4
+Devel::PPPort(fR upgraded to version 3.06_01
+
+o 4
+(  compat version(fR argument checking has been improved
+o 4
+Files passed on the command line are filtered by default
+o 4
+(  nofilter(fR option to override the filtering has been added
+o 4
+Enhanced documentation
+o 4
+diagnostics(fR upgraded to version 1.15
+
+o 4
+Documentation typo fix
+o 4
+Digest(fR upgraded to version 1.14
+
+o 4
+The constructor now knows which module implements SHA 224
+o 4
+Documentation tweaks and typo fixes
+o 4
+Digest::MD5(fR upgraded to version 2.36
+
+o 4
+XSLoader(fR is now used for faster loading
+o 4
+Enhanced documentation including MD5 weaknesses discovered lately
+o 4
+Dumpvalue(fR upgraded to version 1.12
+
+o 4
+Documentation fix
+o 4
+DynaLoader(fR upgraded but unfortunately we're not able to increment its version number : (
+
+o 4
+Implements dl_unload_file(fR on Win32
+o 4
+Internal cleanup
+o 4
+XSLoader(fR 0.06 incorporated; small optimisation for calling
+bootstrap_inherit()(fR and documentation enhancements.
+o 4
+Encode(fR upgraded to version 2.12
+
+o 4
+A coderef is now acceptable for CHECK(fR!
+o 4
+3 new characters added to the ISO 8859 7 encoding
+o 4
+New encoding MIME Header ISO_2022_JP(fR added
+o 4
+Problem with partial characters and encoding(utf 8 strict)(fR fixed.
+o 4
+Documentation enhancements and typo fixes
+o 4
+English(fR upgraded to version 1.02
+
+o 4
+the $COMPILING variable has been added
+o 4
+ExtUtils::Constant(fR upgraded to version 0.17
+
+o 4
+Improved compatibility with older versions of perl
+o 4
+ExtUtils::MakeMaker(fR upgraded to version 6.30 (was 6.17)
+
+o 4
+Too much to list here;  see <http://search.cpan.org/dist/ExtUtils MakeMaker/Changes>
+o 4
+File::Basename(fR upgraded to version 2.74, with changes contributed by Michael Schwern.
+
+o 4
+Documentation clarified and errors corrected.
+o 4
+basename(fR now strips trailing path separators before processing the name.
+o 4
+basename(fR now returns /(fR for parameter /(fR, to make basename(fR
+consistent with the shell utility of the same name.
+o 4
+The suffix is no longer stripped if it is identical to the remaining characters
+in the name, again for consistency with the shell utility.
+o 4
+Some internal code cleanup.
+o 4
+File::Copy(fR upgraded to version 2.09
+
+o 4
+Copying a file onto itself used to fail.
+o 4
+Moving a file between file systems now preserves the access and
+modification time stamps
+o 4
+File::Find(fR upgraded to version 1.10
+
+o 4
+Win32 portability fixes
+o 4
+Enhanced documentation
+o 4
+File::Glob(fR upgraded to version 1.05
+
+o 4
+Internal cleanup
+o 4
+File::Path(fR upgraded to version 1.08
+
+o 4
+mkpath(fR now preserves errno(fR when mkdir(fR fails
+o 4
+File::Spec(fR upgraded to version 3.12
+
+o 4
+File::Spec >rootdir()(fR now returns (e(fR on Win32, instead of /(fR
+o 4
+$^O could sometimes become tainted. This has been fixed.
+o 4
+canonpath(fR on Win32 now collapses foo/..(fR (or foo(..(fR) sections
+correctly, rather than doing the misguided work it was previously doing.
+Note that canonpath(fR on Unix still does not collapse these sections, as
+doing so would be incorrect.
+o 4
+Some documentation improvements
+o 4
+Some internal code cleanup
+o 4
+FileCache(fR upgraded to version 1.06
+
+o 4
+POD formatting errors in the documentation fixed
+o 4
+Filter::Simple(fR upgraded to version 0.82
+o 4
+FindBin(fR upgraded to version 1.47
+
+o 4
+Now works better with directories where access rights are more
+restrictive than usual.
+o 4
+GDBM_File(fR upgraded to version 1.08
+
+o 4
+Internal cleanup
+o 4
+Getopt::Long(fR upgraded to version 2.35
+
+o 4
+prefix_pattern(fR has now been complemented by a new configuration
+option long_prefix_pattern(fR that allows the user to specify what
+prefix patterns should have long option style semantics applied.
+o 4
+Options can now take multiple values at once (experimental)
+o 4
+Various bug fixes
+o 4
+if(fR upgraded to version 0.05
+
+o 4
+Give more meaningful error messages from if(fR when invoked with a
+condition in list context.
+o 4
+Restore backwards compatibility with earlier versions of perl
+o 4
+IO(fR upgraded to version 1.22
+
+o 4
+Enhanced documentation
+o 4
+Internal cleanup
+o 4
+IPC::Open2(fR upgraded to version 1.02
+
+o 4
+Enhanced documentation
+o 4
+IPC::Open3(fR upgraded to version 1.02
+
+o 4
+Enhanced documentation
+o 4
+List::Util(fR upgraded to version 1.18 (was 1.14)
+
+o 4
+Fix pure perl version of refaddr(fR to avoid blessing an un blessed reference
+o 4
+Use XSLoader(fR for faster loading
+o 4
+Fixed various memory leaks
+o 4
+Internal cleanup and portability fixes
+o 4
+Math::Complex(fR upgraded to version 1.35
+
+o 4
+atan2(0, i)(fR now works, as do all the (computable) complex argument cases
+o 4
+Fixes for certain bugs in make(fR and emake(fR
+o 4
+Support returning the kth root directly
+o 4
+Support [2, 3pi/8](fR in emake(fR
+o 4
+Support inf(fR for make(fR/emake(fR
+o 4
+Document make(fR/emake(fR more visibly
+o 4
+Math::Trig(fR upgraded to version 1.03
+
+o 4
+Add more great circle routines: great_circle_waypoint(fR and
+great_circle_destination(fR
+o 4
+MIME::Base64(fR upgraded to version 3.07
+
+o 4
+Use XSLoader(fR for faster loading
+o 4
+Enhanced documentation
+o 4
+Internal cleanup
+o 4
+NDBM_File(fR upgraded to version 1.06
+
+o 4
+Enhanced documentation
+o 4
+ODBM_File(fR upgraded to version 1.06
+
+o 4
+Documentation typo fixed
+o 4
+Internal cleanup
+o 4
+Opcode(fR upgraded to version 1.06
+
+o 4
+Enhanced documentation
+o 4
+Internal cleanup
+o 4
+open(fR upgraded to version 1.05
+
+o 4
+Enhanced documentation
+o 4
+overload(fR upgraded to version 1.04
+
+o 4
+Enhanced documentation
+o 4
+PerlIO(fR upgraded to version 1.04
+
+o 4
+PerlIO::via(fR iterate over layers properly now
+o 4
+PerlIO::scalar(fR understands $/ = ""(fR now
+o 4
+encoding(utf 8 strict)(fR with partial characters now works
+o 4
+Enhanced documentation
+o 4
+Internal cleanup
+o 4
+Pod::Functions(fR upgraded to version 1.03
+
+o 4
+Documentation typos fixed
+o 4
+Pod::Html(fR upgraded to version 1.0504
+
+o 4
+HTML output will now correctly link
+to =item(fRs on the same page, and should be valid XHTML.
+o 4
+Variable names are recognized as intended
+o 4
+Documentation typos fixed
+o 4
+Pod::Parser(fR upgraded to version 1.32
+
+o 4
+Allow files that start with =head(fR on the first line
+o 4
+Win32 portability fix
+o 4
+Exit status of pod2usage(fR fixed
+o 4
+New ( noperldoc(fR switch for pod2usage(fR
+o 4
+Arbitrary URL schemes now allowed
+o 4
+Documentation typos fixed
+o 4
+POSIX(fR upgraded to version 1.09
+
+o 4
+Documentation typos fixed
+o 4
+Internal cleanup
+o 4
+re(fR upgraded to version 0.05
+
+o 4
+Documentation typo fixed
+o 4
+Safe(fR upgraded to version 2.12
+
+o 4
+Minor documentation enhancement
+o 4
+SDBM_File(fR upgraded to version 1.05
+
+o 4
+Documentation typo fixed
+o 4
+Internal cleanup
+o 4
+Socket(fR upgraded to version 1.78
+
+o 4
+Internal cleanup
+o 4
+Storable(fR upgraded to version 2.15
+
+o 4
+This includes the STORABLE_attach(fR hook functionality added by
+Adam Kennedy, and more frugal memory requirements when storing under ithreads(fR, by
+using the ithreads(fR cloning tracking code.
+o 4
+Switch(fR upgraded to version 2.10_01
+
+o 4
+Documentation typos fixed
+o 4
+Sys::Syslog(fR upgraded to version 0.13
+
+o 4
+Now provides numeric macros and meaningful Exporter(fR tags.
+o 4
+No longer uses Sys::Hostname(fR as it may provide useless values in
+unconfigured network environments, so instead uses INADDR_LOOPBACK(fR directly.
+o 4
+syslog()(fR now uses local timestamp.
+o 4
+setlogmask()(fR now behaves like its C counterpart.
+o 4
+setlogsock()(fR will now croak()(fR as documented.
+o 4
+Improved error and warnings messages.
+o 4
+Improved documentation.
+o 4
+Term::ANSIColor(fR upgraded to version 1.10
+
+o 4
+Fixes a bug in colored(fR when $EACHLINE is set that caused it to not color
+lines consisting solely of 0 (literal zero).
+o 4
+Improved tests.
+o 4
+Term::ReadLine(fR upgraded to version 1.02
+
+o 4
+Documentation tweaks
+o 4
+Test::Harness(fR upgraded to version 2.56 (was 2.48)
+
+o 4
+The Test::Harness(fR timer is now off by default.
+o 4
+Now shows elapsed time in milliseconds.
+o 4
+Various bug fixes
+o 4
+Test::Simple(fR upgraded to version 0.62 (was 0.54)
+
+o 4
+is_deeply()(fR no longer fails to work for many cases
+o 4
+Various minor bug fixes
+o 4
+Documentation enhancements
+o 4
+Text::Tabs(fR upgraded to version 2005.0824
+
+o 4
+Provides a faster implementation of expand(fR
+o 4
+Text::Wrap(fR upgraded to version 2005.082401
+
+o 4
+Adds $Text::Wrap::separator2, which allows you to preserve existing newlines
+but add line breaks with some other string.
+o 4
+threads(fR upgraded to version 1.07
+
+o 4
+threads(fR will now honour no warnings threads(W(C'
+o 4
+A thread's interpreter is now freed after $t >join()(fR rather than after
+undef $t(fR, which should fix some ithreads(fR memory leaks. (Fixed by Dave
+Mitchell)
+o 4
+Some documentation typo fixes.
+o 4
+threads::shared(fR upgraded to version 0.94
+
+o 4
+Documentation changes only
+o 4
+Note: An improved implementation of threads::shared(fR is available on
+CPAN   this will be merged into 5.8.9 if it proves stable.
+o 4
+Tie::Hash(fR upgraded to version 1.02
+
+o 4
+Documentation typo fixed
+o 4
+Time::HiRes(fR upgraded to version 1.86 (was 1.66)
+
+o 4
+clock_nanosleep()(fR and clock()(fR functions added
+o 4
+Support for the POSIX clock_gettime()(fR and clock_getres()(fR has been added
+o 4
+Return undef(fR or an empty list if the C gettimeofday()(fR function fails
+o 4
+Improved nanosleep(fR detection
+o 4
+Internal cleanup
+o 4
+Enhanced documentation
+o 4
+Unicode::Collate(fR upgraded to version 0.52
+
+o 4
+Now implements UCA Revision 14 (based on Unicode 4.1.0).
+o 4
+Unicode::Collate >new(fR method no longer overwrites user's $_
+o 4
+Enhanced documentation
+o 4
+Unicode::UCD(fR upgraded to version 0.24
+
+o 4
+Documentation typos fixed
+o 4
+User::grent(fR upgraded to version 1.01
+
+o 4
+Documentation typo fixed
+o 4
+utf8(fR upgraded to version 1.06
+
+o 4
+Documentation typos fixed
+o 4
+vmsish(fR upgraded to version 1.02
+
+o 4
+Documentation typos fixed
+o 4
+warnings(fR upgraded to version 1.05
+
+o 4
+Gentler messing with Carp::(fR internals
+o 4
+Internal cleanup
+o 4
+Documentation update
+o 4
+Win32(fR upgraded to version 0.2601
+
+o 4
+Provides Windows Vista support to Win32::GetOSName(fR
+o 4
+Documentation enhancements
+o 4
+XS::Typemap(fR upgraded to version 0.02
+
+o 4
+Internal cleanup
+Utility Changes
+h2xs(fR implements new option (  use xsloader(fR to force use of
+XSLoader(fR even in backwards compatible modules.
+
+The handling of authors' names that had apostrophes has been fixed.
+
+Any enums with negative values are now skipped.
+perlivp(fR implements new option ( a(fR and will not check for W.ph
+files by default any more.  Use the ( a(fR option to run all tests.
+New Documentation
+
+The perlglossary manpage is a glossary of terms used in the Perl
+documentation, technical and otherwise, kindly provided by O'Reilly Media,
+inc.
+Performance Enhancements
+
+o 4
+Weak reference creation is now O(1) rather than O(n), courtesy of
+Nicholas Clark. Weak reference deletion remains O(n), but if deletion only
+happens at program exit, it may be skipped completely.
+o 4
+Salvador Fandino provided improvements to reduce the memory usage of sort(fR
+and to speed up some cases.
+o 4
+Jarkko Hietaniemi and Andy Lester worked to mark as much data as possible in
+the C source files as static(fR, to increase the proportion of the executable
+file that the operating system can share between process, and thus reduce
+real memory usage on multi user systems.
+Installation and Configuration Improvements
+
+Parallel makes should work properly now, although there may still be problems
+if make test(fR is instructed to run in parallel.
+
+Building with Borland's compilers on Win32 should work more smoothly. In
+particular Steve Hay has worked to side step many warnings emitted by their
+compilers and at least one C compiler internal error.
+
+Configure(fR will now detect clearenv(fR and unsetenv(fR, thanks to a patch
+from Alan Burlison. It will also probe for futimes(fR and whether sprintf(fR
+correctly returns the length of the formatted string, which will both be used
+in perl 5.8.9.
+
+There are improved hints for next 3.0, vmesa, IX, Darwin, Solaris, Linux,
+DEC/OSF, HP UX and MPE/iX
+
+Perl extensions on Windows now can be statically built into the Perl DLL,
+thanks to a work by Vadim Konovalov. (This improvement was actually in 5.8.7,
+but was accidentally omitted from perl587delta).
+Selected Bug Fixes
+
+no warnings 'category' works correctly with  w
+
+Previously when running with warnings enabled globally via ( w(fR, selective
+disabling of specific warning categories would actually turn off all warnings.
+This is now fixed; now no warnings io;(fR will only turn off warnings in the
+io(fR class. Previously it would erroneously turn off all warnings.
+
+This bug fix may cause some programs to start correctly issuing warnings.
+Remove over optimisation
+
+Perl 5.8.4 introduced a change so that assignments of undef(fR to a
+scalar, or of an empty list to an array or a hash, were optimised away. As
+this could cause problems when goto(fR jumps were involved, this change
+has been backed out.
+sprintf() fixes
+
+Using the sprintf() function with some formats could lead to a buffer
+overflow in some specific cases. This has been fixed, along with several
+other bugs, notably in bounds checking.
+
+In related fixes, it was possible for badly written code that did not follow
+the documentation of Sys::Syslog(fR to have formatting vulnerabilities.
+Sys::Syslog(fR has been changed to protect people from poor quality third
+party code.
+Debugger and Unicode slowdown
+
+It had been reported that running under perl's debugger when processing
+Unicode data could cause unexpectedly large slowdowns. The most likely cause
+of this was identified and fixed by Nicholas Clark.
+Smaller fixes
+
+o 4
+FindBin(fR now works better with directories where access rights are more
+restrictive than usual.
+o 4
+Several memory leaks in ithreads were closed. An improved implementation of
+threads::shared(fR is available on CPAN   this will be merged into 5.8.9 if
+it proves stable.
+o 4
+Trailing spaces are now trimmed from $! and $^E.
+o 4
+Operations that require perl to read a process's list of groups, such as reads
+of $( and $), now dynamically allocate memory rather than using a
+fixed sized array. The fixed size array could cause C stack exhaustion on
+systems configured to use large numbers of groups.
+o 4
+PerlIO::scalar(fR now works better with non default $/ settings.
+o 4
+You can now use the x(fR operator to repeat a qw//(fR list. This used
+to raise a syntax error.
+o 4
+The debugger now traces correctly execution in eval("")uated code that
+contains #line directives.
+o 4
+The value of the open(fR pragma is no longer ignored for three argument
+opens.
+o 4
+The optimisation of for (reverse @a)(fR introduced in perl 5.8.6 could
+misbehave when the array had undefined elements and was used in LVALUE
+context. Dave Mitchell provided a fix.
+o 4
+Some case insensitive matches between UTF 8 encoded data and 8 bit regexps,
+and vice versa, could give malformed character warnings. These have been
+fixed by Dave Mitchell and Yves Orton.
+o 4
+lcfirst(fR and ucfirst(fR could corrupt the string for certain cases where
+the length UTF 8 encoding of the string in lower case, upper case or title
+case differed. This was fixed by Nicholas Clark.
+o 4
+Perl will now use the C library calls unsetenv(fR and clearenv(fR if present
+to delete keys from %ENV and delete %ENV entirely, thanks to a patch
+from Alan Burlison.
+New or Changed Diagnostics
+
+Attempt to set length of freed array
+
+This is a new warning, produced in situations such as this:
+    $r = do {my @a; ($#a};
+    $$r = 503;
+
+Non string passed as bitmask
+
+This is a new warning, produced when number has been passed as an argument to
+select(), instead of a bitmask.
+    # Wrong, will now warn
+    $rin = fileno(STDIN);
+    ($nfound,$timeleft) = select($rout=$rin, undef, undef, $timeout);
+    
+    # Should be
+    $rin = (W(Aq;
+    vec($rin,fileno(STDIN),1) = 1;
+    ($nfound,$timeleft) = select($rout=$rin, undef, undef, $timeout);
+
+Search pattern not terminated or ternary operator parsed as search pattern
+
+This syntax error indicates that the lexer couldn't find the final
+delimiter of a ?PATTERN?(fR construct. Mentioning the ternary operator in
+this error message makes it easier to diagnose syntax errors.
+Changed Internals
+
+There has been a fair amount of refactoring of the C(fR source code, partly to
+make it tidier and more maintainable. The resulting object code and the
+perl(fR binary may well be smaller than 5.8.7, in particular due to a change
+contributed by Dave Mitchell which reworked the warnings code to be
+significantly smaller. Apart from being smaller and possibly faster, there
+should be no user detectable changes.
+
+Andy Lester supplied many improvements to determine which function
+parameters and local variables could actually be declared const(fR to the C
+compiler. Steve Peters provided new W_set macros and reworked the core to
+use these rather than assigning to macros in LVALUE context.
+
+Dave Mitchell improved the lexer debugging output under ( DT(fR
+
+Nicholas Clark changed the string buffer allocation so that it is now rounded
+up to the next multiple of 4 (or 8 on platforms with 64 bit pointers). This
+should reduce the number of calls to realloc(fR without actually using any
+extra memory.
+
+The HV(fR's array of HEW(fRs is now allocated at the correct (minimal) size,
+thanks to another change by Nicholas Clark. Compile with
+( DPERL_USE_LARGE_HV_ALLOC(fR to use the old, sloppier, default.
+
+For XS or embedding debugging purposes, if perl is compiled with
+( DDEBUG_LEAKING_SCALARS_FORK_DUMP(fR in addition to
+( DDEBUG_LEAKING_SCALARS(fR then a child process is fork(fRed just before
+global destruction, which is used to display the values of any scalars
+found to have leaked at the end of global destruction. Without this, the
+scalars have already been freed sufficiently at the point of detection that
+it is impossible to produce any meaningful dump of their contents.  This
+feature was implemented by the indefatigable Nicholas Clark, based on an idea
+by Mike Giroux.
+Platform Specific Problems
+
+The optimiser on HP UX 11.23 (Itanium 2) is currently partly disabled (scaled
+down to +O1) when using HP C ANSI C; the cause of problems at higher
+optimisation levels is still unclear.
+
+There are a handful of remaining test failures on VMS, mostly due to
+test fixes and minor module tweaks with too many dependencies to
+integrate into this release from the development stream, where they have
+all been corrected.  The following is a list of expected failures with
+the patch number of the fix where that is known:
+    ext/Devel/PPPort/t/ppphtest.t  #26913
+    ext/List/Util/t/p_tainted.t    #26912
+    lib/ExtUtils/t/PL_FILES.t      #26813
+    lib/ExtUtils/t/basic.t         #26813
+    t/io/fs.t
+    t/op/cmp.t
+
+Reporting Bugs
+
+If you find what you think is a bug, you might check the articles
+recently posted to the comp.lang.perl.misc newsgroup and the perl
+bug database at http://bugs.perl.org.  There may also be
+information at http://www.perl.org, the Perl Home Page.
+
+If you believe you have an unreported bug, please run the perlbug
+program included with your release.  Be sure to trim your bug down
+to a tiny but sufficient test case.  Your bug report, along with the
+output of perl  V(fR, will be sent off to perlbug@perl.org to be
+analysed by the Perl porting team.  You can browse and search
+the Perl 5 bugs at http://bugs.perl.org/
+SEE ALSO
+
+The Changes file for exhaustive details on what changed.
+
+The INSTALL file for how to build Perl.
+
+The README file for general stuff.
+
+The Artistic and Copying files for copyright information.
+

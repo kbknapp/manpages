@@ -1,0 +1,31 @@
+
+ssh-keysign 
+ssh-keysign is used by
+
+to access the local host keys and generate the digital signature
+required during host-based authentication.
+
+ssh-keysign is disabled by default and can only be enabled in the
+global client configuration file
+
+by setting
+
+to
+ssh-keysign is not intended to be invoked by the user, but from
+
+See
+
+and
+
+for more information about host-based authentication.
+Controls whether
+ssh-keysign is enabled.
+These files contain the private parts of the host keys used to
+generate the digital signature.
+They should be owned by root, readable only by root, and not
+accessible to others.
+Since they are readable only by root,
+ssh-keysign must be set-uid root if host-based authentication is used.
+If these files exist they are assumed to contain public certificate
+information corresponding with the private keys above.
+ssh-keysign first appeared in

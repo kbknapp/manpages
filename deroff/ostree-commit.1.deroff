@@ -1,0 +1,86 @@
+
+NAME
+ostree-commit - Commit a new revision
+SYNOPSIS
+
+ostree commit [OPTIONS...] --branch= {BRANCH} [PATH]
+DESCRIPTION
+
+This allows you to commit changes to a branch. The specification of the branch is required. The command will print the checksum of a successful commit.
+OPTIONS
+
+--subject, -s="SUBJECT"
+
+One line subject. (optional)
+--body, -m="BODY"
+
+Full description. (optional)
+--editor, -e
+
+Open a text editor for the commit description. It will use OSTREE_EDITOR, VISUAL, EDITOR, or vi, in descending order of preference. The commit will be aborted if the message is left empty.
+--branch, -b="BRANCH"
+
+Branch. Required, unless --orphan is given.
+--tree="dir=PATH" or "tar=TARFILE" or "ref=COMMIT"
+
+Overlay the given argument as a tree.
+--add-metadata-string="KEY=VALUE"
+
+Add a key/value pair to metadata.
+--add-detached-metadata-string="KEY=VALUE"
+
+Add a key/value pair to detached metadata.
+--owner-uid="UID"
+
+Set file ownership user id.
+--owner-gid="GID"
+
+Set file ownership group id.
+--no-xattrs
+
+Do not import extended attributes.
+--link-checkout-speedup
+
+Optimize for commits of trees composed of hardlinks into the repository.
+--tar-autocreate-parents
+
+When loading tar archives, automatically create parent directories as needed.
+--skip-if-unchanged
+
+If the contents are unchanged from previous commit, do nothing.
+--consume
+
+When committing from a local directory (i.e. not an archive or --tree=ref), assume ownership of the content. This may simply involve deleting it, but if possible, the content may simply be
+rename()ed into the repository rather than creating a new copy.
+--statoverride="PATH"
+
+File containing list of modifications to make permissions (file mode, followed by space, followed by file path).
+--skip-list="PATH"
+
+File containing list of file paths to skip (one path per line).
+--table-output
+
+Output more information in a KEY: VALUE format.
+--generate-sizes
+
+Generate size information along with commit metadata.
+--gpg-sign="KEY-ID"
+
+GPG Key ID with which to sign the commit (if have GPGME - GNU Privacy Guard Made Easy).
+--gpg-homedir="HOMEDIR"
+
+GPG home directory to use when looking for keyrings (if have GPGME - GNU Privacy Guard Made Easy).
+--timestamp="TIMESTAMP"
+
+Override the timestamp of the commit to TIMESTAMP.
+--orphan
+
+Create a commit without writing to a ref (branch)
+--fsync="POLICY"
+
+POLICY is a boolean which specifies whether fsync should be used or not. Default to true.
+
+EXAMPLE
+
+$ ostree commit --branch=my-branch --subject="Initial commit"
+        67e382b11d213a402a5313e61cbc69dfd5ab93cb07fbb8b71c2e84f79fa5d7dc

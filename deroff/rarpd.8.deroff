@@ -1,0 +1,69 @@
+
+NAME
+rarpd - answer RARP REQUESTs
+SYNOPSIS
+
+arping [-aAvde] [-b bootdir] [interface]
+DESCRIPTION
+
+Listens RARP requests from clients. Provided MAC address of client is found in
+/etc/ethers
+database and obtained host name is resolvable to an IP address appropriate for attached network,
+rarpd
+answers to client with RARPD reply carrying an IP address.
+
+To allow multiple boot servers on the network
+rarpd
+optionally checks for presence Sun-like bootable image in TFTP directory. It should have form
+Hexadecimal_IP.ARCH, f.e. to load sparc 193.233.7.98
+C1E90762.SUN4M
+is linked to an image appropriate for SUM4M in directory
+/etc/tftpboot.
+WARNING
+
+This facility is deeply obsoleted by BOOTP and later DHCP protocols. However, some clients really still need this to boot.
+OPTIONS
+
+-a
+
+Listen on all the interfaces. Currently it is an internal option, its function is overridden with
+interface
+argument. It should not be used.
+-A
+
+Listen not only RARP but also ARP messages, some rare clients use ARP by some unknown reason.
+-v
+
+Be verbose.
+-d
+
+Debug mode. Do not go to background.
+-e
+
+Do not check for presence of a boot image, reply if MAC address resolves to a valid IP address using
+/etc/ethers
+database and DNS.
+-b bootdir
+
+TFTP boot directory. Default is
+/etc/tftpboot
+
+SEE ALSO
+
+arping(8),
+tftpd(8).
+AUTHOR
+
+rarpd
+was written by Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>.
+SECURITY
+
+rarpd
+requires CAP_NET_RAW capability to listen and send RARP and ARP packets. It also needs CAP_NET_ADMIN to give to kernel hint for ARP resolution; this is not strictly required, but some (most of, to be more exact) clients are so badly broken that are not able to answer ARP before they are finally booted. This is not wonderful taking into account that clients using RARPD in 2002 are all unsupported relic creatures of 90s and even earlier.
+AVAILABILITY
+
+rarpd
+is part of
+iputils
+package.
+

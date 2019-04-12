@@ -1,0 +1,85 @@
+
+NAME
+*[B-Font]srptool
+- GnuTLS SRP tool
+SYNOPSIS
+*[B-Font]srptool
+
+[*[B-Font]-flags]
+[*[B-Font]-flag [*[I-Font]value]]
+[*[B-Font]--option-name[[=| ]*[I-Font]value]]
+All arguments must be options.
+DESCRIPTION
+Simple program that emulates the programs in the Stanford SRP (Secure
+Remote Password) libraries using GnuTLS.  It is intended for use in  places
+where you don't expect SRP authentication to be the used for system users.
+
+In  brief,  to use SRP you need to create two files. These are the password
+file that holds the users and the verifiers associated with  them  and  the
+configuration file to hold the group parameters (called tpasswd.conf).
+OPTIONS
+Enable debugging.
+This option takes an integer number as its argument.
+The value of
+*[I-Font]number
+is constrained to being:
+in the range  0 through 9999
+Specifies the debug level.
+specify the index of the group parameters in tpasswd.conf to use.
+This option takes an integer number as its argument.
+The default
+*[I-Font]number
+for this option is:
+
+ 3
+specify a username.
+specify a password file.
+specify salt size.
+This option takes an integer number as its argument.
+just verify the password..
+
+Verifies the password provided against the password file.
+specify a password conf file..
+
+Specify a filename or a PKCS #11 URL to read the CAs from.
+Generate a password configuration file..
+
+This generates a password configuration file (tpasswd.conf)
+containing the required for TLS parameters.
+Display usage information and exit.
+Pass the extended usage information through a pager.
+Output version of program and exit.  The default mode is `v', a simple
+version.  The `c' mode will print copyright information and `n' will
+print the full copyright notice.
+
+EXAMPLES
+To create tpasswd.conf which holds the g and n values for SRP protocol
+(generator and a large prime), run:
+$ srptool --create-conf /etc/tpasswd.conf
+This command will create /etc/tpasswd and will add user 'test' (you
+will also be prompted for a password). Verifiers are stored by default
+in the way libsrp expects.
+$ srptool --passwd /etc/tpasswd --passwd-conf /etc/tpasswd.conf -u test
+This command will check against a password. If the password matches
+the one in /etc/tpasswd you will get an ok.
+$ srptool --passwd /etc/tpasswd --passwd-conf /etc/tpasswd.conf --verify -u test
+EXIT STATUS
+One of the following exit values will be returned:
+Successful program execution.
+The operation failed or the command syntax was not valid.
+libopts had an internal operational error.  Please report
+it to autogen-users@lists.sourceforge.net.  Thank you.
+
+SEE ALSO
+    gnutls-cli-debug (1), gnutls-serv (1), srptool (1), psktool (1), certtool (1)
+AUTHORS
+Nikos Mavrogiannopoulos, Simon Josefsson and others; see /usr/share/doc/gnutls/AUTHORS for a complete list.
+COPYRIGHT
+Copyright (C) 2000-@YEAR@ Free Software Foundation, and others all rights reserved.
+This program is released under the terms of the GNU General Public License, version 3 or later.
+BUGS
+Please send bug reports to: @PACKAGE_BUGREPORT@
+NOTES
+This manual page was AutoGen-erated from the srptool
+option definitions.
+

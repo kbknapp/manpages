@@ -1,0 +1,49 @@
+
+NAME
+ldbdel - Command-line program for deleting LDB records
+SYNOPSIS
+
+ldbdel [-h] [-H LDB-URL] [dn] [...]
+DESCRIPTION
+
+ldbdel deletes records from an ldb(3) database. It deletes the records identified by the dns specified on the command-line.
+
+ldbdel uses either the database that is specified with the -H option or the database specified by the LDB_URL environment variable.
+OPTIONS
+
+-h
+
+Show list of available options.
+-H <ldb-url>
+
+LDB URL to connect to. See ldb(3) for details.
+
+ENVIRONMENT
+
+LDB_URL
+
+LDB URL to connect to (can be overrided by using the -H command-line option.)
+
+VERSION
+
+This man page is correct for version 1.1 of LDB.
+SEE ALSO
+
+ldb(3), ldbmodify, ldbadd, ldif(5)
+AUTHOR
+
+ldb was written by
+m[blue]Andrew Tridgellm[]\u[1]\d.
+
+If you wish to report a problem or make a suggestion then please see the
+m[blue]%http://ldb.samba.org/m[]
+web site for current contact and maintainer information.
+
+ldbdel was written by Andrew Tridgell.
+
+This manpage was written by Jelmer Vernooij.
+NOTES
+ 1. 4
+Andrew Tridgell
+
+%https://www.samba.org/~tridge/

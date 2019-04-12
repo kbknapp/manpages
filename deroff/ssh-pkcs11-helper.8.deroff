@@ -1,0 +1,8 @@
+
+ssh-pkcs11-helper 
+ssh-pkcs11-helper is used by
+
+to access keys provided by a PKCS#11 token.
+
+ssh-pkcs11-helper is not intended to be invoked by the user, but from
+ssh-pkcs11-helper first appeared in

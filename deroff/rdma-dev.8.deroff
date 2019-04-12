@@ -1,0 +1,46 @@
+
+NAME
+rdma-dev - RDMA device configuration
+SYNOPSIS
+rdma
+[  OPTIONS  ]
+dev
+ {  COMMAND  | 
+help  }
+OPTIONS  := { 
+-V[ersion] |
+-d[etails] }
+rdma dev show
+[  DEV  ]
+rdma dev set
+[  DEV  ]
+name
+NEWNAME
+rdma dev help
+
+DESCRIPTION
+rdma dev set - rename rdma device
+
+rdma dev show - display rdma device attributes
+DEV
+- specifies the RDMA device to show.
+If this argument is omitted all devices are listed.
+
+EXAMPLES
+
+rdma dev
+
+Shows the state of all RDMA devices on the system.
+rdma dev show mlx5_3
+
+Shows the state of specified RDMA device.
+rdma dev set mlx5_3 name rdma_0
+
+Renames the mlx5_3 device to rdma_0.
+SEE ALSO
+rdma (8),
+rdma-link (8),
+rdma-resource (8),
+AUTHOR
+Leon Romanovsky <leonro@mellanox.com>
+

@@ -1,0 +1,97 @@
+
+NAME
+json_xs   JSON::XS commandline utility
+SYNOPSIS
+   json_xs [ v] [ f inputformat] [ t outputformat]
+
+DESCRIPTION
+
+json_xs converts between some input and output formats (one of them is
+JSON).
+
+The default input format is json(fR and the default output format is
+json pretty(fR.
+OPTIONS
+
+ v 4
+
+Be slightly more verbose.
+ f fromformat 4
+
+Read a file in the given format from STDIN.
+
+fromformat(fR can be one of:
+
+json   a json text encoded, either utf 8, utf16 be/le, utf32 be/le 4
+cbor   CBOR (RFC 7049, CBOR::XS), a kind of binary JSON 4
+
+storable   a Storable frozen value 4
+
+storable file   a Storable file (Storable has two incompatible formats) 4
+
+bencode   use Convert::Bencode, if available (used by torrent files, among others) 4
+
+clzf   Compress::LZF format (requires that module to be installed) 4
+yaml   YAML format (requires that module to be installed) 4
+
+string   do not attempt to decode the file data 4
+ t toformat 4
+Write the file in the given format to STDOUT.
+
+toformat(fR can be one of:
+
+json, json utf 8   json, utf 8 encoded 4
+json pretty   as above, but pretty printed 4
+
+json utf 16le, json utf 16be   little endian/big endian utf 16 4
+
+json utf 32le, json utf 32be   little endian/big endian utf 32 4
+
+cbor   CBOR (RFC 7049, CBOR::XS), a kind of binary JSON 4
+
+cbor packed   CBOR using extensions to make it smaller 4
+
+storable   a Storable frozen value in network format 4
+
+storable file   a Storable file in network format (Storable has two incompatible formats) 4
+
+bencode   use Convert::Bencode, if available (used by torrent files, among others) 4
+
+clzf   Compress::LZF format 4
+
+yaml   YAML::XS format 4
+
+dump   Data::Dump 4
+
+dumper   Data::Dumper 4
+
+string   writes the data out as if it were a string 4
+Note that Data::Dumper doesn't handle self referential data structures
+correctly   use dump instead.
+ e code 4
+
+Evaluate perl code after reading the data and before writing it out again
+  can be used to filter, create or extract data. The data that has been
+written is in $_, and whatever is in there is written out afterwards.
+EXAMPLES
+   json_xs  t none <isitreally.json
+(s 1JSON Lint   tries to parse the file isitreally.json as JSON   if it
+is valid JSON, the command outputs nothing, otherwise it will print an
+error message and exit with non zero exit status.
+   <src.json json_xs >pretty.json
+Prettify the JSON file src.json to dst.json.
+   json_xs  f storable file <file
+Read the serialised Storable file file and print a human readable JSON
+version of it to STDOUT.
+   json_xs  f storable file  t yaml <file
+Same as above, but write YAML instead (not using JSON at all :)
+   json_xs  f none  e $_ = [1, 2, 3]
+Dump the perl array as UTF 8 encoded JSON text.
+   <torrentfile json_xs  f bencode  e $_ = join "(n", map @$_, @{$_ >{"announce list"}}  t string
+Print the tracker list inside a torrent file.
+   lwp request http://cpantesters.perl.org/show/JSON XS.json | json_xs
+Fetch the cpan testers result summary JSON::XS(fR and pretty print it.
+AUTHOR
+
+Copyright (C) 2008 Marc Lehmann <json@schmorp.de>
+

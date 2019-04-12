@@ -1,0 +1,64 @@
+
+
+NAME
+hostname - show or set system host name
+SYNOPSIS
+hostname
+[,OPTION/...] [,NAME/]
+DESCRIPTION
+Show or set the system's host name.
+
+-a, --aliases
+alias names
+
+-d, --domain
+DNS domain name
+
+-f, --fqdn, --long
+DNS host name or FQDN
+
+-F, --file=,FILE/
+set host name or NIS domain name from FILE
+
+-i, --ip-addresses
+addresses for the host name
+
+-s, --short
+short host name
+
+-y, --yp, --nis
+NIS/YP domain name
+
+-?, --help
+give this help list
+
+--usage
+give a short usage message
+
+-V, --version
+print program version
+
+Mandatory or optional arguments to long options are also mandatory or optional
+for any corresponding short options.
+AUTHOR
+Written by Debarshi Ray.
+REPORTING BUGS
+Report bugs to <bug-inetutils@gnu.org>.
+COPYRIGHT
+Copyright © 2015 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+SEE ALSO
+The full documentation for
+hostname
+is maintained as a Texinfo manual.  If the
+info
+and
+hostname
+programs are properly installed at your site, the command
+info hostname
+
+should give you access to the complete manual.
+

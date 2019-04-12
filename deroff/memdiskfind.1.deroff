@@ -1,0 +1,11 @@
+
+NAME
+memdiskfind -- Simple utility to find a resident memdisk instance.
+SYNOPSIS
+memdiskfind
+DESCRIPTION
+
+The memdiskfind utility searches memory for a memdisk instance,
+and, if found, outputs the parameters needed to use the hram driver in
+Linux to map it.
+

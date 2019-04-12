@@ -1,0 +1,39 @@
+
+NAME
+i3-sensible-pager - launches $PAGER with fallbacks
+SYNOPSIS
+
+i3-sensible-pager [arguments]
+DESCRIPTION
+
+i3-sensible-pager is used by i3-nagbar(1) when you click on the view button.
+
+It tries to start one of the following (in that order):
+oc
+o 2.3
+
+$PAGER
+oc
+o 2.3
+
+less
+oc
+o 2.3
+
+most
+oc
+o 2.3
+
+w3m
+oc
+o 2.3
+
+i3-sensible-editor(1)
+Please don't complain about the order: If the user has any preference, they will have $PAGER set.
+SEE ALSO
+
+i3(1)
+AUTHOR
+
+Michael Stapelberg and contributors
+

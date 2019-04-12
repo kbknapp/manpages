@@ -1,0 +1,95 @@
+
+ssh-keyscan is a utility for gathering the public SSH host keys of a number of
+hosts.
+It was designed to aid in building and verifying
+
+files,
+the format of which is documented in
+
+ssh-keyscan provides a minimal interface suitable for use by shell and perl
+scripts.
+
+ssh-keyscan uses non-blocking socket I/O to contact as many hosts as possible in
+parallel, so it is very efficient.
+The keys from a domain of 1,000
+hosts can be collected in tens of seconds, even when some of those
+hosts are down or do not run
+
+For scanning, one does not need
+login access to the machines that are being scanned, nor does the
+scanning process involve any encryption.
+
+The options are as follows:
+Force
+ssh-keyscan to use IPv4 addresses only.
+
+Force
+ssh-keyscan to use IPv6 addresses only.
+
+Request certificates from target hosts instead of plain keys.
+
+Print keys found as SSHFP DNS records.
+The default is to print keys in a format usable as a
+file.
+
+Read hosts or
+
+pairs from
+
+one per line.
+If
+
+is supplied instead of a filename,
+ssh-keyscan will read from the standard input.
+Input is expected in the format:
+
+1.2.3.4,1.2.4.4 name.my.domain,name,n.my.domain,n,1.2.3.4,1.2.4.4
+Hash all hostnames and addresses in the output.
+Hashed names may be used normally by
+
+and
+
+but they do not reveal identifying information should the file's contents
+be disclosed.
+
+Connect to
+
+on the remote host.
+
+Set the timeout for connection attempts.
+If
+
+seconds have elapsed since a connection was initiated to a host or since the
+last time anything was read from that host, the connection is
+closed and the host in question considered unavailable.
+The default is 5 seconds.
+
+Specify the type of the key to fetch from the scanned hosts.
+The possible values are
+or
+
+Multiple values may be specified by separating them with commas.
+The default is to fetch
+and
+
+keys.
+
+Verbose mode:
+print debugging messages about progress.
+If an ssh_known_hosts file is constructed using
+ssh-keyscan without verifying the keys, users will be vulnerable to
+
+attacks.
+On the other hand, if the security model allows such a risk,
+ssh-keyscan can help in the detection of tampered keyfiles or man in the middle
+attacks which have begun after the ssh_known_hosts file was created.
+Print the RSA host key for machine
+Find all hosts from the file
+
+which have new or different keys from those in the sorted file
+$ ssh-keyscan -t rsa,dsa,ecdsa,ed25519 -f ssh_hosts | \
+	sort -u - ssh_known_hosts | diff ssh_known_hosts -
+wrote the initial version, and
+
+added support for protocol version 2.
+

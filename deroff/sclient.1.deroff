@@ -1,0 +1,26 @@
+
+NAME
+sclient - sample Kerberos version 5 client
+\$1 \n[an-margin]
+level \n[rst2man-indent-level]
+level margin: \n[rst2man-indent\n[rst2man-indent-level]]
+-
+\n[rst2man-indent0]
+\n[rst2man-indent1]
+\n[rst2man-indent2]
+SYNOPSIS
+
+sclient remotehost
+DESCRIPTION
+
+sclient is a sample application, primarily useful for testing
+purposes.  It contacts a sample server sserver(8) and
+authenticates to it using Kerberos version 5 tickets, then displays
+the server's response.
+SEE ALSO
+
+kinit(1), sserver(8)
+AUTHOR
+MIT
+COPYRIGHT
+1985-2018, MIT

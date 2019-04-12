@@ -1,0 +1,66 @@
+
+
+NAME
+telnetd - Telnet server
+SYNOPSIS
+telnetd
+[,OPTION/...]
+DESCRIPTION
+DARPA telnet protocol server
+
+-D, --debug[=,LEVEL/]
+set debugging level
+
+-E, --exec-login=,STRING/
+set program to be executed instead of
+,/usr/bin/login/
+
+-h, --no-hostinfo
+do not print host information before login has
+been completed
+
+-l, --linemode[=,MODE/]
+set line mode
+
+-n, --no-keepalive
+disable TCP keep-alives
+
+-U, --reverse-lookup
+refuse connections from addresses that cannot be
+mapped back into a symbolic name
+
+-?, --help
+give this help list
+
+--usage
+give a short usage message
+
+-V, --version
+print program version
+
+Mandatory or optional arguments to long options are also mandatory or optional
+for any corresponding short options.
+AUTHOR
+Written by many authors.
+REPORTING BUGS
+Report bugs to <bug-inetutils@gnu.org>.
+COPYRIGHT
+Copyright © 2015 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+SEE ALSO
+telnet(1)
+
+The full documentation for
+telnetd
+is maintained as a Texinfo manual.  If the
+info
+and
+telnetd
+programs are properly installed at your site, the command
+info telnetd
+
+should give you access to the complete manual.
+

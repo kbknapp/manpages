@@ -1,0 +1,123 @@
+
+sndfile-convert converts sound files from one audio format to another.
+The output file is overwritten it it already exists.
+
+The format of the output file is determined by the filename extension.
+The following file formats are currently recognized:
+WAV (Microsoft)
+
+AIFF (Apple/SGI)
+
+AU (Sun/NeXT)
+
+AU (Sun/NeXT)
+
+RAW (header-less)
+
+RAW (header-less)
+
+RAW (header-less)
+
+PAF (Ensoniq PARIS, big-endian)
+
+PAF (Ensoniq PARIS, little-endian)
+
+IFF (Amiga IFF/SVX8/SV16)
+
+SPHERE (NIST SPeech HEader Resources)
+
+SPHERE (NIST SPeech HEader Resources)
+
+VOC (Creative Labs)
+
+SF (Berkeley/IRCAM/CARL)
+
+SF (Berkeley/IRCAM/CARL)
+
+W64 (SoundFoundry WAVE 64)
+
+MAT4 (GNU Octave 2.0 / Matlab 4.2)
+
+MAT4 (GNU Octave 2.0 / Matlab 4.2)
+
+MAT5 (GNU Octave 2.1 / Matlab 5.0)
+
+PVF (Portable Voice Format)
+
+XI (FastTracker 2)
+
+HTK (HMM Tool Kit)
+
+SDS (Midi Sample Dump Standard)
+
+AVR (Audio Visual Research)
+
+WAVEX (MS WAVE with WAVEFORMATEX)
+
+SD2 (Sound Designer II)
+
+FLAC (FLAC Lossless Audio Codec)
+
+CAF (Apple Core Audio File)
+
+WVE (Psion Series 3)
+
+WVE (Psion Series 3)
+
+OGG (OGG Container format)
+
+OGG (OGG Container format)
+
+MPC (Akai MPC 2k)
+
+RF64 (RIFF 64)
+The following options are recoginzed:
+Make the input use sample rate of
+
+Hz.
+
+Make the output file use little endian data.
+
+Make the output file use big endian data.
+
+Make the output file use CPU endianness.
+
+Normalize the audio data in the output file.
+The optional
+
+parameter allows setting of the data encoding for the output file.
+The following encodings are currently supported:
+signed 8 bit pcm
+
+unsigned 8 bit pcm
+
+16 bit pcm
+
+24 bit pcm
+
+32 bit pcm
+
+32 bit floating point
+
+ULAW
+
+ALAW
+
+IMA ADPCM (WAV only)
+
+MS ADPCM (WAV only)
+
+GSM6.10 (WAV only)
+
+12 bit DWVW (AIFF only)
+
+16 bit DWVW (AIFF only)
+
+24 bit DWVW (AIFF only)
+
+Vorbis (OGG only)
+If no encoding is specified for the output file,
+sndfile-convert will try to use the encoding of the input file.
+This will not always work as most container formats
+(e.g. WAV, AIFF etc) only support a small subset of encodings
+(e.g. 16 bit PCM, a-law, Vorbis etc).

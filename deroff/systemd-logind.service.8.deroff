@@ -1,0 +1,95 @@
+
+NAME
+systemd-logind.service, systemd-logind - Login manager
+SYNOPSIS
+
+systemd-logind.service
+
+/usr/lib/systemd/systemd-logind
+DESCRIPTION
+
+systemd-logind
+is a system service that manages user logins. It is responsible for:
+oc
+o 2.3
+
+Keeping track of users and sessions, their processes and their idle state. This is implemented by allocating a systemd slice unit for each user below
+user.slice, and a scope unit below it for each concurrent session of a user. Also, a per-user service manager is started as system service instance of
+user@.service
+for each logged in user.
+oc
+o 2.3
+
+Generating and managing session IDs. If auditing is available and an audit session ID is already set for a session, then this ID is reused as the session ID. Otherwise, an independent session counter is used.
+oc
+o 2.3
+
+Providing
+m[blue]polkitm[]\u[1]\d-based access for users for operations such as system shutdown or sleep
+oc
+o 2.3
+
+Implementing a shutdown/sleep inhibition logic for applications
+oc
+o 2.3
+
+Handling of power/sleep hardware keys
+oc
+o 2.3
+
+Multi-seat management
+oc
+o 2.3
+
+Session switch management
+oc
+o 2.3
+
+Device access management for users
+oc
+o 2.3
+
+Automatic spawning of text logins (gettys) on virtual console activation and user runtime directory management
+User sessions are registered with logind via the
+pam_systemd(8)
+PAM module.
+
+See
+logind.conf(5)
+for information about the configuration of this service.
+
+See
+sd-login(3)
+for information about the basic concepts of logind such as users, sessions and seats.
+
+See the
+m[blue]logind D-Bus API Documentationm[]\u[2]\d
+for information about the APIs
+systemd-logind
+provides.
+
+For more information on the inhibition logic see the
+m[blue]Inhibitor Lock Developer Documentationm[]\u[3]\d.
+SEE ALSO
+
+systemd(1),
+systemd-user-sessions.service(8),
+loginctl(1),
+logind.conf(5),
+pam_systemd(8)
+sd-login(3)
+NOTES
+ 1. 4
+polkit
+
+%http://www.freedesktop.org/wiki/Software/polkit
+
+ 2. 4
+logind D-Bus API Documentation
+
+%https://www.freedesktop.org/wiki/Software/systemd/logind
+
+ 3. 4
+Inhibitor Lock Developer Documentation
+
+%https://www.freedesktop.org/wiki/Software/systemd/inhibit

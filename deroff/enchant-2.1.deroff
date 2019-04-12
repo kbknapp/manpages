@@ -1,0 +1,73 @@
+
+NAME
+Enchant - a spellchecker
+SYNOPSIS
+
+enchant-2
+[-a] [-d dict] [-h] [-l] [-L] [-v]
+DESCRIPTION
+Enchant
+is an ispell-compatible spellchecker.
+OPTIONS
+
+-a
+List suggestions in ispell pipe mode format.
+
+-d DICTIONARY
+Use the given dictionary.
+
+-h
+Show short help.
+
+-l
+List only the misspellings.
+
+-L
+Include the line number in the output.
+
+-v
+Prints the program's version.
+ENCHANT ORDERING FILE
+Enchant uses global and per-user ordering files named enchant.ordering
+to decide which spelling provider to use for particular languages.
+The per-user file takes precedence.
+
+The ordering file takes the form language_tag:<comma-separated list of spelling
+providers>. To see what providers are available, run enchant-lsmod-2. '*' is
+used to mean "use this ordering for all languages, unless instructed otherwise." For example:
+
+*:aspell,hunspell
+
+en:aspell,hunspell
+
+en_GB:hunspell,aspell
+
+fr:hunspell,aspell
+FILES AND DIRECTORIES
+Enchant looks in the following places for files, in decreasing order of precedence:
+
+ENCHANT_CONFIG_DIR
+(If the environment variable is set.)
+
+XDG_CONFIG_HOME/enchant (non-Windows systems)
+Default: ~/.config/enchant
+
+CSIDL_LOCAL_APPDATA\enchant (Windows systems)
+Default: C:\Documents and Settings\username\Local Settings\Application Data\enchant
+
+${prefix}/share/enchant
+(Or the equivalent location relative to the enchant library for a relocatable build.)
+
+Dictionaries are looked for in a subdirectory with the same name as the
+provider; for example, ${prefix}/share/enchant/hunspell and
+~/.config/enchant/hunspell.
+
+Some providers may also look in a standard system directory for their
+dictionaries; the hunspell provider can be configured to do so at build
+time.
+SEE ALSO
+aspell (1),
+enchant-lsmod-2 (1)
+AUTHOR
+Written by Dom Lachowicz and Reuben Thomas.
+

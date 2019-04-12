@@ -1,0 +1,157 @@
+
+{
+NAME
+lrz   gzip compatible command line variant of lrzip
+SYNOPSIS
+
+lrz [options] file
+DESCRIPTION
+
+lrz is identical to the lrzip application, however, its command
+line options and behaviour are made to be as compatible with gzip
+as possible.
+OPTIONS
+
+General options
+
+  stdout 9
+ c 9
+Output to STDOUT.
+  check 9
+ C 9
+Check integrity of file written on decompression.
+  decompress 9
+ d 9
+Decompress.
+  encrypt 9
+ e 9
+Password protect sha512/aes128 encryption on compression.
+  help 9
+ h 9
+
+ ? 9
+Show help.
+  hash 9
+ H 9
+Display md5 hash integrity information.
+  info 9
+ i 9
+Show compressed file information.
+  license 9
+ L 9
+Display software version and license.
+  progress 9
+ P 9
+Show compression progress.
+  recursive 9
+ r 9
+Operate recursively on directories.
+  test 9
+ t 9
+Test compressed file integrity.
+  verbose 9
+ v[vv] 9
+Increase verbosity.
+  version 9
+ V 9
+Show version.
+Options affecting output
+
+  force 9
+ f 9
+Force overwrite of any existing files.
+  keep 9
+ k 9
+Don't delete source files on de/compression.
+  keep broken 9
+ K 9
+Keep broken or damaged output files.
+  outfile  name 9
+ o name 9
+Specify the output file name and/or path.
+  outdir dir 9
+ O dir 9
+Specify the output directory when  o is not used.
+  suffix suffix 9
+ S suffix 9
+Specify compressed suffix (default '.lrz').
+Options affecting compression
+
+  bzip2 9
+ b 9
+Bzip2 compression.
+  gzip 9
+ g 9
+Gzip compression using zlib.
+  lzo 9
+ l 9
+Lzo compression (ultra fast).
+  lzma 9
+
+Lzma compression (default).
+  no compress 9
+ n 9
+No backend compression   prepare for other compressor.
+  zpaq 9
+ z 9
+Zpaq compression (best, extreme compression, extremely slow).
+Low level options
+
+ 1 ..  9 9
+  level level 9
+
+ L level 9
+Set lzma/bzip2/gzip compression level (1 9, default 7).
+  fast 9
+
+Alias for  1.
+  best 9
+
+Alias for  9.
+  nice level value 9
+ N value 9
+Set nice value to value (default 0).
+  threads value 9
+ P value 9
+Set processor count to override number of threads.
+  maxram size 9
+ m size 9
+Set maximim available ram as size W 100 MB.
+Overrides detected amount of available ram.
+  threshold 9
+ T 9
+Disable LZO compressibility testing.
+  unlimited 9
+ U 9
+Use unlimited window size beyond ramsize (potentially much slower).
+  window size 9
+ w size 9
+Set maximum compression window as size W 100 MB.
+Default chosen by heuristic dependent on ram and chosen compression.
+
+See also lrzip(1)
+ENVIRONMENT
+
+lrz uses the same environment and configuration files as lrzip(1)
+FILES
+
+See lrzip(1)
+SEE ALSO
+
+lrzip.conf(5),
+lrzip(1),
+lrunzip(1),
+lrztar(1),
+lrzuntar(1),
+bzip2(1),
+gzip(1),
+lzop(1),
+rzip(1),
+zip(1)
+AUTHORS
+
+This manual page was written by Con Kolivas <kernel@kolivas.org> (but
+may be used by others). Released under license GNU GPL version 2 or (at
+your option) any later version. For more information about license,
+visit <http://www.gnu.org/copyleft/gpl.html>.
+

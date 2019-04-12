@@ -1,0 +1,44 @@
+
+NAME
+ostree-prune - Search for unreachable objects
+SYNOPSIS
+
+ostree prune [OPTIONS...]
+DESCRIPTION
+
+This searches for unreachable objects in the current repository. If unreachable objects are found, the command delete them to free space. If the
+--no-prune
+option is invoked, the command will just print unreachable objects and recommend deleting them.
+OPTIONS
+
+--no-prune
+
+Only display unreachable objects; dont delete.
+--refs-only
+
+Only compute reachability via refs.
+--delete-commit=COMMIT
+
+Specify a COMMIT to delete.
+--keep-younger-than=DATE
+
+All commits older than DATE will be pruned. The format of DATE is the same as that accepted by GNU
+date
+utility - for more information see
+info date.
+--depth=DEPTH
+
+Only traverse DEPTH (integer) parents for each commit (default: -1=infinite).
+--static-deltas-only=DEPTH
+
+This option may currently
+only
+be used in combination with
+--delete-commit. Previous versions of ostree silently accepted the option without that, and ignored it. However, there are desired use cases for pruning just static deltas (while retaining the commits), and its likely at some point this option will be supported for use cases outside of just
+--delete-commit.
+
+EXAMPLE
+
+$ ostree prune
+        Total objects: 25627
+        No unreachable objects

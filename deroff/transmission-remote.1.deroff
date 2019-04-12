@@ -1,0 +1,291 @@
+
+and
+transmission-remote 
+transmission-remote is a remote control utility for
+
+and
+By default,
+transmission-remote connects to the transmission session at localhost:9091.
+Other sessions can be controlled by specifying a different host and/or port.
+Add torrents to transmission.
+
+Enable debugging mode.
+
+Use the alternate Limits.
+
+Don't use the alternate Limits.
+
+Limit the alternate download speed to
+
+kilobytes per second.
+
+Limit the alternate upload speed to
+
+kilobytes per second.
+
+Use the scheduled on/off times.
+
+Don't use the scheduled on/off days and times.
+to start using the alt speed limits (in hhmm).
+to stop using the alt speed limits (in hhmm).
+
+Set the number of
+
+on which to enable the speed scheduler, using a list such as "2,4-6".
+
+Specify a
+
+to run each time a torrent finishes
+
+Don't run any script when a torrent finishes
+
+When adding new torrents, store their contents in
+
+until the torrent is done.
+
+Don't store incomplete torrents in a different directory.
+
+Limit the maximum download speed to
+
+kB/s.
+If current torrent(s) are selected this operates on them. Otherwise, it changes the global setting.
+
+Disable download speed limits.
+If current torrent(s) are selected this operates on them. Otherwise, it changes the global setting.
+
+Set the session's maximum memory cache size in MiB. This cache is used to reduce disk IO.
+
+Encrypt all peer connections.
+
+Prefer encrypted peer connections.
+
+Prefer unencrypted peer connections.
+
+Tell the Transmission to initiate a shutdown.
+
+Get a file list for the current torrent(s)
+
+Mark file(s) for download.
+
+marks all all of the torrent's files for downloading,
+
+adds a single file to the download list, and
+
+adds multiple files to the download list,
+such as "-g1,3-5" to add files #1, #3, #4, and #5 to the download list.
+
+Mark file(s) for not downloading.
+
+All torrents, unless overridden by a per-torrent setting, should seed until a specific
+All torrents, unless overridden by a per-torrent setting, should seed regardless of ratio
+
+Print command-line option descriptions.
+
+Show details of the current torrent(s)
+
+List the specified torrent's files
+
+List the specified torrent's peers
+
+List the specified torrent's pieces
+
+List the specified torrent's trackers
+
+List session information from the server
+
+List statistical information from the server
+
+List all torrents
+
+Enable portmapping via NAT-PMP or UPnP
+
+Disable portmapping
+
+Set the
+
+and
+
+for authentication
+
+Set the authentication information from the
+
+environment variable which must be formatted as
+Set the authentication information from a
+
+See netrc(5) for more information.
+
+Enable distributed hash table (DHT).
+
+Disable distribued hash table (DHT).
+
+Set the
+
+for use when listening for incoming peer connections
+
+Give this torrent first chance at available bandwidth
+
+Give this torrent the bandwidth left over by high priority torrents
+
+Give this torrent the bandwidth left over by high and normal priority torrents
+
+Try to download the specified file(s) first.
+
+marks all of the torrent's files as normal priority,
+
+sets a single file's priority as normal, and
+
+sets multiple files' priorities as normal,
+such as "-pn1,3-5" to normalize files #1, #3, #4, and #5.
+
+Try to download the specified files normally.
+
+Try to download the specified files last
+
+Set the maximum number of peers.
+If current torrent(s) are selected this operates on them. Otherwise, it changes the global setting.
+
+Remove the current torrent(s). This does not delete the downloaded data.
+
+Remove the current torrent(s) and delete their downloaded data.
+
+Reannounce the current torrent(s). This is the same as the GUI's "ask tracker for more peers" button.
+
+Move the current torrents' data from their current locations to the specified directory.
+
+Tell Transmission where to look for the current torrents' data.
+
+Let the current torrent(s) seed until a specific
+Let the current torrent(s) seed regardless of ratio
+
+Let the current torrent(s) use the global seedratio settings
+
+Add a tracker to a torrent
+
+Remove a tracker from a torrent
+
+Start the current torrent(s)
+
+Stop the current torrent(s) from downloading or seeding
+
+Start added torrents paused
+
+Start added torrents unpaused
+
+Set the current torrent(s) for use by subsequent options. The literal
+
+will apply following requests to all torrents; the literal
+
+will apply following requests to recently-active torrents; and specific torrents can be chosen by
+
+or
+
+To set more than one current torrent, join their ids together in a list, such as
+"-t2,4,6-8" to operate on the torrents whose IDs are 2, 4, 6, 7, and 8.
+
+Delete torrents after adding
+
+Do not delete torrents after adding
+
+Make the current torrent(s) honor the session limits.
+
+Make the current torrent(s) not honor the session limits.
+
+Limit the maximum upload speed to
+
+kB/s.
+If current torrent(s) are selected this operates on them. Otherwise, it changes the global setting.
+
+Disable upload speed limits.
+
+Enable uTP for peer connections.
+
+Disable uTP for peer connections.
+If current torrent(s) are selected this operates on them. Otherwise, it changes the global setting.
+
+Verify the current torrent(s)
+
+Show version number and exit
+
+When used in conjunction with --add, set the new torrent's download folder. Otherwise, set the default download folder.
+
+Enable peer exchange (PEX).
+
+Disable peer exchange (PEX).
+
+Enable local peer discovery (LPD).
+
+Disable local peer discovery (LPD).
+
+List the current torrent's connected peers.
+In the `status' section of the list, the following shorthand is used:
+Update blocklist from URL specified in remote client's settings with
+
+key.
+List all torrents:
+
+$ transmission-remote -l
+
+List all active torrents:
+
+$ transmission-remote -tactive -l
+
+Set download and upload limits to 400 kB/sec and 60 kB/sec:
+
+$ transmission-remote -d400 -u60
+$ transmission-remote --downlimit=400 --uplimit=60
+
+Set alternate download and upload limits to 100 kB/sec and 20 kB/sec:
+
+$ transmission-remote -asd100 -asu20
+$ transmission-remote --alt-speed-downlimit=100 --alt-speed-uplimit=20
+
+Set the scheduler to use the alternate speed limits on weekdays between 10AM and 11PM
+
+$ transmission-remote --alt-speed-time-begin=1000
+$ transmission-remote --alt-speed-time-end=2300
+$ transmission-remote --alt-speed-days=1-5
+$ transmission-remote --alt-speed-scheduler
+
+List all torrents' IDs and states:
+
+$ transmission-remote -l
+
+List all torrents from a remote session that requires authentication:
+
+$ transmission-remote host:9091 --auth=username:password -l
+
+Start all torrents:
+
+$ transmission-remote -tall --start
+
+Add two torrents:
+
+$ transmission-remote -a one.torrent two.torrent
+
+Add all torrents in ~/Desktop:
+
+$ transmission-remote -a ~/Desktop/*torrent
+
+Get detailed information on the torrent whose ID is '1':
+
+$ transmission-remote -t1 -i
+
+Get a list of a torrent's files:
+
+$ transmission-remote -t1 -f
+
+Download only its second and fourth files:
+
+$ transmission-remote -t1 -Gall -g2,4
+
+Set all torrents' first two files' priorities to high:
+
+$ transmission-remote -tall -ph1,2
+
+Set all torrents' files' priorities to normal:
+
+$ transmission-remote -tall -pnall
+Sets the proxy to use for http tracker announces.
+and
+https://transmissionbt.com/
+

@@ -1,0 +1,556 @@
+
+{
+NAME
+perlmod   Perl modules (packages and symbol tables)
+DESCRIPTION
+
+Is this the document you were after?
+
+There are other documents which might contain the information that you're
+looking for:
+This doc 2
+
+Perl's packages, namespaces, and some info on classes.
+perlnewmod 2
+
+Tutorial on making a new module.
+perlmodstyle 2
+
+Best practices for making a new module.
+Packages
+Unlike Perl 4, in which all the variables were dynamic and shared one
+global name space, causing maintainability problems, Perl 5 provides two
+mechanisms for protecting code from having its variables stomped on by
+other code: lexically scoped variables created with my(fR or state(fR and
+namespaced global variables, which are exposed via the vars(fR pragma,
+or the our(fR keyword. Any global variable is considered to
+be part of a namespace and can be accessed via a fully qualified form.
+Conversely, any lexically scoped variable is considered to be part of
+that lexical scope, and does not have a fully qualified form.
+
+In perl namespaces are called packages and
+the package(fR declaration tells the compiler which
+namespace to prefix to our(fR variables and unqualified dynamic names.
+This both protects
+against accidental stomping and provides an interface for deliberately
+clobbering global dynamic variables declared and used in other scopes or
+packages, when that is what you want to do.
+
+The scope of the package(fR declaration is from the
+declaration itself through the end of the enclosing block, eval(fR,
+or file, whichever comes first (the same scope as the my(), our(), state(), and
+local() operators, and also the effect
+of the experimental reference aliasing, which may change), or until
+the next package(fR declaration.  Unqualified dynamic identifiers will be in
+this namespace, except for those few identifiers that, if unqualified,
+default to the main package instead of the current one as described
+below.  A package(fR statement affects only dynamic global
+symbols, including subroutine names, and variables you've used local()
+on, but not lexical variables created with my(), our() or state().
+
+Typically, a package(fR statement is the first declaration in a file
+included in a program by one of the do(fR, require(fR, or use(fR operators.  You can
+switch into a package in more than one place: package(fR has no
+effect beyond specifying which symbol table the compiler will use for
+dynamic symbols for the rest of that block or until the next package(fR statement.
+You can refer to variables and filehandles in other packages
+by prefixing the identifier with the package name and a double
+colon: $Package::Variable.  If the package name is null, the
+main(fR package is assumed.  That is, $::sail is equivalent to
+$main::sail.
+
+The old package delimiter was a single quote, but double colon is now the
+preferred delimiter, in part because it's more readable to humans, and
+in part because it's more readable to emacs macros.  It also makes C .1v'++.1v'programmers feel like they know what's going onas opposed to using the
+single quote as separator, which was there to make Ada programmers feel
+like they knew what was going on.  Because the old fashioned syntax is still
+supported for backwards compatibility, if you try to use a string like
+"This is $owners house", you'll be accessing $owner::s; that is,
+the $s variable in package owner(fR, which is probably not what you meant.
+Use braces to disambiguate, as in "This is ${owner}s house".
+Packages may themselves contain package separators, as in
+$OUTER::INNER::var.  This implies nothing about the order of
+name lookups, however.  There are no relative packages: all symbols
+are either local to the current package, or must be fully qualified
+from the outer package name down.  For instance, there is nowhere
+within package OUTER(fR that $INNER::var refers to
+$OUTER::INNER::var.  INNER(fR refers to a totally
+separate global package. The custom of treating package names as a
+hierarchy is very strong, but the language in no way enforces it.
+
+Only identifiers starting with letters (or underscore) are stored
+in a package's symbol table.  All other symbols are kept in package
+main(fR, including all punctuation variables, like $_.  In addition,
+when unqualified, the identifiers STDIN, STDOUT, STDERR, ARGV,
+ARGVOUT, ENV, INC, and SIG are forced to be in package main(fR,
+even when used for other purposes than their built in ones.  If you
+have a package called m(fR, s(fR, or y(fR, then you can't use the
+qualified form of an identifier because it would be instead interpreted
+as a pattern match, a substitution, or a transliteration.
+Variables beginning with underscore used to be forced into package
+main, but we decided it was more useful for package writers to be able
+to use leading underscore to indicate private variables and method names.
+However, variables and functions named with a single _(fR, such as
+$_ and sub _(fR, are still forced into the package main(fR.  See also
+The Syntax of Variable Names in perlvar.
+
+eval(fRed strings are compiled in the package in which the eval() was
+compiled.  (Assignments to $SIG{}, however, assume the signal
+handler specified is in the main(fR package.  Qualify the signal handler
+name if you wish to have a signal handler in a package.)  For an
+example, examine perldb.pl in the Perl library.  It initially switches
+to the DB(fR package so that the debugger doesn't interfere with variables
+in the program you are trying to debug.  At various points, however, it
+temporarily switches back to the main(fR package to evaluate various
+expressions in the context of the main(fR package (or wherever you came
+from).  See perldebug.
+
+The special symbol __PACKAGE__(fR contains the current package, but cannot
+(easily) be used to construct variable names. After my($foo)(fR has hidden
+package variable $foo, it can still be accessed, without knowing what
+package you are in, as ${__PACKAGE__.::foo}(fR.
+
+See perlsub for other scoping issues related to my() and local(),
+and perlref regarding closures.
+Symbol Tables
+The symbol table for a package happens to be stored in the hash of that
+name with two colons appended.  The main symbol table's name is thus
+%main::, or %:: for short.  Likewise the symbol table for the nested
+package mentioned earlier is named %OUTER::INNER::.
+
+The value in each entry of the hash is what you are referring to when you
+use the Wname typeglob notation.
+    local Wmain::foo    = Wmain::bar;
+You can use this to print out all the variables in a package, for
+instance.  The standard but antiquated dumpvar.pl library and
+the CPAN module Devel::Symdump make use of this.
+
+The results of creating new symbol table entries directly or modifying any
+entries that are not already typeglobs are undefined and subject to change
+between releases of perl.
+
+Assignment to a typeglob performs an aliasing operation, i.e.,
+    Wdick = Wrichard;
+causes variables, subroutines, formats, and file and directory handles
+accessible via the identifier richard(fR also to be accessible via the
+identifier dick(fR.  If you want to alias only a particular variable or
+subroutine, assign a reference instead:
+    Wdick = ($richard;
+Which makes $richard and $dick the same variable, but leaves
+@richard and @dick as separate arrays.  Tricky, eh?
+
+There is one subtle difference between the following statements:
+    Wfoo = Wbar;
+    Wfoo = ($bar;
+Wfoo = Wbar(fR makes the typeglobs themselves synonymous while
+Wfoo = ($bar(fR makes the SCALAR portions of two distinct typeglobs
+refer to the same scalar value. This means that the following code:
+    $bar = 1;
+    Wfoo = ($bar;       # Make $foo an alias for $bar
+
+    {
+        local $bar = 2; # Restrict changes to block
+        print $foo;     # Prints 1!
+    }
+Would print '1', because $foo holds a reference to the original
+$bar. The one that was stuffed away by local()(fR and which will be
+restored when the block ends. Because variables are accessed through the
+typeglob, you can use Wfoo = Wbar(fR to create an alias which can be
+localized. (But be aware that this means you can't have a separate
+@foo and @bar, etc.)
+
+What makes all of this important is that the Exporter module uses glob
+aliasing as the import/export mechanism. Whether or not you can properly
+localize a variable that has been exported from a module depends on how
+it was exported:
+    @EXPORT = qw($FOO); # Usual form, cant be localized
+    @EXPORT = qw(WFOO); # Can be localized
+You can work around the first case by using the fully qualified name
+($Package::FOO) where you need a local value, or by overriding it
+by saying WFOO = WPackage::FOO(fR in your script.
+
+The Wx = ($y(fR mechanism may be used to pass and return cheap references
+into or from subroutines if you don't want to copy the whole
+thing.  It only works when assigning to dynamic variables, not
+lexicals.
+    %some_hash = ();                    # cant be my()
+    Wsome_hash = fn( (%another_hash );
+    sub fn {
+        local Whashsym = shift;
+        # now use %hashsym normally, and you
+        # will affect the callers %another_hash
+        my %nhash = (); # do what you want
+        return (%nhash;
+    }
+On return, the reference will overwrite the hash slot in the
+symbol table specified by the Wsome_hash typeglob.  This
+is a somewhat tricky way of passing around references cheaply
+when you don't want to have to remember to dereference variables
+explicitly.
+
+Another use of symbol tables is for making constant scalars.
+    WPI = (3.14159265358979;
+Now you cannot alter $PI, which is probably a good thing all in all.
+This isn't the same as a constant subroutine, which is subject to
+optimization at compile time.  A constant subroutine is one prototyped
+to take no arguments and to return a constant expression.  See
+perlsub for details on these.  The use constant(fR pragma is a
+convenient shorthand for these.
+
+You can say Wfoo{PACKAGE} and Wfoo{NAME} to find out what name and
+package the Wfoo symbol table entry comes from.  This may be useful
+in a subroutine that gets passed typeglobs as arguments:
+    sub identify_typeglob {
+        my $glob = shift;
+        print You gave me , W{$glob}{PACKAGE},
+            ::, W{$glob}{NAME}, "(n";
+    }
+    identify_typeglob Wfoo;
+    identify_typeglob Wbar::baz;
+This prints
+    You gave me main::foo
+    You gave me bar::baz
+The Wfoo{THING} notation can also be used to obtain references to the
+individual elements of Wfoo.  See perlref.
+
+Subroutine definitions (and declarations, for that matter) need
+not necessarily be situated in the package whose symbol table they
+occupy.  You can define a subroutine outside its package by
+explicitly qualifying the name of the subroutine:
+    package main;
+    sub Some_package::foo { ... }   # &foo defined in Some_package
+This is just a shorthand for a typeglob assignment at compile time:
+    BEGIN { WSome_package::foo = sub { ... } }
+and is not the same as writing:
+    {
+        package Some_package;
+        sub foo { ... }
+    }
+In the first two versions, the body of the subroutine is
+lexically in the main package, not in Some_package. So
+something like this:
+    package main;
+
+    $Some_package::name = "fred";
+    $main::name = "barney";
+
+    sub Some_package::foo {
+        print "in ", __PACKAGE__, ": ($name is $name(en";
+    }
+
+    Some_package::foo();
+prints:
+    in main: $name is barney
+rather than:
+    in Some_package: $name is fred
+This also has implications for the use of the SUPER:: qualifier
+(see perlobj).
+BEGIN, UNITCHECK, CHECK, INIT and END
+Five specially named code blocks are executed at the beginning and at
+the end of a running Perl program.  These are the BEGIN(fR,
+UNITCHECK(fR, CHECK(fR, INIT(fR, and END(fR blocks.
+
+These code blocks can be prefixed with sub(fR to give the appearance of a
+subroutine (although this is not considered good style).  One should note
+that these code blocks don't really exist as named subroutines (despite
+their appearance). The thing that gives this away is the fact that you can
+have more than one of these code blocks in a program, and they will get
+all executed at the appropriate moment.  So you can't execute any of
+these code blocks by name.
+
+A BEGIN(fR code block is executed as soon as possible, that is, the moment
+it is completely defined, even before the rest of the containing file (or
+string) is parsed.  You may have multiple BEGIN(fR blocks within a file (or
+eval'ed string); they will execute in order of definition.  Because a BEGIN(fR
+code block executes immediately, it can pull in definitions of subroutines
+and such from other files in time to be visible to the rest of the compile
+and run time.  Once a BEGIN(fR has run, it is immediately undefined and any
+code it used is returned to Perl's memory pool.
+
+An END(fR code block is executed as late as possible, that is, after
+perl has finished running the program and just before the interpreter
+is being exited, even if it is exiting as a result of a die() function.
+(But not if it's morphing into another program via exec(fR, or
+being blown out of the water by a signalyou have to trap that yourself
+(if you can).)  You may have multiple END(fR blocks within a filethey
+will execute in reverse order of definition; that is: last in, first
+out (LIFO).  END(fR blocks are not executed when you run perl with the
+( c(fR switch, or if compilation fails.
+
+Note that END(fR code blocks are not executed at the end of a string
+eval()(fR: if any END(fR code blocks are created in a string eval()(fR,
+they will be executed just as any other END(fR code block of that package
+in LIFO order just before the interpreter is being exited.
+
+Inside an END(fR code block, $? contains the value that the program is
+going to pass to exit()(fR.  You can modify $? to change the exit
+value of the program.  Beware of changing $? by accident (e.g. by
+running something via system(fR).
+Inside of a END(fR block, the value of ${^GLOBAL_PHASE}(fR will be
+"END".
+
+UNITCHECK(fR, CHECK(fR and INIT(fR code blocks are useful to catch the
+transition between the compilation phase and the execution phase of
+the main program.
+
+UNITCHECK(fR blocks are run just after the unit which defined them has
+been compiled.  The main program file and each module it loads are
+compilation units, as are string eval(fRs, run time code compiled using the
+(?{ })(fR construct in a regex, calls to do FILE(fR, require FILE(fR,
+and code after the ( e(fR switch on the command line.
+
+BEGIN(fR and UNITCHECK(fR blocks are not directly related to the phase of
+the interpreter.  They can be created and executed during any phase.
+
+CHECK(fR code blocks are run just after the initial Perl compile phase ends
+and before the run time begins, in LIFO order.  CHECK(fR code blocks are used
+in the Perl compiler suite to save the compiled state of the program.
+
+Inside of a CHECK(fR block, the value of ${^GLOBAL_PHASE}(fR will be
+"CHECK".
+
+INIT(fR blocks are run just before the Perl runtime begins execution, in
+first in, first out (FIFO) order.
+
+Inside of an INIT(fR block, the value of ${^GLOBAL_PHASE}(fR will be "INIT".
+
+The CHECK(fR and INIT(fR blocks in code compiled by require(fR, string do(fR,
+or string eval(fR will not be executed if they occur after the end of the
+main compilation phase; that can be a problem in mod_perl and other persistent
+environments which use those functions to load code at runtime.
+
+When you use the  n and  p switches to Perl, BEGIN(fR and
+END(fR work just as they do in awk, as a degenerate case.
+Both BEGIN(fR and CHECK(fR blocks are run when you use the  c
+switch for a compile only syntax check, although your main code
+is not.
+
+The begincheck program makes it all clear, eventually:
+  #!/usr/bin/perl
+
+  # begincheck
+
+  print         "10. Ordinary code runs at runtime.(n";
+
+  END { print   "16.   So this is the end of the tale.(n" }
+  INIT { print  " 7. INIT blocks run FIFO just before runtime.(n" }
+  UNITCHECK {
+    print       " 4.   And therefore before any CHECK blocks.(n"
+  }
+  CHECK { print " 6.   So this is the sixth line.(n" }
+
+  print         "11.   It runs in order, of course.(n";
+
+  BEGIN { print " 1. BEGIN blocks run FIFO during compilation.(n" }
+  END { print   "15.   Read perlmod for the rest of the story.(n" }
+  CHECK { print " 5. CHECK blocks run LIFO after all compilation.(n" }
+  INIT { print  " 8.   Run this again, using Perls  c switch.(n" }
+
+  print         "12.   This is anti obfuscated code.(n";
+
+  END { print   "14. END blocks run LIFO at quitting time.(n" }
+  BEGIN { print " 2.   So this line comes out second.(n" }
+  UNITCHECK {
+   print " 3. UNITCHECK blocks run LIFO after each file is compiled.(n"
+  }
+  INIT { print  " 9.   Youll see the difference right away.(n" }
+
+  print         "13.   It only _looks_ like it should be confusing.(n";
+
+  __END__
+
+Perl Classes
+There is no special class syntax in Perl, but a package may act
+as a class if it provides subroutines to act as methods.  Such a
+package may also derive some of its methods from another class (package)
+by listing the other package name(s) in its global @ISA array (which
+must be a package global, not a lexical).
+
+For more on this, see perlootut and perlobj.
+Perl Modules
+A module is just a set of related functions in a library file, i.e.,
+a Perl package with the same name as the file.  It is specifically
+designed to be reusable by other modules or programs.  It may do this
+by providing a mechanism for exporting some of its symbols into the
+symbol table of any package using it, or it may function as a class
+definition and make its semantics available implicitly through
+method calls on the class and its objects, without explicitly
+exporting anything.  Or it can do a little of both.
+
+For example, to start a traditional, non OO module called Some::Module,
+create a file called Some/Module.pm and start with this template:
+    package Some::Module;  # assumes Some/Module.pm
+
+    use strict;
+    use warnings;
+
+    BEGIN {
+        require Exporter;
+
+        # set the version for version checking
+        our $VERSION     = 1.00;
+
+        # Inherit from Exporter to export functions and variables
+        our @ISA         = qw(Exporter);
+
+        # Functions and variables which are exported by default
+        our @EXPORT      = qw(func1 func2);
+
+        # Functions and variables which can be optionally exported
+        our @EXPORT_OK   = qw($Var1 %Hashit func3);
+    }
+
+    # exported package globals go here
+    our $Var1    = (W(Aq;
+    our %Hashit  = ();
+
+    # non exported package globals go here
+    # (they are still accessible as $Some::Module::stuff)
+    our @more    = ();
+    our $stuff   = (W(Aq;
+
+    # file private lexicals go here, before any functions which use them
+    my $priv_var    = (W(Aq;
+    my %secret_hash = ();
+
+    # heres a file private function as a closure,
+    # callable as $priv_func >();
+    my $priv_func = sub {
+        ...
+    };
+
+    # make all your functions, whether exported or not;
+    # remember to put something interesting in the {} stubs
+    sub func1      { ... }
+    sub func2      { ... }
+
+    # this one isnt exported, but could be called directly
+    # as Some::Module::func3()
+    sub func3      { ... }
+
+    END { ... }       # module clean up code here (global destructor)
+
+    1;  # dont forget to return a true value from the file
+Then go on to declare and use your variables in functions without
+any qualifications.  See Exporter and the perlmodlib for
+details on mechanics and style issues in module creation.
+
+Perl modules are included into your program by saying
+    use Module;
+or
+    use Module LIST;
+This is exactly equivalent to
+    BEGIN { require Module.pm; Module( >import; }
+or
+    BEGIN { require Module.pm; Module( >import( LIST ); }
+As a special case
+    use Module ();
+is exactly equivalent to
+    BEGIN { require Module.pm; }
+All Perl module files have the extension .pm.  The use(fR operator
+assumes this so you don't have to spell out "Module.pm" in quotes.
+This also helps to differentiate new modules from old .pl and
+.ph files.  Module names are also capitalized unless they're
+functioning as pragmas; pragmas are in effect compiler directives,
+and are sometimes called pragmatic modules (or even pragmata
+if you're a classicist).
+
+The two statements:
+    require SomeModule;
+    require "SomeModule.pm";
+differ from each other in two ways.  In the first case, any double
+colons in the module name, such as Some::Module(fR, are translated
+into your system's directory separator, usually /.   The second
+case does not, and would have to be specified literally.  The other
+difference is that seeing the first require(fR clues in the compiler
+that uses of indirect object notation involving SomeModule, as
+in $ob = purge SomeModule(fR, are method calls, not function calls.
+(Yes, this really can make a difference.)
+
+Because the use(fR statement implies a BEGIN(fR block, the importing
+of semantics happens as soon as the use(fR statement is compiled,
+before the rest of the file is compiled.  This is how it is able
+to function as a pragma mechanism, and also how modules are able to
+declare subroutines that are then visible as list or unary operators for
+the rest of the current file.  This will not work if you use require(fR
+instead of use(fR.  With require(fR you can get into this problem:
+    require Cwd;                # make Cwd:: accessible
+    $here = Cwd::getcwd();
+
+    use Cwd;                    # import names from Cwd::
+    $here = getcwd();
+
+    require Cwd;                # make Cwd:: accessible
+    $here = getcwd();           # oops! no main::getcwd()
+In general, use Module ()(fR is recommended over require Module(fR,
+because it determines module availability at compile time, not in the
+middle of your program's execution.  An exception would be if two modules
+each tried to use(fR each other, and each also called a function from
+that other module.  In that case, it's easy to use require(fR instead.
+
+Perl packages may be nested inside other package names, so we can have
+package names containing ::(fR.  But if we used that package name
+directly as a filename it would make for unwieldy or impossible
+filenames on some systems.  Therefore, if a module's name is, say,
+Text::Soundex(fR, then its definition is actually found in the library
+file Text/Soundex.pm.
+
+Perl modules always have a .pm file, but there may also be
+dynamically linked executables (often ending in .so) or autoloaded
+subroutine definitions (often ending in .al) associated with the
+module.  If so, these will be entirely transparent to the user of
+the module.  It is the responsibility of the .pm file to load
+(or arrange to autoload) any additional functionality.  For example,
+although the POSIX module happens to do both dynamic loading and
+autoloading, the user can say just use POSIX(fR to get it all.
+Making your module threadsafe
+Perl supports a type of threads called interpreter threads (ithreads).
+These threads can be used explicitly and implicitly.
+
+Ithreads work by cloning the data tree so that no data is shared
+between different threads. These threads can be used by using the threads(fR
+module or by doing fork() on win32 (fake fork() support). When a
+thread is cloned all Perl data is cloned, however non Perl data cannot
+be cloned automatically.  Perl after 5.8.0 has support for the CLONE(fR
+special subroutine.  In CLONE(fR you can do whatever
+you need to do,
+like for example handle the cloning of non Perl data, if necessary.
+CLONE(fR will be called once as a class method for every package that has it
+defined (or inherits it).  It will be called in the context of the new thread,
+so all modifications are made in the new area.  Currently CLONE is called with
+no parameters other than the invocant package name, but code should not assume
+that this will remain unchanged, as it is likely that in future extra parameters
+will be passed in to give more information about the state of cloning.
+
+If you want to CLONE all objects you will need to keep track of them per
+package. This is simply done using a hash and Scalar::Util::weaken().
+
+Perl after 5.8.7 has support for the CLONE_SKIP(fR special subroutine.
+Like CLONE(fR, CLONE_SKIP(fR is called once per package; however, it is
+called just before cloning starts, and in the context of the parent
+thread. If it returns a true value, then no objects of that class will
+be cloned; or rather, they will be copied as unblessed, undef values.
+For example: if in the parent there are two references to a single blessed
+hash, then in the child there will be two references to a single undefined
+scalar value instead.
+This provides a simple mechanism for making a module threadsafe; just add
+sub CLONE_SKIP { 1 }(fR at the top of the class, and DESTROY()(fR will
+now only be called once per object. Of course, if the child thread needs
+to make use of the objects, then a more sophisticated approach is
+needed.
+
+Like CLONE(fR, CLONE_SKIP(fR is currently called with no parameters other
+than the invocant package name, although that may change. Similarly, to
+allow for future expansion, the return value should be a single 0 or
+1 value.
+SEE ALSO
+
+See perlmodlib for general style issues related to building Perl
+modules and classes, as well as descriptions of the standard library
+and CPAN, Exporter for how Perl's standard import/export mechanism
+works, perlootut and perlobj for in depth information on
+creating classes, perlobj for a hard core reference document on
+objects, perlsub for an explanation of functions and scoping,
+and perlxstut and perlguts for more information on writing
+extension modules.
+

@@ -1,0 +1,84 @@
+
+NAME
+netctl - Control the netctl network profile manager
+SYNOPSIS
+
+netctl {COMMAND} [PROFILE]
+
+netctl [--help | --version]
+DESCRIPTION
+
+netctl may be used to introspect and control the state of the systemd services for the network profile manager.
+OPTIONS
+
+The following commands are understood:
+
+list
+
+List all available profiles. Online profiles will be marked with a `*', otherwise active profiles will be marked with a `+'.
+store
+
+Saves which profiles are currently active.
+restore
+
+Loads the profiles that were active during the last invocation of `store'.
+stop-all
+
+Stops all active network profiles.
+start [PROFILE]
+
+Start the network profile specified on the command line.
+stop [PROFILE]
+
+Stop the network profile specified on the command line.
+restart [PROFILE]
+
+Restart the network profile specified on the command line. If it is not started yet, it will be started.
+switch-to [PROFILE]
+
+Starts the network profile specified on the command line after stopping all profiles that refer to the same interface.
+is-active [PROFILE]
+
+Check whether the network profile specified on the command line is active. Prints the current state.
+status [PROFILE]
+
+Show terse runtime status information about a profile, followed by its most recent log data from the journal.
+enable [PROFILE]
+
+Enable the systemd unit for the profile specified. This will create a unit configuration file. If the file already exists, the command fails. No other profiles than the one specified will be enabled. Changes to the general options in a profile specification will not propagate to the unit configuration file automatically. After such changes, it is necessary to `reenable' the profile.
+disable [PROFILE]
+
+Disable the systemd unit for the profile specified. This will remove the file created by `enable' even if it was customized, so be careful.
+reenable [PROFILE]
+
+Reenable the systemd unit for the profile specified. This is effectively a combination of `disable' and `enable'.
+is-enabled [PROFILE]
+
+Check whether the systemd unit for the specified profile is enabled. Prints the current enable status.
+edit [PROFILE]
+
+Open the file of the specified profile in an editor. This does not reenable or restart any profiles.
+wait-online [PROFILE]
+
+Wait until the interface of the profile has a routable IP address of some kind.
+
+EXIT STATUS
+
+On success 0 is returned, a non-zero failure code otherwise.
+ENVIRONMENT
+
+$NETCTL_DEBUG
+
+If set to
+"yes", debugging output is generated.
+
+The value of this variable is independent of the value of the variable with the same name in profiles.
+$NETCTL_STATE_FILE
+
+The location of the state file. Defaults to
+/var/lib/netctl/netctl.state.
+
+SEE ALSO
+
+netctl-auto(1), netctl.profile(5), netctl.special(7), systemctl(1)
+

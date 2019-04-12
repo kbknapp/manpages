@@ -1,0 +1,88 @@
+
+
+NAME
+ftpd - File Transfer Protocol server.
+SYNOPSIS
+ftpd
+[,OPTION/...]
+DESCRIPTION
+File Transfer Protocol daemon.
+
+-4, --ipv4
+restrict daemon to IPv4
+
+-6, --ipv6
+restrict daemon to IPv6
+
+-a, --auth=,AUTH/
+use AUTH for authentication
+
+-A, --anonymous-only
+server configured for anonymous service only
+
+-d, --debug
+debug mode
+
+-D, --daemon
+start the ftpd standalone
+
+-l, --logging
+increase verbosity of syslog messages
+
+--non-rfc2577
+neglect RFC 2577 by giving info on missing users
+
+-p, --pidfile[=,PIDFILE/]
+change default location of pidfile
+
+-q, --no-version
+do not display version in banner
+
+-t, --timeout=,TIMEOUT/
+set default idle timeout
+
+-T, --max-timeout
+reset maximum value of timeout allowed
+
+-u, --umask=,VAL/
+set default umask
+AUTH can be one of the following:
+
+default
+passwd authentication
+
+-?, --help
+give this help list
+
+--usage
+give a short usage message
+
+-V, --version
+print program version
+
+Mandatory or optional arguments to long options are also mandatory or optional
+for any corresponding short options.
+AUTHOR
+Written by many authors.
+REPORTING BUGS
+Report bugs to <bug-inetutils@gnu.org>.
+COPYRIGHT
+Copyright © 2015 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+SEE ALSO
+ftp(1)
+
+The full documentation for
+ftpd
+is maintained as a Texinfo manual.  If the
+info
+and
+ftpd
+programs are properly installed at your site, the command
+info ftpd
+
+should give you access to the complete manual.
+

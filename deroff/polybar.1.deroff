@@ -1,0 +1,56 @@
+
+NAME
+polybar - A fast and easy-to-use tool status bar
+SYNOPSIS
+polybar [OPTION]... BAR
+DESCRIPTION
+Polybar aims to help users build beautiful and highly customizable status bars for their desktop environment, without the need of having a black belt in shell scripting.
+
+-h, --help
+Display help text and exit
+
+-v, --version
+Display build details and exit
+
+-l, --log=LEVEL
+Set the logging verbosity (default: WARNING)
+
+LEVEL is one of: error, warning, info, trace
+
+-q, --quiet
+Be quiet (will override -l)
+
+-c, --config=FILE
+Specify the path to the configuration file. By default, the configuration file is loaded from:
+$XDG_CONFIG_HOME/polybar/config
+
+$HOME/.config/polybar/config
+-r, --reload
+Reload the application when the config file has been modified
+
+-d, --dump=PARAM
+Print the value of the specified parameter PARAM in bar section and exit
+
+-m, --list-monitors
+Print list of available monitors and exit
+
+-w, --print-wmname
+Print the generated WM_NAME and exit
+
+-s, --stdout
+Output the data to stdout instead of drawing it to the X window
+
+-p, --png=FILE
+Save png snapshot to FILE after running for 3 seconds
+
+AUTHOR
+Michael Carlberg <c@rlberg.se>
+
+Contributors can be listed on GitHub.
+REPORTING BUGS
+Report issues on GitHub <https://github.com/jaagr/polybar>
+SEE ALSO
+Full documentation at: <https://github.com/jaagr/polybar>
+
+Project wiki: <https://github.com/jaagr/polybar/wiki>
+

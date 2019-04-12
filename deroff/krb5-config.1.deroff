@@ -1,0 +1,101 @@
+
+NAME
+krb5-config - tool for linking against MIT Kerberos libraries
+\$1 \n[an-margin]
+level \n[rst2man-indent-level]
+level margin: \n[rst2man-indent\n[rst2man-indent-level]]
+-
+\n[rst2man-indent0]
+\n[rst2man-indent1]
+\n[rst2man-indent2]
+SYNOPSIS
+
+krb5-config
+[--help | --all | --version | --vendor | --prefix | --exec-prefix | --defccname | --defktname | --defcktname | --cflags | --libs [libraries]]
+DESCRIPTION
+
+krb5-config tells the application programmer what flags to use to compile
+and link programs against the installed Kerberos libraries.
+OPTIONS
+--help
+prints a usage message.  This is the default behavior when no options
+are specified.
+
+--all
+prints the version, vendor, prefix, and exec-prefix.
+
+--version
+prints the version number of the Kerberos installation.
+
+--vendor
+prints the name of the vendor of the Kerberos installation.
+
+--prefix
+prints the prefix for which the Kerberos installation was built.
+
+--exec-prefix
+prints the prefix for executables for which the Kerberos installation
+was built.
+
+--defccname
+prints the built-in default credentials cache location.
+
+--defktname
+prints the built-in default keytab location.
+
+--defcktname
+prints the built-in default client (initiator) keytab location.
+
+--cflags
+prints the compilation flags used to build the Kerberos installation.
+
+--libs [library]
+prints the compiler options needed to link against library.
+Allowed values for library are:
+_
+T{
+krb5
+T}	T{
+Kerberos 5 applications (default)
+T}
+_
+T{
+gssapi
+T}	T{
+GSSAPI applications with Kerberos 5 bindings
+T}
+_
+T{
+kadm-client
+T}	T{
+Kadmin client
+T}
+_
+T{
+kadm-server
+T}	T{
+Kadmin server
+T}
+_
+T{
+kdb
+T}	T{
+Applications that access the Kerberos database
+T}
+_
+EXAMPLES
+
+krb5-config is particularly useful for compiling against a Kerberos
+installation that was installed in a non-standard location.  For example,
+a Kerberos installation that is installed in /opt/krb5/ but uses
+libraries in /usr/local/lib/ for text localization would produce
+the following output:
+shell% krb5-config --libs krb5
+-L/opt/krb5/lib -Wl,-rpath -Wl,/opt/krb5/lib -L/usr/local/lib -lkrb5 -lk5crypto -lcom_err
+SEE ALSO
+
+kerberos(1), cc(1)
+AUTHOR
+MIT
+COPYRIGHT
+1985-2018, MIT

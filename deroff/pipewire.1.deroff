@@ -1,0 +1,23 @@
+
+NAME
+pipewire - The PipeWire media server
+SYNOPSIS
+pipewire [options]
+
+DESCRIPTION
+PipeWire is a service that allows access to multimedia devices and allows media sharing between applications. 
+OPTIONS
+
+-h | --help
+Show help.
+
+-v | --version
+Show version information.
+
+-n | --name
+Set the daemon name (Default pipewire-1).
+AUTHORS
+The PipeWire Developers <https://github.com/PipeWire/pipewire/issues>; PipeWire is available from http://pipewire.org
+SEE ALSO
+pipewire-monitor(1), 
+

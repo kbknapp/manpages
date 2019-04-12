@@ -1,0 +1,67 @@
+
+NAME
+xl2tpd - Layer 2 Tunnelling Protocol Daemon
+DESCRIPTION
+A Layer 2 Tunneling Protocol VPN client/daemon for Linux and other POSIX-based
+OSs. Based off of L2TPd 0.61 from 
+  http://www.marko.net/l2tp 
+and patches collected by Jacco de Leeuw at
+  http://www.jacco2.dds.nl/networking/openswan-l2tp.html
+
+Currently maintained by Xelerance
+  http://www.xelerance.com/software/xl2tpd/
+
+xl2tpd implements the Layer 2 Tunnelling Protocol, defined by RFC 2661.
+
+OPTIONS
+
+-D
+This option prevents xl2tpd from detaching from the terminal and
+daemonizing.  
+-l
+This option tells xl2tpd to use syslog for logging even when -D
+was specified.
+-c <config file>
+Tells xl2tpd to use an alternate config file.  Default is
+/etc/xl2tpd/xl2tpd.conf. Fallback configuration file is
+/etc/l2tpd/l2tpd.conf
+-s <secret file>
+Tells xl2tpd to use an alternate "secrets" file.  Default is
+/etc/xl2tpd/l2tp-secrets
+-p <pid file>
+Tells xl2tpd to use an alternate pid file.  Default is
+/var/run/xl2tpd/xl2tpd.pid
+-C <control file>
+Tells xl2tpd to use an alternate control file.  Default is
+/var/run/xl2tpd/l2tp-control
+FILES
+
+/etc/xl2tpd/xl2tpd.conf /etc/xl2tpd/l2tp-secrets 
+/var/run/xl2tpd/l2tp-control
+BUGS
+
+Please address bugs and comment to xl2tpd@lists.xelerance.com
+SEE ALSO
+
+xl2tpd.conf(5)
+AUTHORS
+Forked from l2tpd by Xelerance (http://www.xelerance.com/software/xl2tpd/
+
+Michael Richardson <mcr@xelerance.com>
+Paul Wouters <paul@xelerance.com>
+
+Many thanks to Jacco de Leeuw <jacco2@dds.nl> for maintaining l2tpd.
+Previous development was hosted at sourceforge
+(http://www.sourceforge.net/projects/l2tpd) by:
+
+Scott Balmos <sbalmos@iglou.com>
+
+David Stipp <dstipp@one.net>
+
+Jeff McAdams <jeffm@iglou.com>
+Based off of l2tpd version 0.60
+
+Copyright (C)1998 Adtran, Inc.
+
+Mark Spencer <markster@marko.net>
+

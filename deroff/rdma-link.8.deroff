@@ -1,0 +1,37 @@
+
+NAME
+rdma-link - rdma link configuration
+SYNOPSIS
+devlink
+[  OPTIONS  ]
+link
+ {  COMMAND  | 
+help  }
+OPTIONS  := { 
+-V[ersion] |
+-d[etails] }
+rdma link show
+[  DEV/PORT_INDEX  ]
+rdma link help
+
+DESCRIPTION
+rdma link show - display rdma link attributes
+DEV/PORT_INDEX
+- specifies the RDMA link to show.
+If this argument is omitted all links are listed.
+
+EXAMPLES
+
+rdma link show
+
+Shows the state of all rdma links on the system.
+rdma link show mlx5_2/1
+
+Shows the state of specified rdma link.
+SEE ALSO
+rdma (8),
+rdma-dev (8),
+rdma-resource (8),
+AUTHOR
+Leon Romanovsky <leonro@mellanox.com>
+

@@ -1,0 +1,85 @@
+
+
+NAME
+ftp - File Transfer Protocol client.
+SYNOPSIS
+ftp
+[,OPTION/...] [,HOST /[,PORT/]]
+DESCRIPTION
+Remote file transfer.
+
+-4, --ipv4
+contact IPv4 hosts
+
+-6, --ipv6
+contact IPv6 hosts
+
+-A, --active
+enable active mode transfer
+
+-d, --debug
+enable debugging output
+
+-e, --no-edit
+disable command line editing
+
+-g, --no-glob
+turn off file name globbing
+
+-i, --no-prompt
+do not prompt during multiple file transfers
+
+-n, --no-login
+do not automatically login to the remote system
+
+-N, --netrc=,NETRC/
+select a specific initialization file
+
+-p, --passive
+enable passive mode transfer, default for `pftp'
+
+--prompt[=,PROMPT/]
+print a command line PROMPT (optionally), even if
+not on a tty
+
+-t, --trace
+enable packet tracing
+
+-v, --verbose
+verbose output
+
+-?, --help
+give this help list
+
+--usage
+give a short usage message
+
+-V, --version
+print program version
+
+Mandatory or optional arguments to long options are also mandatory or optional
+for any corresponding short options.
+AUTHOR
+Written by many authors.
+REPORTING BUGS
+Report bugs to <bug-inetutils@gnu.org>.
+COPYRIGHT
+Copyright © 2015 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+SEE ALSO
+ftpd(1)
+
+The full documentation for
+ftp
+is maintained as a Texinfo manual.  If the
+info
+and
+ftp
+programs are properly installed at your site, the command
+info ftp
+
+should give you access to the complete manual.
+

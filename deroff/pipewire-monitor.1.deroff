@@ -1,0 +1,23 @@
+
+NAME
+pipewire-monitor - The PipeWire monitor
+SYNOPSIS
+pipewire-monitor [remote-name]
+
+DESCRIPTION
+Monitor objects on the PipeWire instance.
+OPTIONS
+
+remote-name
+The name the remote instance to monitor. If left unspecified, a connection is made to the default PipeWire instance.
+
+-h | --help
+Show help.
+
+--version
+Show version information.
+AUTHORS
+The PipeWire Developers <https://github.com/PipeWire/pipewire/issues>; PipeWire is available from http://pipewire.org
+SEE ALSO
+pipewire(1), 
+

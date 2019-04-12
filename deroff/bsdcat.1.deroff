@@ -1,0 +1,10 @@
+
+bsdcat 
+bsdcat expands files to standard output.
+
+bsdcat typically takes a filename as an argument or reads standard input when used in a
+pipe. In both cases decompressed data it written to standard output.
+To decompress a file:
+To decompress standard input in a pipe:
+Both examples achieve the same results - a decompressed file by redirecting
+output.

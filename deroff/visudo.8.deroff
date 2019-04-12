@@ -1,0 +1,330 @@
+
+visudo edits the
+
+file in a safe fashion, analogous to
+
+visudo locks the
+
+file against multiple simultaneous edits, provides basic sanity checks,
+and checks for parse errors.
+If the
+
+file is currently being edited you will receive a message to try again later.
+
+visudo parses the
+
+file after editing and will not save the changes if there is a syntax error.
+Upon finding an error,
+visudo will print a message stating the line number(s)
+where the error occurred and the user will receive the
+
+prompt.
+At this point the user may enter
+
+to re-edit the
+
+file,
+
+to exit without saving the changes, or
+
+to quit and save changes.
+The
+
+option should be used with extreme caution because if
+visudo believes there to be a parse error, so will
+and no one
+will be able to run
+again until the error is fixed.
+If
+
+is typed to edit the
+
+file after a parse error has been detected, the cursor will be placed on
+the line where the error occurred (if the editor supports this feature).
+
+There are two
+
+settings that determine which editor
+will run.
+A colon
+
+separated list of editors allowed to be used with
+. will choose the editor that matches the user's
+or
+
+environment variable if possible, or the first editor in the
+list that exists and is executable.
+Note that the
+and
+
+environment variables are not preserved by default when the
+option is enabled.
+The default editor path is
+
+which can be set at compile time via the
+
+configure option.
+
+If set,
+. will use the value of the
+or
+
+environment variables before falling back on the default editor list.
+Note that this may create a security hole as it allows the user to
+run any arbitrary command as root without logging.
+A safer alternative is to place a colon-separated list of editors
+in the
+
+variable.
+. will then only use
+or
+
+if they match a value specified in
+
+If the
+
+flag is enabled, the
+and/or
+
+environment variables must be present in the
+
+list for the
+
+flag to function when
+. is invoked via
+The default value is
+
+which can be set at compile time via the
+
+configure option.
+The options are as follows:
+Enable
+
+mode.
+The existing
+
+file (and any other files it includes) will be
+checked for syntax errors.
+If the path to the
+
+file was not specified,
+sudo . will also check the file owner and mode.
+A message will be printed to the standard output describing the status of
+
+unless the
+
+option was specified.
+If the check completes successfully,
+sudo . will exit with a value of 0.
+If an error is encountered,
+sudo . will exit with a value of 1.
+
+Specify an alternate
+
+file location, see below.
+As of version 1.8.27, the
+
+path can be specified without using the
+
+option.
+
+Display a short help message to the standard output and exit.
+
+Enable
+
+mode.
+In this mode details about syntax errors are not printed.
+This option is only useful when combined with
+the
+
+option.
+
+Enable
+
+checking of the
+
+file.
+If an alias is referenced but not actually defined
+or if there is a cycle in an alias,
+sudo . will consider this a parse error.
+Note that it is not possible to differentiate between an
+alias and a host name or user name that consists solely of uppercase
+letters, digits, and the underscore
+
+character.
+
+Print the
+sudo . and
+
+grammar versions and exit.
+A
+
+file may be specified instead of the default,
+
+The lock file used is the specified
+
+file with
+
+appended to it.
+In
+
+mode only,
+
+may be used to indicate that
+
+will be read from the standard input.
+Because the policy is evaluated in its entirety, it is not sufficient
+to check an individual
+
+include file for syntax errors.
+
+sudo . versions 1.8.4 and higher support a flexible debugging framework
+that is configured via
+
+lines in the
+
+file.
+
+Starting with
+1.8.12,
+sudo will also parse the arguments to the
+
+plugin to override the default
+
+path name, UID, GID and file mode.
+These arguments, if present, should be listed after the path to the plugin
+(i.e., after
+
+Multiple arguments may be specified, separated by white space.
+For example:
+
+Plugin sudoers_policy sudoers.so sudoers_mode=0400
+The following arguments are supported:
+The
+
+argument can be used to override the default path to the
+
+file.
+
+The
+
+argument can be used to override the default owner of the sudoers file.
+It should be specified as a numeric user ID.
+
+The
+
+argument can be used to override the default group of the sudoers file.
+It must be specified as a numeric group ID (not a group name).
+
+The
+
+argument can be used to override the default file mode for the sudoers file.
+It should be specified as an octal value.
+For more information on configuring
+
+please refer to its manual.
+
+The following environment variables may be consulted depending on
+the value of the
+
+and
+settings:
+Invoked by
+sudo as the editor to use
+
+Used by
+sudo if
+
+is not set
+
+Used by
+sudo if neither
+
+nor
+
+is set
+Sudo front end configuration
+
+List of who can run what
+
+Lock file for visudo
+In addition to reporting
+
+parse errors,
+sudo may produce the following messages:
+Someone else is currently editing the
+
+file.
+
+You didn't run
+sudo as root.
+
+Your user ID does not appear in the system passwd database.
+
+Either you are trying to use an undeclared {User,Runas,Host,Cmnd}_Alias
+or you have a user or host name listed that consists solely of
+uppercase letters, digits, and the underscore
+
+character.
+In the latter case, you can ignore the warnings
+
+will not complain
+
+The message is prefixed with the path name of the
+
+file and the line number where the undefined alias was used.
+In
+
+(strict) mode these are errors, not warnings.
+
+The specified {User,Runas,Host,Cmnd}_Alias was defined but never
+used.
+The message is prefixed with the path name of the
+
+file and the line number where the unused alias was defined.
+You may wish to comment out or remove the unused alias.
+
+The specified {User,Runas,Host,Cmnd}_Alias includes a reference to
+itself, either directly or through an alias it includes.
+The message is prefixed with the path name of the
+
+file and the line number where the cycle was detected.
+This is only a warning unless
+sudo is run in
+
+(strict) mode as
+will ignore cycles when parsing
+the
+
+file.
+
+The
+
+file contains a
+
+setting not recognized by
+Many people have worked on
+over the years; this version consists of code written primarily by:
+See the CONTRIBUTORS file in the
+distribution (https://www.sudo.ws/contributors.html) for an
+exhaustive list of people who have contributed to
+
+There is no easy way to prevent a user from gaining a root shell if
+the editor used by
+sudo . allows shell escapes.
+
+If you feel you have found a bug in
+please submit a bug report at https://bugzilla.sudo.ws/
+
+Limited free support is available via the sudo-users mailing list,
+see https://www.sudo.ws/mailman/listinfo/sudo-users to subscribe or
+search the archives.
+
+, is provided
+
+and any express or implied warranties, including, but not limited
+to, the implied warranties of merchantability and fitness for a
+particular purpose are disclaimed.
+See the LICENSE file distributed with
+or https://www.sudo.ws/license.html for complete details.
+

@@ -1,0 +1,2869 @@
+
+{
+NAME
+perl5220delta   what is new for perl v5.22.0
+DESCRIPTION
+
+This document describes differences between the 5.20.0 release and the 5.22.0
+release.
+
+If you are upgrading from an earlier release such as 5.18.0, first read
+perl5200delta, which describes differences between 5.18.0 and 5.20.0.
+Core Enhancements
+
+New bitwise operators
+
+A new experimental facility has been added that makes the four standard
+bitwise operators (& | ^ ~(fR) treat their operands consistently as
+numbers, and introduces four new dotted operators (&. |. ^. ~.(fR) that
+treat their operands consistently as strings.  The same applies to the
+assignment variants (&= |= ^= &.= |.= ^.=(fR).
+
+To use this, enable the bitwise feature and disable the
+experimental::bitwise warnings category.  See Bitwise String
+Operators in perlop for details.
+[perl #123466] <https://rt.perl.org/Ticket/Display.html?id=123466>.
+New double diamond operator
+
+<<>>(fR is like <>(fR but uses three argument open(fR to open
+each file in @ARGV.  This means that each element of @ARGV will be treated
+as an actual file name, and "|foo" won't be treated as a pipe open.
+qr/(b{gcb}/(fI
+gcb(fR stands for Grapheme Cluster Boundary.  It is a Unicode property
+that finds the boundary between sequences of characters that look like a
+single character to a native speaker of a language.  Perl has long had
+the ability to deal with these through the (eX(fR regular escape
+sequence.  Now, there is an alternative way of handling these.  See
+(eb{}, (b, (B{}, (B in perlrebackslash for details.
+
+qr/(b{wb}/(fI
+wb(fR stands for Word Boundary.  It is a Unicode property
+that finds the boundary between words.  This is similar to the plain
+(eb(fR (without braces) but is more suitable for natural language
+processing.  It knows, for example, that apostrophes can occur in the
+middle of words.  See (eb{}, (b, (B{}, (B in perlrebackslash for details.
+
+qr/(b{sb}/(fI
+sb(fR stands for Sentence Boundary.  It is a Unicode property
+to aid in parsing natural language sentences.
+See (eb{}, (b, (B{}, (B in perlrebackslash for details.
+Non Capturing Regular Expression Flag
+
+Regular expressions now support a /n(fR flag that disables capturing
+and filling in $1, $2, etc inside of groups:
+  "hello" =~ /(hi|hello)/n; # $1 is not set
+This is equivalent to putting ?:(fR at the beginning of every capturing group.
+
+See n in perlre for more information.
+This applies stricter syntax rules to regular expression patterns
+compiled within its scope. This will hopefully alert you to typos and
+other unintentional behavior that backwards compatibility issues prevent
+us from reporting in normal regular expression compilations.  Because the
+behavior of this is subject to change in future Perl releases as we gain
+experience, using this pragma will raise a warning of category
+experimental::re_strict(fR.
+See 'strict' in re.
+Unicode 7.0 (with correction) is now supported
+
+For details on what is in this release, see
+<http://www.unicode.org/versions/Unicode7.0.0/>.
+The version of Unicode 7.0 that comes with Perl includes
+a correction dealing with glyph shaping in Arabic
+(see <http://www.unicode.org/errata/#current_errata>).
+It is now possible to pass a parameter to use locale(fR to specify
+a subset of locale categories to be locale aware, with the remaining
+ones unaffected.  See The use locale pragma in perllocale for details.
+Perl now supports POSIX 2008 locale currency additions
+
+On platforms that are able to handle POSIX.1 2008, the
+hash returned by
+POSIX::localeconv()(fR
+includes the international currency fields added by that version of the
+POSIX standard.  These are
+int_n_cs_precedes(fR,
+int_n_sep_by_space(fR,
+int_n_sign_posn(fR,
+int_p_cs_precedes(fR,
+int_p_sep_by_space(fR,
+and
+int_p_sign_posn(fR.
+Better heuristics on older platforms for determining locale UTF 8ness
+
+On platforms that implement neither the C99 standard nor the POSIX 2001
+standard, determining if the current locale is UTF 8 or not depends on
+heuristics.  These are improved in this release.
+Aliasing via reference
+
+Variables and subroutines can now be aliased by assigning to a reference:
+    ($c = ($d;
+    (&x = (&y;
+Aliasing can also be accomplished
+by using a backslash before a foreach(fR iterator variable; this is
+perhaps the most useful idiom this feature provides:
+    foreach (%hash (@array_of_hash_refs) { ... }
+This feature is experimental and must be enabled via use feature refaliasing(W(C'.  It will warn unless the experimental::refaliasing(fR
+warnings category is disabled.
+
+See Assigning to References in perlref
+prototype()(fR with no arguments now infers $_.
+[perl #123514] <https://rt.perl.org/Ticket/Display.html?id=123514>.
+The const(fR attribute can be applied to an anonymous subroutine.  It
+causes the new sub to be executed immediately whenever one is created
+(i.e. when the sub(fR expression is evaluated).  Its value is captured
+and used to create a new constant subroutine that is returned.  This
+feature is experimental.  See Constant Functions in perlsub.
+When the relevant support is available in the operating system, the
+fileno(fR builtin now works on directory handles, yielding the
+underlying file descriptor in the same way as for filehandles. On
+operating systems without such support, fileno(fR on a directory handle
+continues to return the undefined value, as before, but also sets $! to
+indicate that the operation is not supported.
+
+Currently, this uses either a dd_fd(fR member in the OS DIR(fR
+structure, or a dirfd(3) function as specified by POSIX.1 2008.
+List form of pipe open implemented for Win32
+
+The list form of pipe:
+  open my $fh, " |", "program", @arguments;
+is now implemented on Win32.  It has the same limitations as system
+LIST(fR on Win32, since the Win32 API doesn't accept program arguments
+as a list.
+Assignment to list repetition
+
+(...) x ...(fR can now be used within a list that is assigned to, as long
+as the left hand side is a valid lvalue.  This allows (undef,undef,$foo) = that_function()(fR to be written as ((undef)x2, $foo) = that_function()(fR.
+Infinity and NaN (not a number) handling improved
+
+Floating point values are able to hold the special values infinity, negative
+infinity, and NaN (not a number).  Now we more robustly recognize and
+propagate the value in computations, and on output normalize them to the strings
+Inf(fR, ( Inf(fR, and NaN(fR.
+
+See also the POSIX enhancements.
+Floating point parsing has been improved
+
+Parsing and printing of floating point values has been improved.
+
+As a completely new feature, hexadecimal floating point literals
+(like 0x1.23p 4(fR)  are now supported, and they can be output with
+printf "%a"(fR. See Scalar value constructors in perldata for more
+details.
+Packing infinity or not a number into a character is now fatal
+
+Before, when trying to pack infinity or not a number into a
+(signed) character, Perl would warn, and assumed you tried to
+pack 0xFF; if you gave it as an argument to chr(fR,
+U+FFFD(fR was returned.
+
+But now, all such actions (pack(fR, chr(fR, and print %c(W(C')
+result in a fatal error.
+Experimental C Backtrace API
+
+Perl now supports (via a C level API) retrieving
+the C level backtrace (similar to what symbolic debuggers like gdb do).
+
+The backtrace returns the stack trace of the C call frames,
+with the symbol names (function names), the object names (like perl),
+and if it can, also the source code locations (file:line).
+
+The supported platforms are Linux and OS X (some WBSD might work at
+least partly, but they have not yet been tested).
+
+The feature needs to be enabled with Configure  Dusecbacktrace(fR.
+
+See C backtrace in perlhacktips for more information.
+Security
+Perl has been compiled with the anti stack smashing option
+( fstack protector(fR since 5.10.1.  Now Perl uses the newer variant
+called ( fstack protector strong(fR, if available.
+The Safe module could allow outside packages to be replaced
+
+Critical bugfix: outside packages could be replaced.  Safe has
+been patched to 2.38 to address this.
+The 'code hardening' option called _FORTIFY_SOURCE(fR, available in
+gcc 4.W, is now always used for compiling Perl, if available.
+
+Note that this isn't necessarily a huge step since in many platforms
+the step had already been taken several years ago: many Linux
+distributions (like Fedora) have been using this option for Perl,
+and OS X has enforced the same for many years.
+Incompatible Changes
+
+Subroutine signatures moved before attributes
+
+The experimental sub signatures feature, as introduced in 5.20, parsed
+signatures after attributes. In this release, following feedback from users
+of the experimental feature, the positioning has been moved such that
+signatures occur after the subroutine name (if any) and before the attribute
+list (if any).
+The &(fR prototype character now accepts only anonymous subs (sub
+{...}(fR), things beginning with (e&(fR, or an explicit undef(fR.  Formerly
+it erroneously also allowed references to arrays, hashes, and lists.
+[perl #4539] <https://rt.perl.org/Ticket/Display.html?id=4539>.
+[perl #123062] <https://rt.perl.org/Ticket/Display.html?id=123062>.
+[perl #123062] <https://rt.perl.org/Ticket/Display.html?id=123475>.
+
+In addition, the (e&(fR prototype was allowing subroutine calls, whereas
+now it only allows subroutines: &foo is still permitted as an argument,
+while &foo()(fR and foo()(fR no longer are.
+[perl #77860] <https://rt.perl.org/Ticket/Display.html?id=77860>.
+The encoding pragma's effect is now limited to lexical scope.  This
+pragma is deprecated, but in the meantime, it could adversely affect
+unrelated modules that are included in the same program; this change
+fixes that.
+List slices returning empty lists
+
+List slices now return an empty list only if the original list was empty
+(or if there are no indices).  Formerly, a list slice would return an empty
+list if all indices fell outside the original list; now it returns a list
+of undef(fR values in that case.
+[perl #114498] <https://rt.perl.org/Ticket/Display.html?id=114498>.
+E.g. (eN{TOO  MANY SPACES}(fR or (eN{TRAILING SPACE }(fR.
+This has been deprecated since v5.18.
+Importing functions from UNIVERSAL(fR has been deprecated since v5.12, and
+is now a fatal error.  use UNIVERSAL(fR without any arguments is still
+allowed.
+In prior releases, failure to do this raised a deprecation warning.
+These had been deprecated since v5.18.
+The /x(fR regular expression modifier allows the pattern to contain
+white space and comments (both of which are ignored) for improved
+readability.  Until now, not all the white space characters that Unicode
+designates for this purpose were handled.  The additional ones now
+recognized are:
+    U+0085 NEXT LINE
+    U+200E LEFT TO RIGHT MARK
+    U+200F RIGHT TO LEFT MARK
+    U+2028 LINE SEPARATOR
+    U+2029 PARAGRAPH SEPARATOR
+The use of these characters with /x(fR outside bracketed character
+classes and when not preceded by a backslash has raised a deprecation
+warning since v5.18.  Now they will be ignored.
+(?[ ])(fR  is an experimental feature, introduced in v5.18.  It operates
+as if /x(fR is always enabled.  But there was a difference: comment
+lines (following a #(fR character) were terminated by anything matching
+(eR(fR which includes all vertical whitespace, such as form feeds.  For
+consistency, this is now changed to match what terminates comment lines
+outside (?[ ])(fR, namely a (en(fR (even if escaped), which is the
+same as what terminates a heredoc string and formats.
+This experimental feature allows set operations in regular expression patterns.
+Prior to this, the intersection operator had the same precedence as the other
+binary operators.  Now it has higher precedence.  This could lead to different
+outcomes than existing code expects (though the documentation has always noted
+that this change might happen, recommending fully parenthesizing the
+expressions).  See Extended Bracketed Character Classes in perlrecharclass.
+Really old Perl let you omit the @(fR on array names and the %(fR on hash
+names in some spots.  This has issued a deprecation warning since Perl
+5.000, and is no longer permitted.
+Previously, the text, unlike almost everything else, always came out
+based on the current underlying locale of the program.  (Also affected
+on some systems is "$^E".)  For programs that are unprepared to
+handle locale differences, this can cause garbage text to be displayed.
+It's better to display text that is translatable via some tool than
+garbage text which is much harder to figure out.
+The stringification of $! and $^E will have the UTF 8 flag set
+when the text is actually non ASCII UTF 8.  This will enable programs
+that are set up to be locale aware to properly output messages in the
+user's native language.  Code that needs to continue the 5.20 and
+earlier behavior can do the stringification within the scopes of both
+use bytes(fR and use locale ":messages"(fR.  Within these two
+scopes, no other Perl operations will
+be affected by locale; only $! and $^E stringification.  The
+bytes(fR pragma causes the UTF 8 flag to not be set, just as in previous
+Perl releases.  This resolves
+[perl #112208] <https://rt.perl.org/Ticket/Display.html?id=112208>.
+The m?PATTERN?(fR construct, which allows matching a regex only once,
+previously had an alternative form that was written directly with a question
+mark delimiter, omitting the explicit m(fR operator.  This usage has produced
+a deprecation warning since 5.14.0.  It is now a syntax error, so that the
+question mark can be available for use in new operators.
+These have been deprecated since v5.6.1 and have raised deprecation
+warnings since v5.16.
+Using a hash or an array as a reference are now fatal errors
+
+For example, %foo >{"bar"}(fR now causes a fatal compilation
+error.  These have been deprecated since before v5.8, and have raised
+deprecation warnings since then.
+The W(fR character in a subroutine's prototype used to allow barewords to take
+precedence over most, but not all, subroutine names.  It was never
+consistent and exhibited buggy behavior.
+
+Now it has been changed, so subroutines always take precedence over barewords,
+which brings it into conformity with similarly prototyped built in functions:
+    sub splat(W) { ... }
+    sub foo { ... }
+    splat(foo); # now always splat(foo())
+    splat(bar); # still splat(bar) as before
+    close(foo); # close(foo())
+    close(bar); # close(bar)
+
+Deprecations
+This variable allows Perl scripts to be written in an encoding other than
+ASCII or UTF 8.  However, it affects all modules globally, leading
+to wrong answers and segmentation faults.  New scripts should be written
+in UTF 8; old scripts should be converted to UTF 8, which is easily done
+with the piconv utility.
+Use of non graphic characters in single character variable names
+
+The syntax for single character variable names is more lenient than
+for longer variable names, allowing the one character name to be a
+punctuation character or even invisible (a non graphic).  Perl v5.20
+deprecated the ASCII range controls as such a name.  Now, all
+non graphic characters that formerly were allowed are deprecated.
+The practical effect of this occurs only when not under use utf8(fR, and affects just the C1 controls (code points 0x80 through
+0xFF), NO BREAK SPACE, and SOFT HYPHEN.
+In many cases Perl makes sub () { $var }(fR into an inlinable constant
+subroutine, capturing the value of $var at the time the sub(fR expression
+is evaluated.  This can break the closure behavior in those cases where
+$var is subsequently modified, since the subroutine won't return the
+changed value. (Note that this all only applies to anonymous subroutines
+with an empty prototype (sub ()(fR).)
+
+This usage is now deprecated in those cases where the variable could be
+modified elsewhere.  Perl detects those cases and emits a deprecation
+warning.  Such code will likely change in the future and stop producing a
+constant.
+
+If your variable is only modified in the place where it is declared, then
+Perl will continue to make the sub inlinable with no warnings.
+    sub make_constant {
+        my $var = shift;
+        return sub () { $var }; # fine
+    }
+
+    sub make_constant_deprecated {
+        my $var;
+        $var = shift;
+        return sub () { $var }; # deprecated
+    }
+
+    sub make_constant_deprecated2 {
+        my $var = shift;
+        log_that_value($var); # could modify $var
+        return sub () { $var }; # deprecated
+    }
+In the second example above, detecting that $var is assigned to only once
+is too hard to detect.  That it happens in a spot other than the my(fR
+declaration is enough for Perl to find it suspicious.
+
+This deprecation warning happens only for a simple variable for the body of
+the sub.  (A BEGIN(fR block or use(fR statement inside the sub is ignored,
+because it does not become part of the sub's body.)  For more complex
+cases, such as sub () { do_something() if 0; $var }(fR the behavior has
+changed such that inlining does not happen if the variable is modifiable
+elsewhere.  Such cases should be rare.
+It is now deprecated to say something like any of the following:
+    qr/foo/xx;
+    /(?xax:foo)/;
+    use re qw(/amxx);
+That is, now x(fR should only occur once in any string of contiguous
+regular expression pattern modifiers.  We do not believe there are any
+occurrences of this in all of CPAN.  This is in preparation for a future
+Perl release having /xx(fR permit white space for readability in
+bracketed character classes (those enclosed in square brackets:
+[...](fR).
+This non graphic character is essentially indistinguishable from a
+regular space, and so should not be allowed.  See
+(s 1CUSTOM ALIASES(s0 in charnames.
+If you want a literal left curly bracket (also called a left brace) in a
+regular expression pattern, you should now escape it by either
+preceding it with a backslash ("({") or enclosing it within square
+brackets "[{]", or by using (eQ(fR; otherwise a deprecation warning
+will be raised.  This was first announced as forthcoming in the v5.16
+release; it will allow future extensions to the language to happen.
+Making all warnings fatal is discouraged
+
+The documentation for fatal warnings notes that
+use warnings FATAL => all(W(C' is discouraged, and provides stronger
+language about the risks of fatal warnings in general.
+Performance Enhancements
+
+o 4
+If a method or class name is known at compile time, a hash is precomputed
+to speed up run time method lookup.  Also, compound method names like
+SUPER::new(fR are parsed at compile time, to save having to parse them at
+run time.
+o 4
+Array and hash lookups (especially nested ones) that use only constants
+or simple variables as keys, are now considerably faster. See
+Internal Changes for more details.
+o 4
+(...)x1(fR, ("constant")x0(fR and ($scalar)x0(fR are now optimised in list
+context.  If the right hand argument is a constant 1, the repetition
+operator disappears.  If the right hand argument is a constant 0, the whole
+expression is optimised to the empty list, so long as the left hand
+argument is a simple scalar or constant.  (That is, (foo())x0(fR is not
+subject to this optimisation.)
+o 4
+substr(fR assignment is now optimised into 4 argument substr(fR at the end
+of a subroutine (or as the argument to return(fR).  Previously, this
+optimisation only happened in void context.
+o 4
+In "(L...", "(Q...", etc., the extra stringify op is now optimised
+away, making these just as fast as lcfirst(fR, quotemeta(fR, etc.
+o 4
+Assignment to an empty list is now sometimes faster.  In particular, it
+never calls FETCH(fR on tied arguments on the right hand side, whereas it
+used to sometimes.
+o 4
+There is a performance improvement of up to 20% when length(fR is applied to
+a non magical, non tied string, and either use bytes(fR is in scope or the
+string doesn't use UTF 8 internally.
+o 4
+On most perl builds with 64 bit integers, memory usage for non magical,
+non tied scalars containing only a floating point value has been reduced
+by between 8 and 32 bytes, depending on OS.
+o 4
+In @array = split(fR, the assignment can be optimized away, so that split(fR
+writes directly to the array.  This optimisation was happening only for
+package arrays other than @_, and only sometimes.  Now this
+optimisation happens almost all the time.
+o 4
+join(fR is now subject to constant folding.  So for example
+join " ", "a", "b"(fR is converted at compile time to "a b".
+Moreover, join(fR with a scalar or constant for the separator and a
+single item list to join is simplified to a stringification, and the
+separator doesn't even get evaluated.
+o 4
+qq(@array)(fR is implemented using two ops: a stringify op and a join op.
+If the qq(fR contains nothing but a single array, the stringification is
+optimized away.
+o 4
+our $var(fR and our($s,@a,%h)(fR in void context are no longer evaluated at
+run time.  Even a whole sequence of our $foo;(fR statements will simply be
+skipped over.  The same applies to state(fR variables.
+o 4
+Many internal functions have been refactored to improve performance and reduce
+their memory footprints.
+[perl #121436] <https://rt.perl.org/Ticket/Display.html?id=121436>
+[perl #121906] <https://rt.perl.org/Ticket/Display.html?id=121906>
+[perl #121969] <https://rt.perl.org/Ticket/Display.html?id=121969>
+o 4
+( T(fR and ( B(fR filetests will return sooner when an empty file is detected.
+[perl #121489] <https://rt.perl.org/Ticket/Display.html?id=121489>
+o 4
+Hash lookups where the key is a constant are faster.
+o 4
+Subroutines with an empty prototype and a body containing just undef(fR are now
+eligible for inlining.
+[perl #122728] <https://rt.perl.org/Ticket/Display.html?id=122728>
+o 4
+Subroutines in packages no longer need to be stored in typeglobs:
+declaring a subroutine will now put a simple sub reference directly in the
+stash if possible, saving memory.  The typeglob still notionally exists,
+so accessing it will cause the stash entry to be upgraded to a typeglob
+(i.e. this is just an internal implementation detail).
+This optimization does not currently apply to XSUBs or exported
+subroutines, and method calls will undo it, since they cache things in
+typeglobs.
+[perl #120441] <https://rt.perl.org/Ticket/Display.html?id=120441>
+o 4
+The functions utf8::native_to_unicode()(fR and utf8::unicode_to_native()(fR
+(see utf8) are now optimized out on ASCII platforms.  There is now not even
+a minimal performance hit in writing code portable between ASCII and EBCDIC
+platforms.
+o 4
+Win32 Perl uses 8 KB less of per process memory than before for every perl
+process, because some data is now memory mapped from disk and shared
+between processes from the same perl binary.
+Modules and Pragmata
+
+Updated Modules and Pragmata
+
+Many of the libraries distributed with perl have been upgraded since v5.20.0.
+For a complete list of changes, run:
+  corelist   diff 5.20.0 5.22.0
+You can substitute your favorite version in place of 5.20.0, too.
+
+Some notable changes include:
+o 4
+Archive::Tar has been upgraded to version 2.04.
+
+Tests can now be run in parallel.
+o 4
+attributes has been upgraded to version 0.27.
+
+The usage of memEQs(fR in the XS has been corrected.
+[perl #122701] <https://rt.perl.org/Ticket/Display.html?id=122701>
+
+Avoid reading beyond the end of a buffer. [perl #122629]
+o 4
+B has been upgraded to version 1.58.
+
+It provides a new B::safename(fR function, based on the existing
+B::GV >SAFENAME(fR, that converts (ecOPEN(fR to ^OPEN(fR.
+
+Nulled COPs are now of class B::COP(fR, rather than B::OP(fR.
+
+B::REGEXP(fR objects now provide a qr_anoncv(fR method for accessing the
+implicit CV associated with qr//(fR things containing code blocks, and a
+compflags(fR method that returns the pertinent flags originating from the
+qr//blahblah(fR op.
+
+B::PMOP(fR now provides a pmregexp(fR method returning a B::REGEXP(fR object.
+Two new classes, B::PADNAME(fR and B::PADNAMELIST(fR, have been introduced.
+
+A bug where, after an ithread creation or psuedofork, special/immortal SVs in
+the child ithread/psuedoprocess did not have the correct class of
+B::SPECIAL(fR, has been fixed.
+The id(fR and outid(fR PADLIST methods have been added.
+o 4
+B::Concise has been upgraded to version 0.996.
+
+Null ops that are part of the execution chain are now given sequence
+numbers.
+
+Private flags for nulled ops are now dumped with mnemonics as they would be
+for the non nulled counterparts.
+o 4
+B::Deparse has been upgraded to version 1.35.
+
+It now deparses +sub : attr { ... }(fR correctly at the start of a
+statement.  Without the initial +(fR, sub(fR would be a statement label.
+
+BEGIN(fR blocks are now emitted in the right place most of the time, but
+the change unfortunately introduced a regression, in that BEGIN(fR blocks
+occurring just before the end of the enclosing block may appear below it
+instead.
+
+B::Deparse(fR no longer puts erroneous local(fR here and there, such as for
+LIST = tr/a//d(fR.  [perl #119815]
+
+Adjacent use(fR statements are no longer accidentally nested if one
+contains a do(fR block.  [perl #115066]
+
+Parenthesised arrays in lists passed to (e(fR are now correctly deparsed
+with parentheses (e.g., (e(@a, (@b), @c)(fR now retains the parentheses
+around @b), thus preserving the flattening behavior of referenced
+parenthesised arrays.  Formerly, it only worked for one array: (e(@a)(fR.
+
+local our(fR is now deparsed correctly, with the our(fR included.
+
+for($foo; !$bar; $baz) {...}(fR was deparsed without the !(fR (or not(fR).
+This has been fixed.
+
+Core keywords that conflict with lexical subroutines are now deparsed with
+the CORE::(fR prefix.
+
+foreach state $x (...) {...}(fR now deparses correctly with state(fR and
+not my(fR.
+
+our @array = split(...)(fR now deparses correctly with our(fR in those
+cases where the assignment is optimized away.
+
+It now deparses our(LIST)(fR and typed lexical (my Dog $spot(fR) correctly.
+
+Deparse $#_ as that instead of as $#{_}.
+[perl #123947] <https://rt.perl.org/Ticket/Display.html?id=123947>
+
+BEGIN blocks at the end of the enclosing scope are now deparsed in the
+right place.  [perl #77452]
+
+BEGIN blocks were sometimes deparsed as __ANON__, but are now always called
+BEGIN.
+
+Lexical subroutines are now fully deparsed.  [perl #116553]
+
+Anything =~ y///r(fR with /r(fR no longer omits the left hand operand.
+
+The op trees that make up regexp code blocks are now deparsed for real.
+Formerly, the original string that made up the regular expression was used.
+That caused problems with qr/(?{<<heredoc})/(fR and multiline code blocks,
+which were deparsed incorrectly.  [perl #123217] [perl #115256]
+
+$; at the end of a statement no longer loses its semicolon.
+[perl #123357]
+
+Some cases of subroutine declarations stored in the stash in shorthand form
+were being omitted.
+
+Non ASCII characters are now consistently escaped in strings, instead of
+some of the time.  (There are still outstanding problems with regular
+expressions and identifiers that have not been fixed.)
+
+When prototype sub calls are deparsed with &(fR (e.g., under the  P
+option), scalar(fR is now added where appropriate, to force the scalar
+context implied by the prototype.
+
+require(foo())(fR, do(foo())(fR, goto(foo())(fR and similar constructs with
+loop controls are now deparsed correctly.  The outer parentheses are not
+optional.
+
+Whitespace is no longer escaped in regular expressions, because it was
+getting erroneously escaped within (?x:...)(fR sections.
+
+sub foo { foo() }(fR is now deparsed with those mandatory parentheses.
+
+/@array/(fR is now deparsed as a regular expression, and not just
+@array.
+
+/@{ }/(fR, /@{+}/(fR and $#{1} are now deparsed with the braces, which
+are mandatory in these cases.
+
+In deparsing feature bundles, B::Deparse(fR was emitting no feature;(fR first
+instead of no feature :all;(fR.  This has been fixed.
+
+chdir FH(fR is now deparsed without quotation marks.
+
+(emy @a(fR is now deparsed without parentheses.  (Parenthese would flatten
+the array.)
+
+system(fR and exec(fR followed by a block are now deparsed correctly.
+Formerly there was an erroneous do(fR before the block.
+
+use constant QR => qr/.../flags(fR followed by "" =~ QR(fR is no longer
+without the flags.
+
+Deparsing BEGIN { undef &foo }(fR with the  w switch enabled started to
+emit 'uninitialized' warnings in Perl 5.14.  This has been fixed.
+
+Deparsing calls to subs with a (;+)(fR prototype resulted in an infinite
+loop.  The (;$(fR) (_)(fR and (;_)(fR prototypes were given the wrong
+precedence, causing foo($a<$b)(fR to be deparsed without the parentheses.
+
+Deparse now provides a defined state sub in inner subs.
+o 4
+B::Op_private has been added.
+
+B::Op_private provides detailed information about the flags used in the
+op_private(fR field of perl opcodes.
+o 4
+bigint, bignum, bigrat have been upgraded to version 0.39.
+
+Document in CAVEATS that using strings as numbers won't always invoke
+the big number overloading, and how to invoke it.  [rt.perl.org #123064]
+o 4
+Carp has been upgraded to version 1.36.
+
+Carp::Heavy(fR now ignores version mismatches with Carp if Carp is newer
+than 1.12, since Carp::Heavy(fR's guts were merged into Carp at that
+point.
+[perl #121574] <https://rt.perl.org/Ticket/Display.html?id=121574>
+
+Carp now handles non ASCII platforms better.
+
+Off by one error fix for Perl < 5.14.
+o 4
+constant has been upgraded to version 1.33.
+
+It now accepts fully qualified constant names, allowing constants to be defined
+in packages other than the caller.
+o 4
+CPAN has been upgraded to version 2.11.
+
+Add support for Cwd::getdcwd()(fR and introduce workaround for a misbehavior
+seen on Strawberry Perl 5.20.1.
+
+Fix chdir()(fR after building dependencies bug.
+
+Introduce experimental support for plugins/hooks.
+
+Integrate the App::Cpan(fR sources.
+
+Do not check recursion on optional dependencies.
+
+Sanity check META.yml to contain a hash.
+[cpan #95271] <https://rt.cpan.org/Ticket/Display.html?id=95271>
+o 4
+CPAN::Meta::Requirements has been upgraded to version 2.132.
+
+Works around limitations in version::vpp(fR detecting v string magic and adds
+support for forthcoming ExtUtils::MakeMaker bootstrap version.pm for
+Perls older than 5.10.0.
+o 4
+Data::Dumper has been upgraded to version 2.158.
+
+Fixes CVE 2014 4330 by adding a configuration variable/option to limit
+recursion when dumping deep data structures.
+
+Changes to resolve Coverity issues.
+XS dumps incorrectly stored the name of code references stored in a
+GLOB.
+[perl #122070] <https://rt.perl.org/Ticket/Display.html?id=122070>
+o 4
+DynaLoader has been upgraded to version 1.32.
+
+Remove dl_nonlazy(fR global if unused in Dynaloader. [perl #122926]
+o 4
+Encode has been upgraded to version 2.72.
+
+piconv(fR now has better error handling when the encoding name is nonexistent,
+and a build breakage when upgrading Encode in perl 5.8.2 and earlier has
+been fixed.
+
+Building in C .1v'++.1v'o 4
+Errno has been upgraded to version 1.23.
+
+Add ( P(fR to the preprocessor command line on GCC 5.  GCC added extra
+line directives, breaking parsing of error code definitions.  [rt.perl.org
+#123784]
+o 4
+experimental has been upgraded to version 0.013.
+
+Hardcodes features for Perls older than 5.15.7.
+o 4
+ExtUtils::CBuilder has been upgraded to version 0.280221.
+
+Fixes a regression on Android.
+[perl #122675] <https://rt.perl.org/Ticket/Display.html?id=122675>
+o 4
+ExtUtils::Manifest has been upgraded to version 1.70.
+
+Fixes a bug with maniread()(fR's handling of quoted filenames and improves
+manifind()(fR to follow symlinks.
+[perl #122415] <https://rt.perl.org/Ticket/Display.html?id=122415>
+o 4
+ExtUtils::ParseXS has been upgraded to version 3.28.
+
+Only declare file(fR unused if we actually define it.
+Improve generated RETVAL(fR code generation to avoid repeated
+references to ST(0).  [perl #123278]
+Broaden and document the /OBJ$/(fR to /REF$/(fR typemap optimization
+for the DESTROY(fR method.  [perl #123418]
+o 4
+Fcntl has been upgraded to version 1.13.
+
+Add support for the Linux pipe buffer size fcntl()(fR commands.
+o 4
+File::Find has been upgraded to version 1.29.
+
+find()(fR and finddepth()(fR will now warn if passed inappropriate or
+misspelled options.
+o 4
+File::Glob has been upgraded to version 1.24.
+
+Avoid SvIV()(fR expanding to call get_sv()(fR three times in a few
+places. [perl #123606]
+o 4
+HTTP::Tiny has been upgraded to version 0.054.
+
+keep_alive(fR is now fork safe and thread safe.
+o 4
+IO has been upgraded to version 1.35.
+
+The XS implementation has been fixed for the sake of older Perls.
+o 4
+IO::Socket has been upgraded to version 1.38.
+
+Document the limitations of the connected()(fR method.  [perl #123096]
+o 4
+IO::Socket::IP has been upgraded to version 0.37.
+
+A better fix for subclassing connect()(fR.
+[cpan #95983] <https://rt.cpan.org/Ticket/Display.html?id=95983>
+[cpan #97050] <https://rt.cpan.org/Ticket/Display.html?id=97050>
+
+Implements Timeout for connect()(fR.
+[cpan #92075] <https://rt.cpan.org/Ticket/Display.html?id=92075>
+o 4
+The libnet collection of modules has been upgraded to version 3.05.
+
+Support for IPv6 and SSL to Net::FTP(fR, Net::NNTP(fR, Net::POP3(fR and Net::SMTP(fR.
+Improvements in Net::SMTP(fR authentication.
+o 4
+Locale::Codes has been upgraded to version 3.34.
+
+Fixed a bug in the scripts used to extract data from spreadsheets that
+prevented the SHP currency code from being found.
+[cpan #94229] <https://rt.cpan.org/Ticket/Display.html?id=94229>
+
+New codes have been added.
+o 4
+Math::BigInt has been upgraded to version 1.9997.
+
+Synchronize POD changes from the CPAN release.
+Math::BigFloat >blog(x)(fR would sometimes return blog(2Wx)(fR when
+the accuracy was greater than 70 digits.
+The result of Math::BigFloat >bdiv()(fR in list context now
+satisfies x = quotient W divisor + remainder(fR.
+
+Correct handling of subclasses.
+[cpan #96254] <https://rt.cpan.org/Ticket/Display.html?id=96254>
+[cpan #96329] <https://rt.cpan.org/Ticket/Display.html?id=96329>
+o 4
+Module::Metadata has been upgraded to version 1.000026.
+
+Support installations on older perls with an ExtUtils::MakeMaker earlier
+than 6.63_03
+o 4
+overload has been upgraded to version 1.26.
+
+A redundant ref $sub(fR check has been removed.
+o 4
+The PathTools module collection has been upgraded to version 3.56.
+
+A warning from the gcc compiler is now avoided when building the XS.
+
+Don't turn leading //(fR into /(fR on Cygwin. [perl #122635]
+o 4
+perl5db.pl has been upgraded to version 1.49.
+
+The debugger would cause an assertion failure.
+[perl #124127] <https://rt.perl.org/Ticket/Display.html?id=124127>
+
+fork()(fR in the debugger under tmux(fR will now create a new window for
+the forked process. [perl
+#121333] <https://rt.perl.org/Ticket/Display.html?id=121333>
+
+The debugger now saves the current working directory on startup and
+restores it when you restart your program with R(fR or rerun(fR. [perl
+#121509] <https://rt.perl.org/Ticket/Display.html?id=121509>
+o 4
+PerlIO::scalar has been upgraded to version 0.22.
+
+Reading from a position well past the end of the scalar now correctly
+returns end of file.  [perl #123443]
+
+Seeking to a negative position still fails, but no longer leaves the
+file position set to a negation location.
+
+eof()(fR on a PerlIO::scalar(fR handle now properly returns true when
+the file position is past the 2GB mark on 32 bit systems.
+
+Attempting to write at file positions impossible for the platform now
+fail early rather than wrapping at 4GB.
+o 4
+Pod::Perldoc has been upgraded to version 3.25.
+
+Filehandles opened for reading or writing now have :encoding(UTF 8)(fR set.
+[cpan #98019] <https://rt.cpan.org/Ticket/Display.html?id=98019>
+o 4
+POSIX has been upgraded to version 1.53.
+
+The C99 math functions and constants (for example acosh(fR, isinf(fR, isnan(fR, round(fR,
+trunc(fR; M_E(fR, M_SQRT2(fR, M_PI(fR) have been added.
+
+POSIX::tmpnam()(fR now produces a deprecation warning.  [perl #122005]
+o 4
+Safe has been upgraded to version 2.39.
+
+reval(fR was not propagating void context properly.
+o 4
+Scalar List Utils has been upgraded to version 1.41.
+
+A new module, Sub::Util, has been added, containing functions related to
+CODE refs, including subname(fR (inspired by Sub::Identity(fR) and set_subname(fR
+(copied and renamed from Sub::Name(fR).
+The use of GetMagic(fR in List::Util::reduce()(fR has also been fixed.
+[cpan #63211] <https://rt.cpan.org/Ticket/Display.html?id=63211>
+o 4
+SDBM_File has been upgraded to version 1.13.
+
+Simplified the build process.  [perl #123413]
+o 4
+Time::Piece has been upgraded to version 1.29.
+
+When pretty printing negative Time::Seconds(fR, the minus is no longer lost.
+o 4
+Unicode::Collate has been upgraded to version 1.12.
+
+Version 0.67's improved discontiguous contractions is invalidated by default
+and is supported as a parameter long_contraction(fR.
+o 4
+Unicode::Normalize has been upgraded to version 1.18.
+
+The XSUB implementation has been removed in favor of pure Perl.
+o 4
+Unicode::UCD has been upgraded to version 0.61.
+
+A new function property_values()
+has been added to return a given property's possible values.
+
+A new function charprop()
+has been added to return the value of a given property for a given code
+point.
+
+A new function charprops_all()
+has been added to return the values of all Unicode properties for a
+given code point.
+
+A bug has been fixed so that propaliases()
+returns the correct short and long names for the Perl extensions where
+it was incorrect.
+
+A bug has been fixed so that
+prop_value_aliases()
+returns undef(fR instead of a wrong result for properties that are Perl
+extensions.
+
+This module now works on EBCDIC platforms.
+o 4
+utf8 has been upgraded to version 1.17
+
+A mismatch between the documentation and the code in utf8::downgrade()(fR
+was fixed in favor of the documentation. The optional second argument
+is now correctly treated as a perl boolean (true/false semantics) and
+not as an integer.
+o 4
+version has been upgraded to version 0.9909.
+
+Numerous changes.  See the Changes file in the CPAN distribution for
+details.
+o 4
+Win32 has been upgraded to version 0.51.
+
+GetOSName()(fR now supports Windows 8.1, and building in C .1v'++.1v'o 4
+Win32API::File has been upgraded to version 0.1202
+
+Building in C .1v'++.1v'o 4
+XSLoader has been upgraded to version 0.20.
+
+Allow XSLoader to load modules from a different namespace.
+[perl #122455]
+Removed Modules and Pragmata
+
+The following modules (and associated modules) have been removed from the core
+perl distribution:
+o 4
+CGI
+o 4
+Module::Build
+Documentation
+
+New Documentation
+
+perlunicook
+This document, by Tom Christiansen, provides examples of handling Unicode in
+Perl.
+Changes to Existing Documentation
+
+perlaix
+
+o 4
+A note on long doubles has been added.
+
+perlapi
+
+o 4
+Note that SvSetSV(fR doesn't do set magic.
+o 4
+sv_usepvn_flags(fR   fix documentation to mention the use of Newx(fR instead of
+malloc(fR.
+
+[perl #121869] <https://rt.perl.org/Ticket/Display.html?id=121869>
+o 4
+Clarify where NUL(fR may be embedded or is required to terminate a string.
+o 4
+Some documentation that was previously missing due to formatting errors is
+now included.
+o 4
+Entries are now organized into groups rather than by the file where they
+are found.
+o 4
+Alphabetical sorting of entries is now done consistently (automatically
+by the POD generator) to make entries easier to find when scanning.
+
+perldata
+
+o 4
+The syntax of single character variable names has been brought
+up to date and more fully explained.
+o 4
+Hexadecimal floating point numbers are described, as are infinity and
+NaN.
+
+perlebcdic
+
+o 4
+This document has been significantly updated in the light of recent
+improvements to EBCDIC support.
+
+perlfilter
+
+o 4
+Added a LIMITATIONS section.
+
+perlfunc
+
+o 4
+Mention that study()(fR is currently a no op.
+o 4
+Calling delete(fR or exists(fR on array values is now described as strongly
+discouraged rather than deprecated.
+o 4
+Improve documentation of our(fR.
+o 4
+( l(fR now notes that it will return false if symlinks aren't supported by the
+file system.
+[perl #121523] <https://rt.perl.org/Ticket/Display.html?id=121523>
+o 4
+Note that exec LIST(fR and system LIST(fR may fall back to the shell on
+Win32. Only the indirect object syntax exec PROGRAM LIST(fR and
+system PROGRAM LIST(fR will reliably avoid using the shell.
+
+This has also been noted in perlport.
+
+[perl #122046] <https://rt.perl.org/Ticket/Display.html?id=122046>
+
+perlguts
+
+o 4
+The OOK example has been updated to account for COW changes and a change in the
+storage of the offset.
+o 4
+Details on C level symbols and libperl.t added.
+o 4
+Information on Unicode handling has been added
+o 4
+Information on EBCDIC handling has been added
+
+perlhack
+
+o 4
+A note has been added about running on platforms with non ASCII
+character sets
+o 4
+A note has been added about performance testing
+
+perlhacktips
+
+o 4
+Documentation has been added illustrating the perils of assuming that
+there is no change to the contents of static memory pointed to by the
+return values of Perl's wrappers for C library functions.
+o 4
+Replacements for tmpfile(fR, atoi(fR, strtol(fR, and strtoul(fR are now
+recommended.
+o 4
+Updated documentation for the test.valgrind(fR make(fR target.
+[perl #121431] <https://rt.perl.org/Ticket/Display.html?id=121431>
+o 4
+Information is given about writing test files portably to non ASCII
+platforms.
+o 4
+A note has been added about how to get a C language stack backtrace.
+
+perlhpux
+
+o 4
+Note that the message Redeclaration of sendpath with a different
+storage class specifier is harmless.
+
+perllocale
+
+o 4
+Updated for the enhancements in v5.22, along with some clarifications.
+
+perlmodstyle
+
+o 4
+Instead of pointing to the module list, we are now pointing to
+PrePAN <http://prepan.org/>.
+
+perlop
+
+o 4
+Updated for the enhancements in v5.22, along with some clarifications.
+
+perlpodspec
+
+o 4
+The specification of the pod language is changing so that the default
+encoding of pods that aren't in UTF 8 (unless otherwise indicated) is
+CP1252 instead of ISO 8859 1 (Latin1).
+
+perlpolicy
+
+o 4
+We now have a code of conduct for the p5p mailing list, as documented
+in (s 1STANDARDS OF CONDUCT(s0 in perlpolicy.
+o 4
+The conditions for marking an experimental feature as non experimental are now
+set out.
+o 4
+Clarification has been made as to what sorts of changes are permissible in
+maintenance releases.
+
+perlport
+
+o 4
+Out of date VMS specific information has been fixed and/or simplified.
+o 4
+Notes about EBCDIC have been added.
+
+perlre
+
+o 4
+The description of the /x(fR modifier has been clarified to note that
+comments cannot be continued onto the next line by escaping them; and
+there is now a list of all the characters that are considered whitespace
+by this modifier.
+o 4
+The new /n(fR modifier is described.
+o 4
+A note has been added on how to make bracketed character class ranges
+portable to non ASCII machines.
+
+perlrebackslash
+
+o 4
+Added documentation of (eb{sb}(fR, (eb{wb}(fR, (eb{gcb}(fR, and (eb{g}(fR.
+
+perlrecharclass
+
+o 4
+Clarifications have been added to Character Ranges in perlrecharclass
+to the effect [A Z](fR, [a z](fR, [0 9](fR and
+any subranges thereof in regular expression bracketed character classes
+are guaranteed to match exactly what a naive English speaker would
+expect them to match, even on platforms (such as EBCDIC) where perl
+has to do extra work to accomplish this.
+o 4
+The documentation of Bracketed Character Classes has been expanded to cover the
+improvements in qr/[(N{named sequence}]/(fR (see under Selected Bug Fixes).
+
+perlref
+
+o 4
+A new section has been added
+Assigning to References
+
+perlsec
+
+o 4
+Comments added on algorithmic complexity and tied hashes.
+
+perlsyn
+
+o 4
+An ambiguity in the documentation of the ...(fR statement has been corrected.
+[perl #122661] <https://rt.perl.org/Ticket/Display.html?id=122661>
+o 4
+The empty conditional in for(fR and while(fR is now documented
+in perlsyn.
+
+perlunicode
+
+o 4
+This has had extensive revisions to bring it up to date with current
+Unicode support and to make it more readable.  Notable is that Unicode
+7.0 changed what it should do with non characters.  Perl retains the old
+way of handling for reasons of backward compatibility.  See
+Noncharacter code points in perlunicode.
+
+perluniintro
+
+o 4
+Advice for how to make sure your strings and regular expression patterns are
+interpreted as Unicode has been updated.
+
+perlvar
+
+o 4
+$] is no longer listed as being deprecated.  Instead, discussion has
+been added on the advantages and disadvantages of using it versus
+$^V.  $OLD_PERL_VERSION was re added to the documentation as the long
+form of $].
+o 4
+${^ENCODING}(fR is now marked as deprecated.
+o 4
+The entry for %^H(fR has been clarified to indicate it can only handle
+simple values.
+
+perlvms
+
+o 4
+Out of date and/or incorrect material has been removed.
+o 4
+Updated documentation on environment and shell interaction in VMS.
+
+perlxs
+
+o 4
+Added a discussion of locale issues in XS code.
+Diagnostics
+
+The following additions or changes have been made to diagnostic output,
+including warnings and fatal error messages.  For the complete list of
+diagnostic messages, see perldiag.
+New Diagnostics
+
+New Errors
+
+o 4
+Bad symbol for scalar
+
+(P) An internal request asked to add a scalar entry to something that
+wasn't a symbol table entry.
+o 4
+Can't use a hash as a reference
+
+(F) You tried to use a hash as a reference, as in
+%foo >{"bar"}(fR or %$ref >{"hello"}(fR.  Versions of perl <= 5.6.1
+used to allow this syntax, but shouldn't have.
+o 4
+Can't use an array as a reference
+
+(F) You tried to use an array as a reference, as in
+@foo >[23](fR or @$ref >[99](fR.  Versions of perl <= 5.6.1 used to
+allow this syntax, but shouldn't have.
+o 4
+Can't use 'defined(@array)' (Maybe you should just omit the defined()?)
+
+(F) defined()(fR is not useful on arrays because it
+checks for an undefined scalar value.  If you want to see if the
+array is empty, just use if (@array) { # not empty }(fR for example.
+o 4
+Can't use 'defined(%hash)' (Maybe you should just omit the defined()?)
+
+(F) defined()(fR is not usually right on hashes.
+
+Although defined %hash(fR is false on a plain not yet used hash, it
+becomes true in several non obvious circumstances, including iterators,
+weak references, stash names, even remaining true after undef %hash(fR.
+These things make defined %hash(fR fairly useless in practice, so it now
+generates a fatal error.
+
+If a check for non empty is what you wanted then just put it in boolean
+context (see Scalar values in perldata):
+    if (%hash) {
+       # not empty
+    }
+If you had defined %Foo::Bar::QUUX(fR to check whether such a package
+variable exists then that's never really been reliable, and isn't
+a good way to enquire about the features of a package, or whether
+it's loaded, etc.
+o 4
+Cannot chr %f
+
+(F) You passed an invalid number (like an infinity or not a number) to
+chr(fR.
+o 4
+Cannot compress %f in pack
+
+(F) You tried converting an infinity or not a number to an unsigned
+character, which makes no sense.
+o 4
+Cannot pack %f with '%c'
+
+(F) You tried converting an infinity or not a number to a character,
+which makes no sense.
+o 4
+Cannot print %f with '%c'
+
+(F) You tried printing an infinity or not a number as a character (%c),
+which makes no sense.  Maybe you meant %s(fR, or just stringifying it?
+o 4
+charnames alias definitions may not contain a sequence of multiple spaces
+
+(F) You defined a character name which had multiple space
+characters in a row.  Change them to single spaces.  Usually these
+names are defined in the :alias(fR import argument to use charnames(fR, but
+they could be defined by a translator installed into $^H{charnames}.
+See (s 1CUSTOM ALIASES(s0 in charnames.
+o 4
+charnames alias definitions may not contain trailing white space
+
+(F) You defined a character name which ended in a space
+character.  Remove the trailing space(s).  Usually these names are
+defined in the :alias(fR import argument to use charnames(fR, but they
+could be defined by a translator installed into $^H{charnames}.
+See (s 1CUSTOM ALIASES(s0 in charnames.
+o 4
+:const is not permitted on named subroutines
+
+(F) The const(fR attribute causes an anonymous subroutine to be run and
+its value captured at the time that it is cloned.  Named subroutines are
+not cloned like this, so the attribute does not make sense on them.
+o 4
+Hexadecimal float: internal error
+
+(F) Something went horribly bad in hexadecimal float handling.
+o 4
+Hexadecimal float: unsupported long double format
+
+(F) You have configured Perl to use long doubles but
+the internals of the long double format are unknown,
+therefore the hexadecimal float output is impossible.
+o 4
+Illegal suidscript
+
+(F) The script run under suidperl was somehow illegal.
+o 4
+In '(?...)', the '(' and '?' must be adjacent in regex; marked by <   HERE in m/%s/
+
+(F) The two character sequence "(?" in
+this context in a regular expression pattern should be an
+indivisible token, with nothing intervening between the "("
+and the "?", but you separated them.
+o 4
+In '(WVERB...)', the '(' and 'W' must be adjacent in regex; marked by <   HERE in m/%s/
+
+(F) The two character sequence "(W" in
+this context in a regular expression pattern should be an
+indivisible token, with nothing intervening between the "("
+and the "W", but you separated them.
+o 4
+Invalid quantifier in {,} in regex; marked by <   HERE in m/%s/
+
+(F) The pattern looks like a {min,max} quantifier, but the min or max could not
+be parsed as a valid number: either it has leading zeroes, or it represents
+too big a number to cope with.  The <   HERE shows where in the regular
+expression the problem was discovered.  See perlre.
+o 4
+'%s' is an unknown bound type in regex
+
+(F) You used (eb{...}(fR or (eB{...}(fR and the ...(fR is not known to
+Perl.  The current valid ones are given in
+(eb{}, (b, (B{}, (B in perlrebackslash.
+o 4
+Missing or undefined argument to require
+
+(F) You tried to call require(fR with no argument or with an undefined
+value as an argument.  require(fR expects either a package name or a
+file specification as an argument.  See require in perlfunc.
+
+Formerly, require(fR with no argument or undef(fR warned about a Null filename.
+
+New Warnings
+
+o 4
+(C is deprecated in regex
+
+(D deprecated) The /(C/(fR character class was deprecated in v5.20, and
+now emits a warning. It is intended that it will become an error in v5.24.
+This character class matches a single byte even if it appears within a
+multi byte character, breaks encapsulation, and can corrupt UTF 8
+strings.
+o 4
+%s is more clearly written simply as %s in regex; marked by <   HERE in m/%s/
+
+(W regexp) (only under use re strict(W(C' or within (?[...])(fR)
+
+You specified a character that has the given plainer way of writing it,
+and which is also portable to platforms running with different character
+sets.
+o 4
+Argument %s treated as 0 in increment (++)
+
+(W numeric) The indicated string was fed as an argument to the ++(fR operator
+which expects either a number or a string matching /^[a zA Z]W[0 9]W(z/(fR.
+See Auto increment and Auto decrement in perlop for details.
+o 4
+Both or neither range ends should be Unicode in regex; marked by <   HERE in m/%s/
+
+(W regexp) (only under use re strict(W(C' or within (?[...])(fR)
+
+In a bracketed character class in a regular expression pattern, you
+had a range which has exactly one end of it specified using (eN{}(fR, and
+the other end is specified using a non portable mechanism.  Perl treats
+the range as a Unicode range, that is, all the characters in it are
+considered to be the Unicode characters, and which may be different code
+points on some platforms Perl runs on.  For example, [(N{U+06} (x08](fR
+is treated as if you had instead said [(N{U+06} (N{U+08}](fR, that is it
+matches the characters whose code points in Unicode are 6, 7, and 8.
+But that (ex08(fR might indicate that you meant something different, so
+the warning gets raised.
+o 4
+Can't do %s(%s) on non UTF 8 locale; resolved to %s.
+
+(W locale) You are 1) running under "use locale(fR"; 2) the current
+locale is not a UTF 8 one; 3) you tried to do the designated case change
+operation on the specified Unicode character; and 4) the result of this
+operation would mix Unicode and locale rules, which likely conflict.
+
+The warnings category locale(fR is new.
+o 4
+:const is experimental
+
+(S experimental::const_attr) The const(fR attribute is experimental.
+If you want to use the feature, disable the warning with no warnings
+experimental::const_attr(W(C', but know that in doing so you are taking
+the risk that your code may break in a future Perl version.
+o 4
+gmtime(%f) failed
+
+(W overflow) You called gmtime(fR with a number that it could not handle:
+too large, too small, or NaN.  The returned value is undef(fR.
+o 4
+Hexadecimal float: exponent overflow
+
+(W overflow) The hexadecimal floating point has larger exponent
+than the floating point supports.
+o 4
+Hexadecimal float: exponent underflow
+
+(W overflow) The hexadecimal floating point has smaller exponent
+than the floating point supports.
+o 4
+Hexadecimal float: mantissa overflow
+
+(W overflow) The hexadecimal floating point literal had more bits in
+the mantissa (the part between the 0x(fR and the exponent, also known as
+the fraction or the significand) than the floating point supports.
+o 4
+Hexadecimal float: precision loss
+
+(W overflow) The hexadecimal floating point had internally more
+digits than could be output.  This can be caused by unsupported
+long double formats, or by 64 bit integers not being available
+(needed to retrieve the digits under some configurations).
+o 4
+Locale '%s' may not work well.%s
+
+(W locale) You are using the named locale, which is a non UTF 8 one, and
+which perl has determined is not fully compatible with what it can
+handle.  The second %s gives a reason.
+
+The warnings category locale(fR is new.
+o 4
+localtime(%f) failed
+
+(W overflow) You called localtime(fR with a number that it could not handle:
+too large, too small, or NaN.  The returned value is undef(fR.
+o 4
+Negative repeat count does nothing
+
+(W numeric) You tried to execute the
+x(fR repetition operator fewer than 0
+times, which doesn't make sense.
+o 4
+NO BREAK SPACE in a charnames alias definition is deprecated
+
+(D deprecated) You defined a character name which contained a no break
+space character.  Change it to a regular space.  Usually these names are
+defined in the :alias(fR import argument to use charnames(fR, but they
+could be defined by a translator installed into $^H{charnames}.  See
+(s 1CUSTOM ALIASES(s0 in charnames.
+o 4
+Non finite repeat count does nothing
+
+(W numeric) You tried to execute the
+x(fR repetition operator Inf(fR (or
+( Inf(fR) or NaN times, which doesn't make sense.
+o 4
+PerlIO layer ':win32' is experimental
+
+(S experimental::win32_perlio) The :win32(fR PerlIO layer is
+experimental.  If you want to take the risk of using this layer,
+simply disable this warning:
+    no warnings "experimental::win32_perlio";
+
+o 4
+Ranges of ASCII printables should be some subset of 0 9, A Z, or a z in regex; marked by <   HERE in m/%s/
+
+(W regexp) (only under use re strict(W(C' or within (?[...])(fR)
+
+Stricter rules help to find typos and other errors.  Perhaps you didn't
+even intend a range here, if the " " was meant to be some other
+character, or should have been escaped (like "( ").  If you did
+intend a range, the one that was used is not portable between ASCII and
+EBCDIC platforms, and doesn't have an obvious meaning to a casual
+reader.
+ [3 7]    # OK; Obvious and portable
+ [d g]    # OK; Obvious and portable
+ [A Y]    # OK; Obvious and portable
+ [A z]    # WRONG; Not portable; not clear what is meant
+ [a Z]    # WRONG; Not portable; not clear what is meant
+ [% .]    # WRONG; Not portable; not clear what is meant
+ [(x41 Z] # WRONG; Not portable; not obvious to non geek
+(You can force portability by specifying a Unicode range, which means that
+the endpoints are specified by
+(eN{...}(fR, but the meaning may
+still not be obvious.)
+The stricter rules require that ranges that start or stop with an ASCII
+character that is not a control have all their endpoints be a literal
+character, and not some escape sequence (like "(x41"), and the ranges
+must be all digits, or all uppercase letters, or all lowercase letters.
+o 4
+Ranges of digits should be from the same group in regex; marked by <   HERE in m/%s/
+
+(W regexp) (only under use re strict(W(C' or within (?[...])(fR)
+
+Stricter rules help to find typos and other errors.  You included a
+range, and at least one of the end points is a decimal digit.  Under the
+stricter rules, when this happens, both end points should be digits in
+the same group of 10 consecutive digits.
+o 4
+Redundant argument in %s
+
+(W redundant) You called a function with more arguments than were
+needed, as indicated by information within other arguments you supplied
+(e.g. a printf format). Currently only emitted when a printf type format
+required fewer arguments than were supplied, but might be used in the
+future for e.g. pack in perlfunc.
+
+The warnings category redundant(fR is new. See also
+[perl #121025] <https://rt.perl.org/Ticket/Display.html?id=121025>.
+o 4
+Replacement list is longer than search list
+
+This is not a new diagnostic, but in earlier releases was accidentally
+not displayed if the transliteration contained wide characters.  This is
+now fixed, so that you may see this diagnostic in places where you
+previously didn't (but should have).
+o 4
+Use of (b{} for non UTF 8 locale is wrong.  Assuming a UTF 8 locale
+
+(W locale) You are matching a regular expression using locale rules,
+and a Unicode boundary is being matched, but the locale is not a Unicode
+one.  This doesn't make sense.  Perl will continue, assuming a Unicode
+(UTF 8) locale, but the results could well be wrong except if the locale
+happens to be ISO 8859 1 (Latin1) where this message is spurious and can
+be ignored.
+
+The warnings category locale(fR is new.
+o 4
+Using /u for '%s' instead of /%s in regex; marked by <   HERE in m/%s/
+
+(W regexp) You used a Unicode boundary ((eb{...}(fR or (eB{...}(fR) in a
+portion of a regular expression where the character set modifiers /a(fR
+or /aa(fR are in effect.  These two modifiers indicate an ASCII
+interpretation, and this doesn't make sense for a Unicode definition.
+The generated regular expression will compile so that the boundary uses
+all of Unicode.  No other portion of the regular expression is affected.
+o 4
+The bitwise feature is experimental
+
+(S experimental::bitwise) This warning is emitted if you use bitwise
+operators (& | ^ ~ &. |. ^. ~.(fR) with the bitwise feature enabled.
+Simply suppress the warning if you want to use the feature, but know
+that in doing so you are taking the risk of using an experimental
+feature which may change or be removed in a future Perl version:
+    no warnings "experimental::bitwise";
+    use feature "bitwise";
+    $x |.= $y;
+
+o 4
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <   HERE in m/%s/
+
+(D deprecated, regexp) You used a literal "{" character in a regular
+expression pattern. You should change to use "({" instead, because a future
+version of Perl (tentatively v5.26) will consider this to be a syntax error.  If
+the pattern delimiters are also braces, any matching right brace
+("}") should also be escaped to avoid confusing the parser, for
+example,
+    qr{abc({def(}ghi}
+
+o 4
+Use of literal non graphic characters in variable names is deprecated
+
+(D deprecated) Using literal non graphic (including control)
+characters in the source to refer to the ^FOO variables, like $^X and
+${^GLOBAL_PHASE}(fR is now deprecated.
+o 4
+Useless use of attribute const
+
+(W misc) The const(fR attribute has no effect except
+on anonymous closure prototypes.  You applied it to
+a subroutine via attributes.pm.  This is only useful
+inside an attribute handler for an anonymous subroutine.
+o 4
+Useless use of /d modifier in transliteration operator
+
+This is not a new diagnostic, but in earlier releases was accidentally
+not displayed if the transliteration contained wide characters.  This is
+now fixed, so that you may see this diagnostic in places where you
+previously didn't (but should have).
+o 4
+use re 'strict' is experimental
+
+(S experimental::re_strict) The things that are different when a regular
+expression pattern is compiled under strict(fR are subject to change
+in future Perl releases in incompatible ways; there are also proposals
+to change how to enable strict checking instead of using this subpragma.
+This means that a pattern that compiles today may not in a future Perl
+release.  This warning is to alert you to that risk.
+o 4
+Warning: unable to close filehandle properly: %s
+
+Warning: unable to close filehandle %s properly: %s
+
+(S io) Previously, perl silently ignored any errors when doing an implicit
+close of a filehandle, i.e. where the reference count of the filehandle
+reached zero and the user's code hadn't already called close()(fR; e.g.
+    {
+        open my $fh, >, $file  or die "open: $file: $!(n";
+        print $fh, $data  or die;
+    } # implicit close here
+In a situation such as disk full, due to buffering, the error may only be
+detected during the final close, so not checking the result of the close is
+dangerous.
+
+So perl now warns in such situations.
+o 4
+Wide character (U+%X) in %s
+
+(W locale) While in a single byte locale (i.e., a non UTF 8
+one), a multi byte character was encountered.   Perl considers this
+character to be the specified Unicode code point.  Combining non UTF 8
+locales and Unicode is dangerous.  Almost certainly some characters
+will have two different representations.  For example, in the ISO 8859 7
+(Greek) locale, the code point 0xC3 represents a Capital Gamma.  But so
+also does 0x393.  This will make string comparisons unreliable.
+
+You likely need to figure out how this multi byte character got mixed up
+with your single byte locale (or perhaps you thought you had a UTF 8
+locale, but Perl disagrees).
+
+The warnings category locale(fR is new.
+Changes to Existing Diagnostics
+
+o 4
+<> should be quotes
+
+This warning has been changed to
+<> at require statement should be quotes
+to make the issue more identifiable.
+o 4
+Argument %s isn't numeric%s
+
+The perldiag entry for this warning has added this clarifying note:
+ Note that for the Inf and NaN (infinity and not a number) the
+ definition of "numeric" is somewhat unusual: the strings themselves
+ (like "Inf") are considered numeric, and anything following them is
+ considered non numeric.
+
+o 4
+Global symbol %s requires explicit package name
+
+This message has had '(did you forget to declare my %s?)' appended to it, to
+make it more helpful to new Perl programmers.
+[perl #121638] <https://rt.perl.org/Ticket/Display.html?id=121638>
+o 4
+'my variable &foo::bar can't be in a package' has been reworded to say
+'subroutine' instead of 'variable'.
+o 4
+(N{} in character class restricted to one character in regex; marked by
+<   HERE in m/%s/
+
+This message has had character class changed to inverted character
+class or as a range end point is to reflect improvements in
+qr/[(N{named sequence}]/(fR (see under Selected Bug Fixes).
+o 4
+panic: frexp
+
+This message has had ': %f' appended to it, to show what the offending
+floating point number is.
+o 4
+Possible precedence problem on bitwise %c operator reworded as
+Possible precedence problem on bitwise %s operator.
+o 4
+Unsuccessful %s on filename containing newline
+
+This warning is now only produced when the newline is at the end of
+the filename.
+o 4
+"Variable %s will not stay shared has been changed to say Subroutine"
+when it is actually a lexical sub that will not stay shared.
+o 4
+Variable length lookbehind not implemented in regex m/%s/
+
+The perldiag entry for this warning has had information about Unicode
+behavior added.
+Diagnostic Removals
+
+o 4
+Ambiguous use of  foo resolved as  &foo()
+
+There is actually no ambiguity here, and this impedes the use of negated
+constants; e.g., ( Inf(fR.
+o 4
+Constant is not a FOO reference
+
+Compile time checking of constant dereferencing (e.g., my_constant >()(fR)
+has been removed, since it was not taking overloading into account.
+[perl #69456] <https://rt.perl.org/Ticket/Display.html?id=69456>
+[perl #122607] <https://rt.perl.org/Ticket/Display.html?id=122607>
+Utility Changes
+
+find2perl, s2p and a2p removal
+
+o 4
+The x2p/ directory has been removed from the Perl core.
+
+This removes find2perl, s2p and a2p. They have all been released to CPAN as
+separate distributions (App::find2perl(fR, App::s2p(fR, App::a2p(fR).
+h2ph
+
+o 4
+h2ph now handles hexadecimal constants in the compiler's predefined
+macro definitions, as visible in $Config{cppsymbols}.
+[perl #123784] <https://rt.perl.org/Ticket/Display.html?id=123784>.
+encguess
+
+o 4
+No longer depends on non core modules.
+Configuration and Compilation
+
+o 4
+Configure now checks for lrintl()(fR, lroundl()(fR, llrintl()(fR, and
+llroundl()(fR.
+o 4
+Configure with ( Dmksymlinks(fR should now be faster.
+[perl #122002] <https://rt.perl.org/Ticket/Display.html?id=122002>.
+o 4
+The pthreads(fR and cl(fR libraries will be linked by default if present.
+This allows XS modules that require threading to work on non threaded
+perls. Note that you must still pass ( Dusethreads(fR if you want a
+threaded perl.
+o 4
+To get more precision and range for floating point numbers one can now
+use the GCC quadmath library which implements the quadruple precision
+floating point numbers on x86 and IA 64 platforms.  See INSTALL for
+details.
+o 4
+MurmurHash64A and MurmurHash64B can now be configured as the internal hash
+function.
+o 4
+make test.valgrind(fR now supports parallel testing.
+
+For example:
+    TEST_JOBS=9 make test.valgrind
+See valgrind in perlhacktips for more information.
+
+[perl #121431] <https://rt.perl.org/Ticket/Display.html?id=121431>
+o 4
+The MAD (Misc Attribute Decoration) build option has been removed
+
+This was an unmaintained attempt at preserving
+the Perl parse tree more faithfully so that automatic conversion of
+Perl 5 to Perl 6 would have been easier.
+
+This build time configuration option had been unmaintained for years,
+and had probably seriously diverged on both Perl 5 and Perl 6 sides.
+o 4
+A new compilation flag, ( DPERL_OP_PARENT(fR is available. For details,
+see the discussion below at Internal Changes.
+o 4
+Pathtools no longer tries to load XS on miniperl. This speeds up building perl
+slightly.
+Testing
+
+o 4
+t/porting/re_context.t has been added to test that utf8 and its
+dependencies only use the subset of the $1..$n(fR capture vars that
+Perl_save_re_context()(fR is hard coded to localize, because that function
+has no efficient way of determining at runtime what vars to localize.
+o 4
+Tests for performance issues have been added in the file t/perf/taint.t.
+o 4
+Some regular expression tests are written in such a way that they will
+run very slowly if certain optimizations break. These tests have been
+moved into new files, t/re/speed.t and t/re/speed_thr.t,
+and are run with a watchdog()(fR.
+o 4
+test.pl(fR now allows plan skip_all => $reason(fR, to make it
+more compatible with Test::More(fR.
+o 4
+A new test script, op/infnan.t, has been added to test if infinity and NaN are
+working correctly.  See Infinity and NaN (not a number) handling improved.
+Platform Support
+
+Regained Platforms
+
+IRIX and Tru64 platforms are working again. 4
+
+Some make test(fR failures remain:
+[perl #123977] <https://rt.perl.org/Ticket/Display.html?id=123977>
+and [perl #125298] <https://rt.perl.org/Ticket/Display.html?id=125298>
+for IRIX; [perl #124212] <https://rt.perl.org/Ticket/Display.html?id=124212>,
+[cpan #99605] <https://rt.cpan.org/Public/Bug/Display.html?id=99605>, and
+[cpan #104836] <https://rt.cpan.org/Ticket/Display.html?id=104836> for Tru64.
+z/OS running EBCDIC Code Page 1047 4
+
+Core perl now works on this EBCDIC platform.  Earlier perls also worked, but,
+even though support wasn't officially withdrawn, recent perls would not compile
+and run well.  Perl 5.20 would work, but had many bugs which have now been
+fixed.  Many CPAN modules that ship with Perl still fail tests, including
+Pod::Simple(fR.  However the version of Pod::Simple(fR currently on CPAN should work;
+it was fixed too late to include in Perl 5.22.  Work is under way to fix many
+of the still broken CPAN modules, which likely will be installed on CPAN when
+completed, so that you may not have to wait until Perl 5.24 to get a working
+version.
+Discontinued Platforms
+
+NeXTSTEP/OPENSTEP 4
+
+NeXTSTEP was a proprietary operating system bundled with NeXT's
+workstations in the early to mid 90s; OPENSTEP was an API specification
+that provided a NeXTSTEP like environment on a non NeXTSTEP system.  Both
+are now long dead, so support for building Perl on them has been removed.
+Platform Specific Notes
+
+EBCDIC 4
+
+Special handling is required of the perl interpreter on EBCDIC platforms
+to get qr/[i j]/(fR to match only "i" and "j", since there are 7
+characters between the
+code points for "i" and "j".  This special handling had only been
+invoked when both ends of the range are literals.  Now it is also
+invoked if any of the (eN{...}(fR forms for specifying a character by
+name or Unicode code point is used instead of a literal.  See
+Character Ranges in perlrecharclass.
+HP UX 4
+
+The archname now distinguishes use64bitint from use64bitall.
+Android 4
+
+Build support has been improved for cross compiling in general and for
+Android in particular.
+VMS 4
+o 4
+
+When spawning a subprocess without waiting, the return value is now
+the correct PID.
+o 4
+Fix a prototype so linking doesn't fail under the VMS C .1v'++.1v'o 4
+finite(fR, finitel(fR, and isfinite(fR detection has been added to
+configure.com(fR, environment handling has had some minor changes, and
+a fix for legacy feature checking status.
+Win32 4
+o 4
+
+miniperl.exe is now built with ( fno strict aliasing(fR, allowing 64 bit
+builds to complete on GCC 4.8.
+[perl #123976] <https://rt.perl.org/Ticket/Display.html?id=123976>
+o 4
+nmake minitest(fR now works on Win32.  Due to dependency issues you
+need to build nmake test prep(fR first, and a small number of the
+tests fail.
+[perl #123394] <https://rt.perl.org/Ticket/Display.html?id=123394>
+o 4
+Perl can now be built in C .1v'++.1v'USE_CPLUSPLUS(fR to the value define.
+o 4
+The list form of piped open has been implemented for Win32.  Note: unlike
+system LIST(fR this does not fall back to the shell.
+[perl #121159] <https://rt.perl.org/Ticket/Display.html?id=121159>
+o 4
+New DebugSymbols(fR and DebugFull(fR configuration options added to
+Windows makefiles.
+o 4
+Previously, compiling XS modules (including CPAN ones) using Visual C .1v'++.1v'Win64 resulted in around a dozen warnings per file from hv_func.h.  These
+warnings have been silenced.
+o 4
+Support for building without PerlIO has been removed from the Windows
+makefiles.  Non PerlIO builds were all but deprecated in Perl 5.18.0 and are
+already not supported by Configure on POSIX systems.
+o 4
+Between 2 and 6 milliseconds and seven I/O calls have been saved per attempt
+to open a perl module for each path in @INC.
+o 4
+Intel C builds are now always built with C99 mode on.
+o 4
+%I64d is now being used instead of %lld for MinGW.
+o 4
+In the experimental :win32(fR layer, a crash in open(fR was fixed. Also
+opening /dev/null (which works under Win32 Perl's default :unix(fR
+layer) was implemented for :win32(fR.
+[perl #122224] <https://rt.perl.org/Ticket/Display.html?id=122224>
+o 4
+A new makefile option, USE_LONG_DOUBLE(fR, has been added to the Windows
+dmake makefile for gcc builds only.  Set this to define if you want perl to
+use long doubles to give more accuracy and range for floating point numbers.
+OpenBSD 4
+
+On OpenBSD, Perl will now default to using the system malloc(fR due to the
+security features it provides. Perl's own malloc wrapper has been in use
+since v5.14 due to performance reasons, but the OpenBSD project believes
+the tradeoff is worth it and would prefer that users who need the speed
+specifically ask for it.
+
+[perl #122000] <https://rt.perl.org/Ticket/Display.html?id=122000>.
+Solaris 4
+o 4
+
+We now look for the Sun Studio compiler in both /opt/solstudioW and
+/opt/solarisstudioW.
+o 4
+Builds on Solaris 10 with ( Dusedtrace(fR would fail early since make
+didn't follow implied dependencies to build perldtrace.h(fR.  Added an
+explicit dependency to depend(fR.
+[perl #120120] <https://rt.perl.org/Ticket/Display.html?id=120120>
+o 4
+C99 options have been cleaned up; hints look for solstudio(fR
+as well as SUNWspro(fR; and support for native setenv(fR has been added.
+Internal Changes
+
+o 4
+Experimental support has been added to allow ops in the optree to locate
+their parent, if any. This is enabled by the non default build option
+( DPERL_OP_PARENT(fR. It is envisaged that this will eventually become
+enabled by default, so XS code which directly accesses the op_sibling(fR
+field of ops should be updated to be future proofed.
+
+On PERL_OP_PARENT(fR builds, the op_sibling(fR field has been renamed
+op_sibparent(fR and a new flag, op_moresib(fR, added. On the last op in a
+sibling chain, op_moresib(fR is false and op_sibparent(fR points to the
+parent (if any) rather than being NULL(fR.
+
+To make existing code work transparently whether using PERL_OP_PARENT(fR
+or not, a number of new macros and functions have been added that should
+be used, rather than directly manipulating op_sibling(fR.
+
+For the case of just reading op_sibling(fR to determine the next sibling,
+two new macros have been added. A simple scan through a sibling chain
+like this:
+    for (; kid >op_sibling; kid = kid >op_sibling) { ... }
+should now be written as:
+    for (; OpHAS_SIBLING(kid); kid = OpSIBLING(kid)) { ... }
+For altering optrees, a general purpose function op_sibling_splice()(fR
+has been added, which allows for manipulation of a chain of sibling ops.
+By analogy with the Perl function splice()(fR, it allows you to cut out
+zero or more ops from a sibling chain and replace them with zero or more
+new ops.  It transparently handles all the updating of sibling, parent,
+op_last pointers etc.
+
+If you need to manipulate ops at a lower level, then three new macros,
+OpMORESIB_set(fR, OpLASTSIB_set(fR and OpMAYBESIB_set(fR are intended to
+be a low level portable way to set op_sibling(fR / op_sibparent(fR while
+also updating op_moresib(fR.  The first sets the sibling pointer to a new
+sibling, the second makes the op the last sibling, and the third
+conditionally does the first or second action.  Note that unlike
+op_sibling_splice()(fR these macros won't maintain consistency in the
+parent at the same time (e.g. by updating op_first(fR and op_last(fR where
+appropriate).
+
+A C level Perl_op_parent()(fR function and a Perl level B::OP::parent()(fR
+method have been added. The C function only exists under
+PERL_OP_PARENT(fR builds (using it is build time error on vanilla
+perls).  B::OP::parent()(fR exists always, but on a vanilla build it
+always returns NULL(fR. Under PERL_OP_PARENT(fR, they return the parent
+of the current op, if any. The variable $B::OP::does_parent allows you
+to determine whether B(fR supports retrieving an op's parent.
+
+PERL_OP_PARENT(fR was introduced in 5.21.2, but the interface was
+changed considerably in 5.21.11. If you updated your code before the
+5.21.11 changes, it may require further revision. The main changes after
+5.21.2 were:
+
+o 4
+The OP_SIBLING(fR and OP_HAS_SIBLING(fR macros have been renamed
+OpSIBLING(fR and OpHAS_SIBLING(fR for consistency with other
+op manipulating macros.
+o 4
+The op_lastsib(fR field has been renamed op_moresib(fR, and its meaning
+inverted.
+o 4
+The macro OpSIBLING_set(fR has been removed, and has been superseded by
+OpMORESIB_set(fR et al.
+o 4
+The op_sibling_splice()(fR function now accepts a null parent(fR argument
+where the splicing doesn't affect the first or last ops in the sibling
+chain
+o 4
+Macros have been created to allow XS code to better manipulate the POSIX locale
+category LC_NUMERIC(fR.  See Locale related functions and macros in perlapi.
+o 4
+The previous atoi(fR et al replacement function, grok_atou(fR, has now been
+superseded by grok_atoUV(fR.  See perlclib for details.
+o 4
+A new function, Perl_sv_get_backrefs()(fR, has been added which allows you
+retrieve the weak references, if any, which point at an SV.
+o 4
+The screaminstr()(fR function has been removed. Although marked as
+public API, it was undocumented and had no usage in CPAN modules. Calling
+it has been fatal since 5.17.0.
+o 4
+The newDEFSVOP()(fR, block_start()(fR, block_end()(fR and intro_my()(fR
+functions have been added to the API.
+o 4
+The internal convert(fR function in op.c has been renamed
+op_convert_list(fR and added to the API.
+o 4
+The sv_magic()(fR function no longer forbids ext magic on read only
+values.  After all, perl can't know whether the custom magic will modify
+the SV or not.
+[perl #123103] <https://rt.perl.org/Ticket/Display.html?id=123103>.
+o 4
+Accessing CvPADLIST in perlapi on an XSUB is now forbidden.
+
+The CvPADLIST(fR field has been reused for a different internal purpose
+for XSUBs. So in particular, you can no longer rely on it being NULL as a
+test of whether a CV is an XSUB. Use CvISXSUB()(fR instead.
+o 4
+SVs of type SVt_NV(fR are now sometimes bodiless when the build
+configuration and platform allow it: specifically, when sizeof(NV) <=
+sizeof(IV)(fR. Bodiless means that the NV value is stored directly in
+the head of an SV, without requiring a separate body to be allocated. This
+trick has already been used for IVs since 5.9.2 (though in the case of
+IVs, it is always used, regardless of platform and build configuration).
+o 4
+The $DB::single, $DB::signal and $DB::trace variables now have set  and
+get magic that stores their values as IVs, and those IVs are used when
+testing their values in pp_dbstate()(fR.  This prevents perl from
+recursing infinitely if an overloaded object is assigned to any of those
+variables.
+[perl #122445] <https://rt.perl.org/Ticket/Display.html?id=122445>.
+o 4
+Perl_tmps_grow()(fR, which is marked as public API but is undocumented, has
+been removed from the public API. This change does not affect XS code that
+uses the EXTEND_MORTAL(fR macro to pre extend the mortal stack.
+o 4
+Perl's internals no longer sets or uses the SVs_PADMY(fR flag.
+SvPADMY()(fR now returns a true value for anything not marked PADTMP(fR
+and SVs_PADMY(fR is now defined as 0.
+o 4
+The macros SETsv(fR and SETsvUN(fR have been removed. They were no longer used
+in the core since commit 6f1401dc2a five years ago, and have not been
+found present on CPAN.
+o 4
+The SvFAKE(fR bit (unused on HVs) got informally reserved by
+David Mitchell for future work on vtables.
+o 4
+The sv_catpvn_flags()(fR function accepts SV_CATBYTES(fR and SV_CATUTF8(fR
+flags, which specify whether the appended string is bytes or UTF 8,
+respectively. (These flags have in fact been present since 5.16.0, but
+were formerly not regarded as part of the API.)
+o 4
+A new opcode class, METHOP(fR, has been introduced. It holds
+information used at runtime to improve the performance
+of class/object method calls.
+
+OP_METHOD(fR and OP_METHOD_NAMED(fR have changed from being
+UNOP/SVOP(fR to being METHOP(fR.
+o 4
+cv_name()(fR is a new API function that can be passed a CV or GV.  It
+returns an SV containing the name of the subroutine, for use in
+diagnostics.
+
+[perl #116735] <https://rt.perl.org/Ticket/Display.html?id=116735>
+[perl #120441] <https://rt.perl.org/Ticket/Display.html?id=120441>
+o 4
+cv_set_call_checker_flags()(fR is a new API function that works like
+cv_set_call_checker()(fR, except that it allows the caller to specify
+whether the call checker requires a full GV for reporting the subroutine's
+name, or whether it could be passed a CV instead.  Whatever value is
+passed will be acceptable to cv_name()(fR.  cv_set_call_checker()(fR
+guarantees there will be a GV, but it may have to create one on the fly,
+which is inefficient.
+[perl #116735] <https://rt.perl.org/Ticket/Display.html?id=116735>
+o 4
+CvGV(fR (which is not part of the API) is now a more complex macro, which may
+call a function and reify a GV.  For those cases where it has been used as a
+boolean, CvHASGV(fR has been added, which will return true for CVs that
+notionally have GVs, but without reifying the GV.  CvGV(fR also returns a GV
+now for lexical subs.
+[perl #120441] <https://rt.perl.org/Ticket/Display.html?id=120441>
+o 4
+The sync_locale in perlapi function has been added to the public API.
+Changing the program's locale should be avoided by XS code. Nevertheless,
+certain non Perl libraries called from XS need to do so, such as Gtk(fR.
+When this happens, Perl needs to be told that the locale has
+changed.  Use this function to do so, before returning to Perl.
+o 4
+The defines and labels for the flags in the op_private(fR field of OPs are now
+auto generated from data in regen/op_private.  The noticeable effect of this
+is that some of the flag output of Concise(fR might differ slightly, and the
+flag output of perl  Dx(fR may differ considerably (they both use the same set
+of labels now).  Also, debugging builds now have a new assertion in
+op_free()(fR to ensure that the op doesn't have any unrecognized flags set in
+op_private(fR.
+o 4
+The deprecated variable PL_sv_objcount(fR has been removed.
+o 4
+Perl now tries to keep the locale category LC_NUMERIC(fR set to C
+except around operations that need it to be set to the program's
+underlying locale.  This protects the many XS modules that cannot cope
+with the decimal radix character not being a dot.  Prior to this
+release, Perl initialized this category to C, but a call to
+POSIX::setlocale()(fR would change it.  Now such a call will change the
+underlying locale of the LC_NUMERIC(fR category for the program, but the
+locale exposed to XS code will remain C.  There are new macros
+to manipulate the LC_NUMERIC locale, including
+STORE_LC_NUMERIC_SET_TO_NEEDED(fR and
+STORE_LC_NUMERIC_FORCE_TO_UNDERLYING(fR.
+See Locale related functions and macros in perlapi.
+o 4
+A new macro isUTF8_CHAR(fR has been written which
+efficiently determines if the string given by its parameters begins
+with a well formed UTF 8 encoded character.
+o 4
+The following private API functions had their context parameter removed:
+Perl_cast_ulong(fR,  Perl_cast_i32(fR, Perl_cast_iv(fR,    Perl_cast_uv(fR,
+Perl_cv_const_sv(fR, Perl_mg_find(fR,  Perl_mg_findext(fR, Perl_mg_magical(fR,
+Perl_mini_mktime(fR, Perl_my_dirfd(fR, Perl_sv_backoff(fR, Perl_utf8_hop(fR.
+
+Note that the prefix less versions of those functions that are part of the
+public API, such as cast_i32()(fR, remain unaffected.
+o 4
+The PADNAME(fR and PADNAMELIST(fR types are now separate types, and no
+longer simply aliases for SV and AV.
+[perl #123223] <https://rt.perl.org/Ticket/Display.html?id=123223>.
+o 4
+Pad names are now always UTF 8.  The PadnameUTF8(fR macro always returns
+true.  Previously, this was effectively the case already, but any support
+for two different internal representations of pad names has now been
+removed.
+o 4
+A new op class, UNOP_AUX(fR, has been added. This is a subclass of
+UNOP(fR with an op_aux(fR field added, which points to an array of unions
+of UV, SVW etc. It is intended for where an op needs to store more data
+than a simple op_sv(fR or whatever. Currently the only op of this type is
+OP_MULTIDEREF(fR (see next item).
+o 4
+A new op has been added, OP_MULTIDEREF(fR, which performs one or more
+nested array and hash lookups where the key is a constant or simple
+variable. For example the expression $a[0]{$k}[$i], which previously
+involved ten rv2Xv(fR, Xelem(fR, gvsv(fR and const(fR ops is now performed
+by a single multideref(fR op. It can also handle local(fR, exists(fR and
+delete(fR. A non simple index expression, such as [$i+1](fR is still done
+using aelem(fR/helem(fR, and single level array lookup with a small constant
+index is still done using aelemfast(fR.
+Selected Bug Fixes
+
+o 4
+close(fR now sets $!
+
+When an I/O error occurs, the fact that there has been an error is recorded
+in the handle.  close(fR returns false for such a handle.  Previously, the
+value of $! would be untouched by close(fR, so the common convention of
+writing close $fh or die $!(fR did not work reliably.  Now the handle
+records the value of $!, too, and close(fR restores it.
+o 4
+no re(fR now can turn off everything that use re(fR enables
+
+Previously, running no re(fR would turn off only a few things. Now it
+can turn off all the enabled things. For example, the only way to
+stop debugging, once enabled, was to exit the enclosing block; that is
+now fixed.
+o 4
+pack("D", $x)(fR and pack("F", $x)(fR now zero the padding on x86 long
+double builds.  Under some build options on GCC 4.8 and later, they used
+to either overwrite the zero initialized padding, or bypass the
+initialized buffer entirely.  This caused op/pack.t to fail.
+[perl #123971] <https://rt.perl.org/Ticket/Display.html?id=123971>
+o 4
+Extending an array cloned from a parent thread could result in Modification of
+a read only value attempted errors when attempting to modify the new elements.
+[perl #124127] <https://rt.perl.org/Ticket/Display.html?id=124127>
+o 4
+An assertion failure and subsequent crash with Wx=<y>(fR has been fixed.
+[perl #123790] <https://rt.perl.org/Ticket/Display.html?id=123790>
+o 4
+A possible crashing/looping bug related to compiling lexical subs has been
+fixed.
+[perl #124099] <https://rt.perl.org/Ticket/Display.html?id=124099>
+o 4
+UTF 8 now works correctly in function names, in unquoted HERE document
+terminators, and in variable names used as array indexes.
+[perl #124113] <https://rt.perl.org/Ticket/Display.html?id=124113>
+o 4
+Repeated global pattern matches in scalar context on large tainted strings were
+exponentially slow depending on the current match position in the string.
+[perl #123202] <https://rt.perl.org/Ticket/Display.html?id=123202>
+o 4
+Various crashes due to the parser getting confused by syntax errors have been
+fixed.
+[perl #123801] <https://rt.perl.org/Ticket/Display.html?id=123801>
+[perl #123802] <https://rt.perl.org/Ticket/Display.html?id=123802>
+[perl #123955] <https://rt.perl.org/Ticket/Display.html?id=123955>
+[perl #123995] <https://rt.perl.org/Ticket/Display.html?id=123995>
+o 4
+split(fR in the scope of lexical $_ has been fixed not to fail assertions.
+[perl #123763] <https://rt.perl.org/Ticket/Display.html?id=123763>
+o 4
+my $x : attr(fR syntax inside various list operators no longer fails
+assertions.
+[perl #123817] <https://rt.perl.org/Ticket/Display.html?id=123817>
+o 4
+An @(fR sign in quotes followed by a non ASCII digit (which is not a valid
+identifier) would cause the parser to crash, instead of simply trying the
+@(fR as literal.  This has been fixed.
+[perl #123963] <https://rt.perl.org/Ticket/Display.html?id=123963>
+o 4
+Wbar::=Wfoo::=Wglob_with_hash(fR has been crashing since Perl 5.14, but no
+longer does.
+[perl #123847] <https://rt.perl.org/Ticket/Display.html?id=123847>
+o 4
+foreach(fR in scalar context was not pushing an item on to the stack, resulting
+in bugs.  (print 4, scalar do { foreach(@x){} } + 1(fR would print 5.)
+It has been fixed to return undef(fR.
+[perl #124004] <https://rt.perl.org/Ticket/Display.html?id=124004>
+o 4
+Several cases of data used to store environment variable contents in core C
+code being potentially overwritten before being used have been fixed.
+[perl #123748] <https://rt.perl.org/Ticket/Display.html?id=123748>
+o 4
+Some patterns starting with /.W..../(fR matched against long strings have
+been slow since v5.8, and some of the form /.W..../i(fR have been slow
+since v5.18. They are now all fast again.
+[perl #123743] <https://rt.perl.org/Ticket/Display.html?id=123743>.
+o 4
+The original visible value of $/ is now preserved when it is set to
+an invalid value.  Previously if you set $/ to a reference to an
+array, for example, perl would produce a runtime error and not set
+PL_rs(fR, but Perl code that checked $/ would see the array
+reference.
+[perl #123218] <https://rt.perl.org/Ticket/Display.html?id=123218>.
+o 4
+In a regular expression pattern, a POSIX class, like [:ascii:](fR, must
+be inside a bracketed character class, like qr/[[:ascii:]]/(fR.  A
+warning is issued when something looking like a POSIX class is not
+inside a bracketed class.  That warning wasn't getting generated when
+the POSIX class was negated: [:^ascii:](fR.  This is now fixed.
+o 4
+Perl 5.14.0 introduced a bug whereby eval { LABEL: }(fR would crash.  This
+has been fixed.
+[perl #123652] <https://rt.perl.org/Ticket/Display.html?id=123652>.
+o 4
+Various crashes due to the parser getting confused by syntax errors have
+been fixed.
+[perl #123617] <https://rt.perl.org/Ticket/Display.html?id=123617>.
+[perl #123737] <https://rt.perl.org/Ticket/Display.html?id=123737>.
+[perl #123753] <https://rt.perl.org/Ticket/Display.html?id=123753>.
+[perl #123677] <https://rt.perl.org/Ticket/Display.html?id=123677>.
+o 4
+Code like /$a[/(fR used to read the next line of input and treat it as
+though it came immediately after the opening bracket.  Some invalid code
+consequently would parse and run, but some code caused crashes, so this is
+now disallowed.
+[perl #123712] <https://rt.perl.org/Ticket/Display.html?id=123712>.
+o 4
+Fix argument underflow for pack(fR.
+[perl #123874] <https://rt.perl.org/Ticket/Display.html?id=123874>.
+o 4
+Fix handling of non strict (ex{}(fR. Now (ex{}(fR is equivalent to (ex{0}(fR
+instead of faulting.
+o 4
+stat  t(fR is now no longer treated as stackable, just like ( t stat(fR.
+[perl #123816] <https://rt.perl.org/Ticket/Display.html?id=123816>.
+o 4
+The following no longer causes a SEGV: qr{x+(y(?0))W}(fR.
+o 4
+Fixed infinite loop in parsing backrefs in regexp patterns.
+o 4
+Several minor bug fixes in behavior of Infinity and NaN, including
+warnings when stringifying Infinity like or NaN like strings. For example,
+NaNcy doesn't numify to NaN anymore.
+o 4
+A bug in regular expression patterns that could lead to segfaults and
+other crashes has been fixed.  This occurred only in patterns compiled
+with /i(fR while taking into account the current POSIX locale (which usually
+means they have to be compiled within the scope of use locale(fR),
+and there must be a string of at least 128 consecutive bytes to match.
+[perl #123539] <https://rt.perl.org/Ticket/Display.html?id=123539>.
+o 4
+s///g(fR now works on very long strings (where there are more than 2
+billion iterations) instead of dying with 'Substitution loop'.
+[perl #103260] <https://rt.perl.org/Ticket/Display.html?id=103260>.
+[perl #123071] <https://rt.perl.org/Ticket/Display.html?id=123071>.
+o 4
+gmtime(fR no longer crashes with not a number values.
+[perl #123495] <https://rt.perl.org/Ticket/Display.html?id=123495>.
+o 4
+(e()(fR (a reference to an empty list), and y///(fR with lexical $_ in
+scope, could both do a bad write past the end of the stack.  They have
+both been fixed to extend the stack first.
+o 4
+prototype()(fR with no arguments used to read the previous item on the
+stack, so print "foo", prototype()(fR would print foo's prototype.
+It has been fixed to infer $_ instead.
+[perl #123514] <https://rt.perl.org/Ticket/Display.html?id=123514>.
+o 4
+Some cases of lexical state subs declared inside predeclared subs could
+crash, for example when evalling a string including the name of an outer
+variable, but no longer do.
+o 4
+Some cases of nested lexical state subs inside anonymous subs could cause
+'Bizarre copy' errors or possibly even crashes.
+o 4
+When trying to emit warnings, perl's default debugger (perl5db.pl) was
+sometimes giving 'Undefined subroutine &DB::db_warn called' instead.  This
+bug, which started to occur in Perl 5.18, has been fixed.
+[perl #123553] <https://rt.perl.org/Ticket/Display.html?id=123553>.
+o 4
+Certain syntax errors in substitutions, such as s/${<>{})//(fR, would
+crash, and had done so since Perl 5.10.  (In some cases the crash did not
+start happening till 5.16.)  The crash has, of course, been fixed.
+[perl #123542] <https://rt.perl.org/Ticket/Display.html?id=123542>.
+o 4
+Fix a couple of string grow size calculation overflows; in particular,
+a repeat expression like 33 x ~3(fR could cause a large buffer
+overflow since the new output buffer size was not correctly handled by
+SvGROW()(fR.  An expression like this now properly produces a memory wrap
+panic.
+[perl #123554] <https://rt.perl.org/Ticket/Display.html?id=123554>.
+o 4
+formline("@...", "a");(fR would crash.  The FF_CHECKNL(fR case in
+pp_formline()(fR didn't set the pointer used to mark the chop position,
+which led to the FF_MORE(fR case crashing with a segmentation fault.
+This has been fixed.
+[perl #123538] <https://rt.perl.org/Ticket/Display.html?id=123538>.
+o 4
+A possible buffer overrun and crash when parsing a literal pattern during
+regular expression compilation has been fixed.
+[perl #123604] <https://rt.perl.org/Ticket/Display.html?id=123604>.
+o 4
+fchmod()(fR and futimes()(fR now set $! when they fail due to being
+passed a closed file handle.
+[perl #122703] <https://rt.perl.org/Ticket/Display.html?id=122703>.
+o 4
+op_free()(fR and scalarvoid()(fR no longer crash due to a stack overflow
+when freeing a deeply recursive op tree.
+[perl #108276] <https://rt.perl.org/Ticket/Display.html?id=108276>.
+o 4
+In Perl 5.20.0, $^N accidentally had the internal UTF 8 flag turned off
+if accessed from a code block within a regular expression, effectively
+UTF 8 encoding the value.  This has been fixed.
+[perl #123135] <https://rt.perl.org/Ticket/Display.html?id=123135>.
+o 4
+A failed semctl(fR call no longer overwrites existing items on the stack,
+which means that (semctl( 1,0,0,0))[0](fR no longer gives an
+uninitialized warning.
+o 4
+else{foo()}(fR with no space before foo(fR is now better at assigning the
+right line number to that statement.
+[perl #122695] <https://rt.perl.org/Ticket/Display.html?id=122695>.
+o 4
+Sometimes the assignment in @array = split(fR gets optimised so that split(fR
+itself writes directly to the array.  This caused a bug, preventing this
+assignment from being used in lvalue context.  So
+(@a=split//,"foo")=bar()(fR was an error.  (This bug probably goes back to
+Perl 3, when the optimisation was added.) It has now been fixed.
+[perl #123057] <https://rt.perl.org/Ticket/Display.html?id=123057>.
+o 4
+When an argument list fails the checks specified by a subroutine
+signature (which is still an experimental feature), the resulting error
+messages now give the file and line number of the caller, not of the
+called subroutine.
+[perl #121374] <https://rt.perl.org/Ticket/Display.html?id=121374>.
+o 4
+The flip flop operators (..(fR and ...(fR in scalar context) used to maintain
+a separate state for each recursion level (the number of times the
+enclosing sub was called recursively), contrary to the documentation.  Now
+each closure has one internal state for each flip flop.
+[perl #122829] <https://rt.perl.org/Ticket/Display.html?id=122829>.
+o 4
+The flip flop operator (..(fR in scalar context) would return the same
+scalar each time, unless the containing subroutine was called recursively.
+Now it always returns a new scalar.
+[perl #122829] <https://rt.perl.org/Ticket/Display.html?id=122829>.
+o 4
+use(fR, no(fR, statement labels, special blocks (BEGIN(fR) and pod are now
+permitted as the first thing in a map(fR or grep(fR block, the block after
+print(fR or say(fR (or other functions) returning a handle, and within
+${...}(fR, @{...}(fR, etc.
+[perl #122782] <https://rt.perl.org/Ticket/Display.html?id=122782>.
+o 4
+The repetition operator x(fR now propagates lvalue context to its left hand
+argument when used in contexts like foreach(fR.  That allows
+for(($#that_array)x2) { ... }(fR to work as expected if the loop modifies
+$_.
+o 4
+(...) x ...(fR in scalar context used to corrupt the stack if one operand
+was an object with x overloading, causing erratic behavior.
+[perl #121827] <https://rt.perl.org/Ticket/Display.html?id=121827>.
+o 4
+Assignment to a lexical scalar is often optimised away; for example in
+my $x; $x = $y + $z(fR, the assign operator is optimised away and the add
+operator writes its result directly to $x.  Various bugs related to
+this optimisation have been fixed.  Certain operators on the right hand
+side would sometimes fail to assign the value at all or assign the wrong
+value, or would call STORE twice or not at all on tied variables.  The
+operators affected were $foo++(fR, $foo  (fR, and ( $foo(fR under use
+integer(fR, chomp(fR, chr(fR and setpgrp(fR.
+o 4
+List assignments were sometimes buggy if the same scalar ended up on both
+sides of the assignment due to use of tied(fR, values(fR or each(fR.  The
+result would be the wrong value getting assigned.
+o 4
+setpgrp($nonzero)(fR (with one argument) was accidentally changed in 5.16
+to mean setpgrp(0).  This has been fixed.
+o 4
+__SUB__(fR could return the wrong value or even corrupt memory under the
+debugger (the ( d(fR switch) and in subs containing eval $string(fR.
+o 4
+When sub () { $var }(fR becomes inlinable, it now returns a different
+scalar each time, just as a non inlinable sub would, though Perl still
+optimises the copy away in cases where it would make no observable
+difference.
+o 4
+my sub f () { $var }(fR and sub () : attr { $var }(fR are no longer
+eligible for inlining.  The former would crash; the latter would just
+throw the attributes away.  An exception is made for the little known
+:method(fR attribute, which does nothing much.
+o 4
+Inlining of subs with an empty prototype is now more consistent than
+before. Previously, a sub with multiple statements, of which all but the last
+were optimised away, would be inlinable only if it were an anonymous sub
+containing a string eval(fR or state(fR declaration or closing over an
+outer lexical variable (or any anonymous sub under the debugger).  Now any
+sub that gets folded to a single constant after statements have been
+optimised away is eligible for inlining.  This applies to things like sub
+() { jabber() if DEBUG; 42 }(fR.
+
+Some subroutines with an explicit return(fR were being made inlinable,
+contrary to the documentation,  Now return(fR always prevents inlining.
+o 4
+On some systems, such as VMS, crypt(fR can return a non ASCII string.  If a
+scalar assigned to had contained a UTF 8 string previously, then crypt(fR
+would not turn off the UTF 8 flag, thus corrupting the return value.  This
+would happen with $lexical = crypt ...(fR.
+o 4
+crypt(fR no longer calls FETCH(fR twice on a tied first argument.
+o 4
+An unterminated here doc on the last line of a quote like operator
+(qq[${ <<END }](fR, /(?{ <<END })/(fR) no longer causes a double free.  It
+started doing so in 5.18.
+o 4
+index()(fR and rindex()(fR no longer crash when used on strings over 2GB in
+size.
+[perl #121562] <https://rt.perl.org/Ticket/Display.html?id=121562>.
+o 4
+A small, previously intentional, memory leak in
+PERL_SYS_INIT(fR/PERL_SYS_INIT3(fR on Win32 builds was fixed. This might
+affect embedders who repeatedly create and destroy perl engines within
+the same process.
+o 4
+POSIX::localeconv()(fR now returns the data for the program's underlying
+locale even when called from outside the scope of use locale(fR.
+o 4
+POSIX::localeconv()(fR now works properly on platforms which don't have
+LC_NUMERIC(fR and/or LC_MONETARY(fR, or for which Perl has been compiled
+to disregard either or both of these locale categories.  In such
+circumstances, there are now no entries for the corresponding values in
+the hash returned by localeconv()(fR.
+o 4
+POSIX::localeconv()(fR now marks appropriately the values it returns as
+UTF 8 or not.  Previously they were always returned as bytes, even if
+they were supposed to be encoded as UTF 8.
+o 4
+On Microsoft Windows, within the scope of use locale(fR, the following
+POSIX character classes gave results for many locales that did not
+conform to the POSIX standard:
+[[:alnum:]](fR,
+[[:alpha:]](fR,
+[[:blank:]](fR,
+[[:digit:]](fR,
+[[:graph:]](fR,
+[[:lower:]](fR,
+[[:print:]](fR,
+[[:punct:]](fR,
+[[:upper:]](fR,
+[[:word:]](fR,
+and
+[[:xdigit:]](fR.
+This was because the underlying Microsoft implementation does not
+follow the standard.  Perl now takes special precautions to correct for
+this.
+o 4
+Many issues have been detected by Coverity <http://www.coverity.com/> and
+fixed.
+o 4
+system()(fR and friends should now work properly on more Android builds.
+
+Due to an oversight, the value specified through ( Dtargetsh(fR to Configure
+would end up being ignored by some of the build process.  This caused perls
+cross compiled for Android to end up with defective versions of system()(fR,
+exec()(fR and backticks: the commands would end up looking for /bin/sh(fR
+instead of /system/bin/sh(fR, and so would fail for the vast majority
+of devices, leaving $! as ENOENT(fR.
+o 4
+qr(...((...()...)(fR,
+qr[...([...(]...](fR,
+and
+qr{...({...(}...}(fR
+now work.  Previously it was impossible to escape these three
+left characters with a backslash within a regular expression pattern
+where otherwise they would be considered metacharacters, and the pattern
+opening delimiter was the character, and the closing delimiter was its
+mirror character.
+o 4
+s///e(fR on tainted UTF 8 strings corrupted pos()(fR. This bug,
+introduced in 5.20, is now fixed.
+[perl #122148] <https://rt.perl.org/Ticket/Display.html?id=122148>.
+o 4
+A non word boundary in a regular expression ((eB(fR) did not always
+match the end of the string; in particular q{} =~ /(B/(fR did not
+match. This bug, introduced in perl 5.14, is now fixed.
+[perl #122090] <https://rt.perl.org/Ticket/Display.html?id=122090>.
+o 4
+" P" =~ /(?=.WP)P/(fR should match, but did not. This is now fixed.
+[perl #122171] <https://rt.perl.org/Ticket/Display.html?id=122171>.
+o 4
+Failing to compile use Foo(fR in an eval(fR could leave a spurious
+BEGIN(fR subroutine definition, which would produce a Subroutine
+BEGIN redefined warning on the next use of use(fR, or other BEGIN(fR
+block.
+[perl #122107] <https://rt.perl.org/Ticket/Display.html?id=122107>.
+o 4
+method { BLOCK } ARGS(fR syntax now correctly parses the arguments if they
+begin with an opening brace.
+[perl #46947] <https://rt.perl.org/Ticket/Display.html?id=46947>.
+o 4
+External libraries and Perl may have different ideas of what the locale is.
+This is problematic when parsing version strings if the locale's numeric
+separator has been changed.  Version parsing has been patched to ensure
+it handles the locales correctly.
+[perl #121930] <https://rt.perl.org/Ticket/Display.html?id=121930>.
+o 4
+A bug has been fixed where zero length assertions and code blocks inside of a
+regex could cause pos(fR to see an incorrect value.
+[perl #122460] <https://rt.perl.org/Ticket/Display.html?id=122460>.
+o 4
+Dereferencing of constants now works correctly for typeglob constants.  Previously
+the glob was stringified and its name looked up.  Now the glob itself is used.
+[perl #69456] <https://rt.perl.org/Ticket/Display.html?id=69456>
+o 4
+When parsing a sigil ($(fR @(fR %(fR &)(fR followed by braces,
+the parser no
+longer tries to guess whether it is a block or a hash constructor (causing a
+syntax error when it guesses the latter), since it can only be a block.
+o 4
+undef $reference(fR now frees the referent immediately, instead of hanging on
+to it until the next statement.
+[perl #122556] <https://rt.perl.org/Ticket/Display.html?id=122556>
+o 4
+Various cases where the name of a sub is used (autoload, overloading, error
+messages) used to crash for lexical subs, but have been fixed.
+o 4
+Bareword lookup now tries to avoid vivifying packages if it turns out the
+bareword is not going to be a subroutine name.
+o 4
+Compilation of anonymous constants (e.g., sub () { 3 }(fR) no longer deletes
+any subroutine named __ANON__(fR in the current package.  Not only was
+W__ANON__{CODE}(fR cleared, but there was a memory leak, too.  This bug goes
+back to Perl 5.8.0.
+o 4
+Stub declarations like sub f;(fR and sub f ();(fR no longer wipe out constants
+of the same name declared by use constant(fR.  This bug was introduced in Perl
+5.10.0.
+o 4
+qr/[(N{named sequence}]/(fR now works properly in many instances.
+
+Some names
+known to (eN{...}(fR refer to a sequence of multiple characters, instead of the
+usual single character.  Bracketed character classes generally only match
+single characters, but now special handling has been added so that they can
+match named sequences, but not if the class is inverted or the sequence is
+specified as the beginning or end of a range.  In these cases, the only
+behavior change from before is a slight rewording of the fatal error message
+given when this class is part of a ?[...])(fR construct.  When the [...](fR
+stands alone, the same non fatal warning as before is raised, and only the
+first character in the sequence is used, again just as before.
+o 4
+Tainted constants evaluated at compile time no longer cause unrelated
+statements to become tainted.
+[perl #122669] <https://rt.perl.org/Ticket/Display.html?id=122669>
+o 4
+open $$fh, ...(fR, which vivifies a handle with a name like
+"main::_GEN_0", was not giving the handle the right reference count, so
+a double free could happen.
+o 4
+When deciding that a bareword was a method name, the parser would get confused
+if an our(fR sub with the same name existed, and look up the method in the
+package of the our(fR sub, instead of the package of the invocant.
+o 4
+The parser no longer gets confused by (eU=(fR within a double quoted string.  It
+used to produce a syntax error, but now compiles it correctly.
+[perl #80368] <https://rt.perl.org/Ticket/Display.html?id=80368>
+o 4
+It has always been the intention for the ( B(fR and ( T(fR file test operators to
+treat UTF 8 encoded files as text.  (perlfunc has
+been updated to say this.)  Previously, it was possible for some files to be
+considered UTF 8 that actually weren't valid UTF 8.  This is now fixed.  The
+operators now work on EBCDIC platforms as well.
+o 4
+Under some conditions warning messages raised during regular expression pattern
+compilation were being output more than once.  This has now been fixed.
+o 4
+Perl 5.20.0 introduced a regression in which a UTF 8 encoded regular
+expression pattern that contains a single ASCII lowercase letter did not
+match its uppercase counterpart. That has been fixed in both 5.20.1 and
+5.22.0.
+[perl #122655] <https://rt.perl.org/Ticket/Display.html?id=122655>
+o 4
+Constant folding could incorrectly suppress warnings if lexical warnings
+(use warnings(fR or no warnings(fR) were not in effect and $^W were
+false at compile time and true at run time.
+o 4
+Loading Unicode tables during a regular expression match could cause assertion
+failures under debugging builds if the previous match used the very same
+regular expression.
+[perl #122747] <https://rt.perl.org/Ticket/Display.html?id=122747>
+o 4
+Thread cloning used to work incorrectly for lexical subs, possibly causing
+crashes or double frees on exit.
+o 4
+Since Perl 5.14.0, deleting $SomePackage::{__ANON__} and then undefining an
+anonymous subroutine could corrupt things internally, resulting in
+Devel::Peek crashing or B.pm giving nonsensical data.  This has been
+fixed.
+o 4
+(caller $n)[3](fR now reports names of lexical subs, instead of
+treating them as "(unknown)".
+o 4
+sort subname LIST(fR now supports using a lexical sub as the comparison
+routine.
+o 4
+Aliasing (e.g., via Wx = Wy(fR) could confuse list assignments that mention the
+two names for the same variable on either side, causing wrong values to be
+assigned.
+[perl #15667] <https://rt.perl.org/Ticket/Display.html?id=15667>
+o 4
+Long here doc terminators could cause a bad read on short lines of input.  This
+has been fixed.  It is doubtful that any crash could have occurred.  This bug
+goes back to when here docs were introduced in Perl 3.000 twenty five years
+ago.
+o 4
+An optimization in split(fR to treat split /^/(fR like split /^/m(fR had the
+unfortunate side effect of also treating split /(A/(fR like split /^/m(fR,
+which it should not.  This has been fixed.  (Note, however, that split /^x/(fR
+does not behave like split /^x/m(fR, which is also considered to be a bug and
+will be fixed in a future version.)
+[perl #122761] <https://rt.perl.org/Ticket/Display.html?id=122761>
+o 4
+The little known my Class $var(fR syntax (see fields and attributes)
+could get confused in the scope of use utf8(fR if Class(fR were a constant
+whose value contained Latin 1 characters.
+o 4
+Locking and unlocking values via Hash::Util or Internals::SvREADONLY(fR
+no longer has any effect on values that were read only to begin with.
+Previously, unlocking such values could result in crashes, hangs or
+other erratic behavior.
+o 4
+Some unterminated (?(...)...)(fR constructs in regular expressions would
+either crash or give erroneous error messages.  /(?(1)/(fR is one such
+example.
+o 4
+pack "w", $tied(fR no longer calls FETCH twice.
+o 4
+List assignments like ($x, $z) = (1, $y)(fR now work correctly if $x and
+$y have been aliased by foreach(fR.
+o 4
+Some patterns including code blocks with syntax errors, such as
+/ (?{(^{})/(fR, would hang or fail assertions on debugging builds.  Now
+they produce errors.
+o 4
+An assertion failure when parsing sort(fR with debugging enabled has been
+fixed.
+[perl #122771] <https://rt.perl.org/Ticket/Display.html?id=122771>.
+o 4
+Wa = Wb; @a = split //, $b[1](fR could do a bad read and produce junk
+results.
+o 4
+In () = @array = split(fR, the () =(fR at the beginning no longer confuses
+the optimizer into assuming a limit of 1.
+o 4
+Fatal warnings no longer prevent the output of syntax errors.
+[perl #122966] <https://rt.perl.org/Ticket/Display.html?id=122966>.
+o 4
+Fixed a NaN double to long double conversion error on VMS. For quiet NaNs
+(and only on Itanium, not Alpha) negative infinity instead of NaN was
+produced.
+o 4
+Fixed the issue that caused make distclean(fR to incorrectly leave some
+files behind.
+[perl #122820] <https://rt.perl.org/Ticket/Display.html?id=122820>.
+o 4
+AIX now sets the length in getsockopt(fR correctly.
+[perl #120835] <https://rt.perl.org/Ticket/Display.html?id=120835>.
+[cpan #91183] <https://rt.cpan.org/Ticket/Display.html?id=91183>.
+[cpan #85570] <https://rt.cpan.org/Ticket/Display.html?id=85570>.
+o 4
+The optimization phase of a regexp compilation could run forever and
+exhaust all memory under certain circumstances; now fixed.
+[perl #122283] <https://rt.perl.org/Ticket/Display.html?id=122283>.
+o 4
+The test script t/op/crypt.t now uses the SHA 256 algorithm if the
+default one is disabled, rather than giving failures.
+[perl #121591] <https://rt.perl.org/Ticket/Display.html?id=121591>.
+o 4
+Fixed an off by one error when setting the size of a shared array.
+[perl #122950] <https://rt.perl.org/Ticket/Display.html?id=122950>.
+o 4
+Fixed a bug that could cause perl to enter an infinite loop during
+compilation. In particular, a while(1) within a sublist, e.g.
+    sub foo { () = ($a, my $b, ($c, do { while(1) {} })) }
+The bug was introduced in 5.20.0
+[perl #122995] <https://rt.perl.org/Ticket/Display.html?id=122995>.
+o 4
+On Win32, if a variable was local(fR ized in a pseudo process that later
+forked, restoring the original value in the child pseudo process caused
+memory corruption and a crash in the child pseudo process (and therefore the
+OS process).
+[perl #40565] <https://rt.perl.org/Ticket/Display.html?id=40565>.
+o 4
+Calling write(fR on a format with a ^WW(fR field could produce a panic
+in sv_chop()(fR if there were insufficient arguments or if the variable
+used to fill the field was empty.
+[perl #123245] <https://rt.perl.org/Ticket/Display.html?id=123245>.
+o 4
+Non ASCII lexical sub names now appear without trailing junk when they
+appear in error messages.
+o 4
+The (e@(fR subroutine prototype no longer flattens parenthesized arrays
+(taking a reference to each element), but takes a reference to the array
+itself.
+[perl #47363] <https://rt.perl.org/Ticket/Display.html?id=47363>.
+o 4
+A block containing nothing except a C style for(fR loop could corrupt the
+stack, causing lists outside the block to lose elements or have elements
+overwritten.  This could happen with map { for(...){...} } ...(fR and with
+lists containing do { for(...){...} }(fR.
+[perl #123286] <https://rt.perl.org/Ticket/Display.html?id=123286>.
+o 4
+scalar()(fR now propagates lvalue context, so that
+for(scalar($#foo)) { ... }(fR can modify $#foo through $_.
+o 4
+qr/@array(?{block})/(fR no longer dies with Bizarre copy of ARRAY.
+[perl #123344] <https://rt.perl.org/Ticket/Display.html?id=123344>.
+o 4
+eval $variable(W(C' in nested named subroutines would sometimes look up a
+global variable even with a lexical variable in scope.
+o 4
+In perl 5.20.0, sort CORE::fake(fR where 'fake' is anything other than a
+keyword, started chopping off the last 6 characters and treating the result
+as a sort sub name.  The previous behavior of treating CORE::fake(fR as a
+sort sub name has been restored.
+[perl #123410] <https://rt.perl.org/Ticket/Display.html?id=123410>.
+o 4
+Outside of use utf8(fR, a single character Latin 1 lexical variable is
+disallowed.  The error message for it, "Can't use global $foo...", was
+giving garbage instead of the variable name.
+o 4
+readline(fR on a nonexistent handle was causing ${^LAST_FH}(fR to produce a
+reference to an undefined scalar (or fail an assertion).  Now
+${^LAST_FH}(fR ends up undefined.
+o 4
+(...) x ...(fR in void context now applies scalar context to the left hand
+argument, instead of the context the current sub was called in.
+[perl #123020] <https://rt.perl.org/Ticket/Display.html?id=123020>.
+Known Problems
+
+o 4
+pack(fR ing a NaN on a perl compiled with Visual C 6 does not behave properly,
+leading to a test failure in t/op/infnan.t.
+[perl 125203] <https://rt.perl.org/Ticket/Display.html?id=125203>
+o 4
+A goal is for Perl to be able to be recompiled to work reasonably well on any
+Unicode version.  In Perl 5.22, though, the earliest such version is Unicode
+5.1 (current is 7.0).
+o 4
+EBCDIC platforms
+
+o 4
+The cmp(fR (and hence sort(fR) operators do not necessarily give the
+correct results when both operands are UTF EBCDIC encoded strings and
+there is a mixture of ASCII and/or control characters, along with other
+characters.
+o 4
+Ranges containing (eN{...}(fR in the tr///(fR (and y///(fR)
+transliteration operators are treated differently than the equivalent
+ranges in regular expression patterns.  They should, but don't, cause
+the values in the ranges to all be treated as Unicode code points, and
+not native ones.  (Version 8 Regular Expressions in perlre gives
+details as to how it should work.)
+o 4
+Encode and encoding are mostly broken.
+o 4
+Many CPAN modules that are shipped with core show failing tests.
+o 4
+pack(fR/unpack(fR with "U0" format may not work properly.
+o 4
+The following modules are known to have test failures with this version of
+Perl.  In many cases, patches have been submitted, so there will hopefully be
+new releases soon:
+
+o 4
+B::Generate version 1.50
+o 4
+B::Utils version 0.25
+o 4
+Coro version 6.42
+o 4
+Dancer version 1.3130
+o 4
+Data::Alias version 1.18
+o 4
+Data::Dump::Streamer version 2.38
+o 4
+Data::Util version 0.63
+o 4
+Devel::Spy version 0.07
+o 4
+invoker version 0.34
+o 4
+Lexical::Var version 0.009
+o 4
+LWP::ConsoleLogger version 0.000018
+o 4
+Mason version 2.22
+o 4
+NgxQueue version 0.02
+o 4
+Padre version 1.00
+o 4
+Parse::Keyword 0.08
+Obituary
+
+Brian McCauley died on May 8, 2015.  He was a frequent poster to Usenet, Perl
+Monks, and other Perl forums, and made several CPAN contributions under the
+nick NOBULL, including to the Perl FAQ.  He attended almost every
+YAPC::Europe, and indeed, helped organise YAPC::Europe 2006 and the QA
+Hackathon 2009.  His wit and his delight in intricate systems were
+particularly apparent in his love of board games; many Perl mongers will
+have fond memories of playing Fluxx and other games with Brian.  He will be
+missed.
+Acknowledgements
+
+Perl 5.22.0 represents approximately 12 months of development since Perl 5.20.0
+and contains approximately 590,000 lines of changes across 2,400 files from 94
+authors.
+
+Excluding auto generated files, documentation and release tools, there were
+approximately 370,000 lines of changes to 1,500 .pm, .t, .c and .h files.
+
+Perl continues to flourish into its third decade thanks to a vibrant community
+of users and developers. The following people are known to have contributed the
+improvements that became Perl 5.22.0:
+
+Aaron Crane, Abhijit Menon Sen, Abigail, Alberto Simoes, Alex Solovey, Alex
+Vandiver, Alexandr Ciornii, Alexandre (Midnite) Jousset, Andreas Ko(k: ((n(.wuW8/10 +.1m+)' 'z..2m+'.|(n:u'Andreas Voegele, Andrew Fresh, Andy Dougherty, Anthony Heading, Aristotle
+Pagaltzis, brian d foy, Brian Fraser, Chad Granum, Chris 'BinGOs' Williams,
+Craig A. Berry, Dagfinn Ilmari Mannsa(k: ((n(.wu+u )/2u' .3n'(z°.3n'|(n:u'Rolsky, David Golden, David Mitchell, David Wheeler, Dmitri Tikhonov, Doug
+Bell, E. Choroba, Ed J, Eric Herman, Father Chrysostomos, George Greer, Glenn
+D. Golden, Graham Knop, H.Merijn Brand, Herbert Breunung, Hugo van der Sanden,
+James E Keenan, James McCoy, James Raspass, Jan Dubois, Jarkko Hietaniemi,
+Jasmine Ngan, Jerry D. Hedden, Jim Cromie, John Goodyear, kafka, Karen
+Etheridge, Karl Williamson, Kent Fredric, kmx, Lajos Veres, Leon Timmermans,
+Lukas Mai, Mathieu Arnold, Matthew Horsfall, Max Maischein, Michael Bunk,
+Nicholas Clark, Niels Thykier, Niko Tyni, Norman Koch, Olivier Mengue, Peter
+John Acklam, Peter Martini, Petr PisaX, Philippe Bruhat (BooK), Pierre
+Bogossian, Rafael Garcia Suarez, Randy Stauner, Reini Urban, Ricardo Signes,
+Rob Hoelz, Rostislav Skudnov, Sawyer X, Shirakata Kentaro, Shlomi Fish,
+Sisyphus, Slaven Rezic, Smylers, Steffen Mu(k: ((n(.wuW8/10 +.1m+)' 'z..2m+'.|(n:u'syber, Tadeusz SoXnierz, Thomas Sibley, Todd Rinaldo, Tony Cook, Vincent Pit,
+Vladimir Marek, Yaroslav Kuzmin, Yves Orton, A (uW4/10)'E
+The list above is almost certainly incomplete as it is automatically generated
+from version control history. In particular, it does not include the names of
+the (very much appreciated) contributors who reported issues to the Perl bug
+tracker.
+
+Many of the changes included in this version originated in the CPAN modules
+included in Perl's core. We're grateful to the entire CPAN community for
+helping Perl to flourish.
+
+For a more complete list of all of Perl's historical contributors, please see
+the AUTHORS file in the Perl source distribution.
+Reporting Bugs
+
+If you find what you think is a bug, you might check the articles recently
+posted to the comp.lang.perl.misc newsgroup and the perl bug database at
+<https://rt.perl.org/>.  There may also be information at
+<http://www.perl.org/>, the Perl Home Page.
+
+If you believe you have an unreported bug, please run the perlbug program
+included with your release.  Be sure to trim your bug down to a tiny but
+sufficient test case.  Your bug report, along with the output of perl  V(fR,
+will be sent off to perlbug@perl.org to be analysed by the Perl porting team.
+
+If the bug you are reporting has security implications, which make it
+inappropriate to send to a publicly archived mailing list, then please send it
+to perl5 security report@perl.org.  This points to a closed subscription
+unarchived mailing list, which includes all the core committers, who will be
+able to help assess the impact of issues, figure out a resolution, and help
+co ordinate the release of patches to mitigate or fix the problem across all
+platforms on which Perl is supported.  Please only use this address for
+security issues in the Perl core, not for modules independently distributed on
+CPAN.
+SEE ALSO
+
+The Changes file for an explanation of how to view exhaustive details on
+what changed.
+
+The INSTALL file for how to build Perl.
+
+The README file for general stuff.
+
+The Artistic and Copying files for copyright information.
+

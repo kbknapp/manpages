@@ -1,0 +1,986 @@
+
+{
+NAME
+perl5101delta   what is new for perl v5.10.1
+DESCRIPTION
+
+This document describes differences between the 5.10.0 release and
+the 5.10.1 release.
+
+If you are upgrading from an earlier release such as 5.8.8, first read
+the perl5100delta, which describes differences between 5.8.8 and
+5.10.0
+Incompatible Changes
+
+Switch statement changes
+
+The handling of complex expressions by the given(fR/when(fR switch
+statement has been enhanced. There are two new cases where when(fR now
+interprets its argument as a boolean, instead of an expression to be used
+in a smart match:
+flip flop operators 4
+
+The ..(fR and ...(fR flip flop operators are now evaluated in boolean
+context, following their usual semantics; see Range Operators in perlop.
+
+Note that, as in perl 5.10.0, when (1..10)(fR will not work to test
+whether a given value is an integer between 1 and 10; you should use
+when ([1..10])(fR instead (note the array reference).
+
+However, contrary to 5.10.0, evaluating the flip flop operators in boolean
+context ensures it can now be useful in a when()(fR, notably for
+implementing bistable conditions, like in:
+    when (/^=begin/ .. /^=end/) {
+      # do something
+    }
+
+defined or operator 4
+
+A compound expression involving the defined or operator, as in
+when (expr1 // expr2)(fR, will be treated as boolean if the first
+expression is boolean. (This just extends the existing rule that applies
+to the regular or operator, as in when (expr1 || expr2)(fR.)
+
+The next section details more changes brought to the semantics to
+the smart match operator, that naturally also modify the behaviour
+of the switch statements where smart matching is implicitly used.
+Smart match changes
+
+Changes to type based dispatch
+The smart match operator ~~(fR is no longer commutative. The behaviour of
+a smart match now depends primarily on the type of its right hand
+argument. Moreover, its semantics have been adjusted for greater
+consistency or usefulness in several cases. While the general backwards
+compatibility is maintained, several changes must be noted:
+o 4
+Code references with an empty prototype are no longer treated specially.
+They are passed an argument like the other code references (even if they
+choose to ignore it).
+o 4
+%hash ~~ sub {}(fR and @array ~~ sub {}(fR now test that the subroutine
+returns a true value for each key of the hash (or element of the
+array), instead of passing the whole hash or array as a reference to
+the subroutine.
+o 4
+Due to the commutativity breakage, code references are no longer
+treated specially when appearing on the left of the ~~(fR operator,
+but like any vulgar scalar.
+o 4
+undef ~~ %hash(fR is always false (since undef(fR can't be a key in a
+hash). No implicit conversion to "" is done (as was the case in perl
+5.10.0).
+o 4
+$scalar ~~ @array(fR now always distributes the smart match across the
+elements of the array. It's true if one element in @array verifies
+$scalar ~~ $element(fR. This is a generalization of the old behaviour
+that tested whether the array contained the scalar.
+
+The full dispatch table for the smart match operator is given in
+Smart matching in detail in perlsyn.
+
+Smart match and overloading
+According to the rule of dispatch based on the rightmost argument type,
+when an object overloading ~~(fR appears on the right side of the
+operator, the overload routine will always be called (with a 3rd argument
+set to a true value, see overload.) However, when the object will
+appear on the left, the overload routine will be called only when the
+rightmost argument is a simple scalar. This way distributivity of smart match
+across arrays is not broken, as well as the other behaviours with complex
+types (coderefs, hashes, regexes). Thus, writers of overloading routines
+for smart match mostly need to worry only with comparing against a scalar,
+and possibly with stringification overloading; the other common cases
+will be automatically handled consistently.
+
+~~(fR will now refuse to work on objects that do not overload it (in order
+to avoid relying on the object's underlying structure). (However, if the
+object overloads the stringification or the numification operators, and
+if overload fallback is active, it will be used instead, as usual.)
+Other incompatible changes
+
+o 4
+The semantics of use feature :5.10W(fR have changed slightly.
+See Modules and Pragmata for more information.
+o 4
+It is now a run time error to use the smart match operator ~~(fR
+with an object that has no overload defined for it. (This way
+~~(fR will not break encapsulation by matching against the
+object's internal representation as a reference.)
+o 4
+The version control system used for the development of the perl
+interpreter has been switched from Perforce to git.  This is mainly an
+internal issue that only affects people actively working on the perl core;
+but it may have minor external visibility, for example in some of details
+of the output of perl  V(fR. See perlrepository for more information.
+o 4
+The internal structure of the ext/(fR directory in the perl source has
+been reorganised. In general, a module Foo::Bar(fR whose source was
+stored under ext/Foo/Bar/ is now located under ext/Foo Bar/. Also,
+some modules have been moved from lib/ to ext/. This is purely a
+source tarball change, and should make no difference to the compilation or
+installation of perl, unless you have a very customised build process that
+explicitly relies on this structure, or which hard codes the nonxs_ext(fR
+Configure parameter. Specifically, this change does not by default
+alter the location of any files in the final installation.
+o 4
+As part of the Test::Harness(fR 2.x to 3.x upgrade, the experimental
+Test::Harness::Straps(fR module has been removed.
+See Updated Modules for more details.
+o 4
+As part of the ExtUtils::MakeMaker(fR upgrade, the
+ExtUtils::MakeMaker::bytes(fR and ExtUtils::MakeMaker::vmsish(fR modules
+have been removed from this distribution.
+o 4
+Module::CoreList(fR no longer contains the %:patchlevel hash.
+o 4
+This one is actually a change introduced in 5.10.0, but it was missed
+from that release's perldelta, so it is mentioned here instead.
+
+A bugfix related to the handling of the /m(fR modifier and qr(fR resulted
+in a change of behaviour between 5.8.x and 5.10.0:
+    # matches in 5.8.x, doesnt match in 5.10.0
+    $re = qr/^bar/; "foo(nbar" =~ /$re/m;
+
+Core Enhancements
+
+Unicode Character Database 5.1.0
+
+The copy of the Unicode Character Database included in Perl 5.10.1 has
+been updated to 5.1.0 from 5.0.0. See
+<http://www.unicode.org/versions/Unicode5.1.0/#Notable_Changes> for the
+notable changes.
+A proper interface for pluggable Method Resolution Orders
+
+As of Perl 5.10.1 there is a new interface for plugging and using method
+resolution orders other than the default (linear depth first search).
+The C3 method resolution order added in 5.10.0 has been re implemented as
+a plugin, without changing its Perl space interface. See perlmroapi for
+more information.
+This pragma allows you to lexically disable or enable overloading
+for some or all operations. (Yuval Kogman)
+Parallel tests
+
+The core distribution can now run its regression tests in parallel on
+Unix like platforms. Instead of running make test(fR, set TEST_JOBS(fR in
+your environment to the number of tests to run in parallel, and run
+make test_harness(fR. On a Bourne like shell, this can be done as
+    TEST_JOBS=3 make test_harness  # Run 3 tests in parallel
+An environment variable is used, rather than parallel make itself, because
+TAP::Harness needs to be able to schedule individual non conflicting test
+scripts itself, and there is no standard interface to make(fR utilities to
+interact with their job schedulers.
+
+Note that currently some test scripts may fail when run in parallel (most
+notably ext/IO/t/io_dir.t(fR). If necessary run just the failing scripts
+again sequentially and see if the failures go away.
+DTrace support
+
+Some support for DTrace has been added. See DTrace support in INSTALL.
+Both CPAN(fR and CPANPLUS(fR now support the configure_requires(fR keyword
+in the META.yml(fR metadata file included in most recent CPAN distributions.
+This allows distribution authors to specify configuration prerequisites that
+must be installed before running Makefile.PL or Build.PL.
+
+See the documentation for ExtUtils::MakeMaker(fR or Module::Build(fR for more
+on how to specify configure_requires(fR when creating a distribution for CPAN.
+Modules and Pragmata
+
+New Modules and Pragmata
+This is a new lexically scoped alternative for the Fatal(fR module.
+The bundled version is 2.06_01. Note that in this release, using a string
+eval when autodie(fR is in effect can cause the autodie behaviour to leak
+into the surrounding scope. See (s 1BUGS(s0 in autodie for more details.
+This has been added to the core (version 2.020).
+This pragma establishes an ISA relationship with base classes at compile
+time. It provides the key feature of base(fR without the feature creep.
+This has been added to the core (version 1.39).
+Pragmata Changes
+Upgraded from version 0.08 to 0.09.
+Upgraded from version 1.02 to 1.03.
+Upgraded from version 2.13 to 2.14. See parent for a replacement.
+Upgraded from version 0.22 to 0.23.
+Upgraded from version 0.22 to 0.23.
+Upgraded from version 0.22 to 0.23.
+Upgraded from version 1.06 to 1.07.
+
+The Unicode NameAliases.txt database file has been added. This has the
+effect of adding some extra (eN(fR character names that formerly wouldn't
+have been recognised; for example, "(N{LATIN CAPITAL LETTER GHA}".
+Upgraded from version 1.13 to 1.17.
+The meaning of the :5.10(fR and :5.10.X(fR feature bundles has
+changed slightly. The last component, if any (i.e. X(fR) is simply ignored.
+This is predicated on the assumption that new features will not, in
+general, be added to maintenance releases. So :5.10(fR and :5.10.X(fR
+have identical effect. This is a change to the behaviour documented for
+5.10.0.
+Upgraded from version 2.13 to 2.14 (this was just a version bump; there
+were no functional changes).
+Upgraded from version 0.5565 to 0.62.
+Upgraded from version 1.06 to 1.07.
+Upgraded from version 1.06 to 1.07.
+See "The overloading(fR pragma" above.
+Upgraded from version 0.74 to 0.77.
+Updated Modules
+Upgraded from version 0.24 to 0.34.
+Upgraded from version 1.38 to 1.52.
+Upgraded from version 0.79 to 0.85.
+Upgraded from version 5.63 to 5.68.
+Upgraded from version 1.05 to 1.06.
+Upgraded from version 1.17 to 1.22.
+Upgraded from version 1.05 to 1.11.
+Upgraded from version 0.83 to 0.89.
+Upgraded from version 1.09 to 1.11.
+Upgraded from version 1.01 to 1.02.
+Upgraded from version 1.10 to 1.11.
+Upgraded from version 1.08 to 1.11.
+Upgraded from version 3.29 to 3.43.
+(also includes the default_value for popup_menu() fix from 3.45).
+Upgraded from version 2.008 to 2.020.
+Upgraded from version 1.9205 to 1.9402. CPAN::FTP(fR has a local fix to
+stop it being too verbose on download failure.
+Upgraded from version 0.84 to 0.88.
+Upgraded from version 0.06_02 to 0.36.
+Upgraded from version 3.25_01 to 3.30.
+Upgraded from version 2.121_14 to 2.124.
+Upgraded from version 1.01 to 1.02.
+Upgraded from version 1.816_1 to 1.820.
+Upgraded from version 3.13 to 3.19.
+Upgraded from version 2.36_01 to 2.39.
+Upgraded from version 5.45 to 5.47.
+Upgraded from version 1.01 to 1.03.
+Upgraded from version 1.12 to 1.13.
+Upgraded from version 1.08 to 1.10.
+Upgraded from version 2.23 to 2.35.
+Upgraded from version 1.10 to 1.11.
+Upgraded from version 5.62 to 5.63.
+Upgraded from version 0.21 to 0.2602.
+Upgraded from version 1.13 to 1.16.
+Upgraded from 0.20 to 0.22. (Note that neither of these versions are
+available on CPAN.)
+Upgraded from version 1.27 to 1.28.
+Upgraded from version 1.44 to 1.54.
+Upgraded from version 6.42 to 6.55_02.
+
+Note that ExtUtils::MakeMaker::bytes(fR and ExtUtils::MakeMaker::vmsish(fR
+have been removed from this distribution.
+Upgraded from version 1.51_01 to 1.56.
+Upgraded from version 2.18_02 to 2.2002.
+Upgraded from version 1.05 to 2.06_01. See also the new pragma autodie(fR.
+Upgraded from version 2.76 to 2.77.
+Upgraded from version 1.1005 to 1.1006.
+Upgraded from version 2.11 to 2.14.
+Upgraded from version 0.14 to 0.20.
+Upgraded from version 1.12 to 1.14.
+Upgraded from version 2.04 to 2.07_03.
+Upgraded from version 3.2501 to 3.30.
+Upgraded from version 1.00 to 1.01.
+Upgraded from version 0.18 to 0.22.
+Upgraded from version 1.07 to 1.08.
+Upgraded from version 2.01 to 2.02.
+Upgraded from version 0.82 to 0.84.
+Upgraded from version 1.07 to 1.08.
+Upgraded from version 1.49 to 1.50.
+Upgraded from version 1.08 to 1.09.
+Upgraded from version 2.37 to 2.38.
+Upgraded from version 1.03 to 1.04. This fixes a memory leak.
+Upgraded from version 1.00 to 1.01.
+Upgraded from version 1.23_01 to 1.25.
+
+This makes non blocking mode work on Windows in IO::Socket::INET(fR
+[CPAN #43573].
+Upgraded from version 2.008 to 2.020.
+Upgraded from version 1.06 to 1.07.
+Upgraded from version 1.27 to 1.28.
+Upgraded from version 1.30_01 to 1.31.
+Upgraded from version 1.07 to 1.09.
+Upgraded from version 0.40_1 to 0.46.
+Upgraded from version 1.02 to 1.04.
+Upgraded from version 1.05 to 2.01.
+Upgraded from version 0.5565 to 0.62.
+Upgraded from version 1.19 to 1.21.
+Upgraded from version 1.12 to 1.13.
+Upgraded from version 0.01 to 0.02.
+Upgraded from version 1.59 to 1.60.
+Upgraded from version 1.88 to 1.89.
+Upgraded from version 0.16 to 0.19.
+Upgraded from version 0.21 to 0.22.
+Upgraded from version 1.37 to 1.56.
+Upgraded from version 1.04 to 1.20.
+Upgraded from version 1.01_02 to 1.01_03 (just a minor documentation
+change).
+Upgraded from version 0.2808_01 to 0.34_02.
+Upgraded from version 2.13 to 2.18. This release no longer contains the
+%Module::CoreList::patchlevel hash.
+Upgraded from version 0.12 to 0.16.
+Upgraded from version 0.22 to 0.30.
+Upgraded from version 0.01 to 0.02.
+Upgraded from version 3.6 to 3.9.
+Upgraded from version 1.07 to 1.08.
+Upgraded from version 2.33 to 2.36.
+Upgraded from version 0.60_01 to 0.64.
+Upgraded from version 0.32 to 0.34.
+Upgraded from version 1.03 to 1.04.
+Upgraded from version 0.01 to 0.02.
+Upgraded from version 1.04 to 1.06.
+Upgraded from version 0.04 to 0.07.
+Upgraded from version 2.16 to 2.22.
+Upgraded from version 1.35 to 1.37.
+Upgraded from version 3.05 to 3.07.
+Upgraded from version 3.08 to 3.13.
+Upgraded from version 1.13 to 1.17.
+Upgraded from 2.12 to 2.18.
+Upgraded from version 1.19 to 1.21.
+Upgraded from 1.01 to 1.02.
+Upgraded from 1.11 to 1.17.
+Upgraded from 1.80 to 1.82.
+Upgraded from 2.18 to 2.20.
+Upgraded from version 2.13 to 2.14. Please see Deprecations.
+Upgraded from version 1.06 to 1.07.
+Upgraded from version 0.22 to 0.27.
+Upgraded from version 1.12 to 2.00.
+Upgraded from version 1.03 to 1.04.
+Upgraded from version 0.18 to 0.20.
+Upgraded from version 2.64 to 3.17.
+
+Note that one side effect of the 2.x to 3.x upgrade is that the
+experimental Test::Harness::Straps(fR module (and its supporting
+Assert(fR, Iterator(fR, Point(fR and Results(fR modules) have been
+removed. If you still need this, then they are available in the
+(unmaintained) Test Harness Straps(fR distribution on CPAN.
+Upgraded from version 0.72 to 0.92.
+Upgraded from version 3.26 to 3.27.
+Upgraded from version 2007.1117 to 2009.0305.
+Upgraded from version 2006.1117 to 2009.0305.
+Upgraded from version 2.00 to 2.11.
+Upgraded from version 2.01 to 2.09.
+Upgraded from version 1.67 to 1.72.
+Upgraded from version 1.14 to 1.29.
+Upgraded from version 1.37 to 1.38.
+This has documentation changes, and has been assigned a version for the
+first time: version 4.2.
+Upgraded from version 1.9711 to 1.9719.
+Upgraded from version 1.18 to 1.1901.
+Upgraded from version 1.12 to 1.15.
+Upgraded from version 1.02 to 1.03.
+Upgraded from version 0.25 to 0.27.
+
+charinfo()(fR now works on Unified CJK code points added to later versions
+of Unicode.
+
+casefold()(fR has new fields returned to provide both a simpler interface
+and previously missing information. The old fields are retained for
+backwards compatibility. Information about Turkic specific code points is
+now returned.
+
+The documentation has been corrected and expanded.
+Upgraded from version 1.04 to 1.05.
+Upgraded from version 0.34 to 0.39.
+Upgraded from version 0.1001_01 to 0.1101.
+Upgraded from version 0.08 to 0.10.
+Utility Changes
+
+h2ph 4
+
+Now looks in include fixed(fR too, which is a recent addition to gcc's
+search path.
+h2xs 4
+
+No longer incorrectly treats enum values like macros (Daniel Burr).
+
+Now handles C .1v'++.1v'Rainer Weikusat was used; Daniel Burr also proposed a similar fix).
+perl5db.pl 4
+
+LVALUE(fR subroutines now work under the debugger.
+
+The debugger now correctly handles proxy constant subroutines, and
+subroutine stubs.
+perlthanks 4
+
+Perl 5.10.1 adds a new utility perlthanks, which is a variant of
+perlbug, but for sending non bug reports to the authors and maintainers
+of Perl. Getting nothing but bug reports can become a bit demoralising:
+we'll see if this changes things.
+New Documentation
+
+perlhaiku 4
+
+This contains instructions on how to build perl for the Haiku platform.
+perlmroapi 4
+
+This describes the new interface for pluggable Method Resolution Orders.
+perlperf 4
+
+This document, by Richard Foley, provides an introduction to the use of
+performance and optimization techniques which can be used with particular
+reference to perl programs.
+perlrepository 4
+
+This describes how to access the perl source using the git version
+control system.
+perlthanks 4
+
+This describes the new perlthanks utility.
+Changes to Existing Documentation
+
+The various large ChangesW(fR files (which listed every change made to perl
+over the last 18 years) have been removed, and replaced by a small file,
+also called Changes(fR, which just explains how that same information may
+be extracted from the git version control system.
+
+The file Porting/patching.pod has been deleted, as it mainly described
+interacting with the old Perforce based repository, which is now obsolete.
+Information still relevant has been moved to perlrepository.
+
+perlapi, perlintern, perlmodlib and perltoc are now all
+generated at build time, rather than being shipped as part of the release.
+Performance Enhancements
+
+o 4
+A new internal cache means that isa()(fR will often be faster.
+o 4
+Under use locale(fR, the locale relevant information is now cached on
+read only values, such as the list returned by keys %hash(fR. This makes
+operations such as sort keys %hash(fR in the scope of use locale(fR much
+faster.
+o 4
+Empty DESTROY(fR methods are no longer called.
+Installation and Configuration Improvements
+
+ext/ reorganisation
+
+The layout of directories in ext has been revised. Specifically, all
+extensions are now flat, and at the top level, with /(fR in pathnames
+replaced by ( (fR, so that ext/Data/Dumper/ is now ext/Data Dumper/,
+etc.  The names of the extensions as specified to Configure, and as
+reported by %Config::Config under the keys dynamic_ext(fR,
+known_extensions(fR, nonxs_ext(fR and static_ext(fR have not changed, and
+still use /(fR. Hence this change will not have any affect once perl is
+installed. However, Attribute::Handlers(fR, Safe(fR and mro(fR have now
+become extensions in their own right, so if you run Configure with
+options to specify an exact list of extensions to build, you will need to
+change it to account for this.
+
+For 5.10.2, it is planned that many dual life modules will have been moved
+from lib to ext; again this will have no effect on an installed
+perl, but will matter if you invoke Configure with a pre canned list of
+extensions to build.
+Configuration improvements
+
+If vendorlib(fR and vendorarch(fR are the same, then they are only added to
+@INC once.
+
+$Config{usedevel} and the C level PERL_USE_DEVEL(fR are now defined if
+perl is built with  ( Dusedevel(fR.
+
+Configure will enable use of ( fstack protector(fR, to provide protection
+against stack smashing attacks, if the compiler supports it.
+
+Configure will now determine the correct prototypes for re entrant
+functions, and for gconvert(fR, if you are using a C .1v'++.1v'than a C compiler.
+
+On Unix, if you build from a tree containing a git repository, the
+configuration process will note the commit hash you have checked out, for
+display in the output of perl  v(fR and perl  V(fR. Unpushed local commits
+are automatically added to the list of local patches displayed by
+perl  V(fR.
+Compilation improvements
+
+As part of the flattening of ext, all extensions on all platforms are
+built by make_ext.pl. This replaces the Unix specific
+ext/util/make_ext, VMS specific make_ext.com and Win32 specific
+win32/buildext.pl.
+Platform Specific Changes
+
+AIX 4
+
+Removed libbsd for AIX 5L and 6.1. Only flock() was used from libbsd.
+
+Removed libgdbm for AIX 5L and 6.1. The libgdbm is delivered as an
+optional package with the AIX Toolbox. Unfortunately the 64 bit version 
+is broken.
+
+Hints changes mean that AIX 4.2 should work again.
+Cygwin 4
+
+On Cygwin we now strip the last number from the DLL. This has been the
+behaviour in the cygwin.com build for years. The hints files have been
+updated.
+FreeBSD 4
+
+The hints files now identify the correct threading libraries on FreeBSD 7
+and later.
+Irix 4
+
+We now work around a bizarre preprocessor bug in the Irix 6.5 compiler:
+cc  E  (fR unfortunately goes into K&R mode, but cc  E file.c(fR doesn't.
+Haiku 4
+
+Patches from the Haiku maintainers have been merged in. Perl should now
+build on Haiku.
+MirOS BSD 4
+
+Perl should now build on MirOS BSD.
+NetBSD 4
+
+Hints now supports versions 5.W.
+Stratus VOS 4
+
+Various changes from Stratus have been merged in.
+Symbian 4
+
+There is now support for Symbian S60 3.2 SDK and S60 5.0 SDK.
+Win32 4
+
+Improved message window handling means that alarm(fR and kill(fR messages
+will no longer be dropped under race conditions.
+VMS 4
+
+Reads from the in memory temporary files of PerlIO::scalar(fR used to fail
+if $/ was set to a numeric reference (to indicate record style reads).
+This is now fixed.
+
+VMS now supports getgrgid(fR.
+
+Many improvements and cleanups have been made to the VMS file name handling
+and conversion code.
+
+Enabling the PERL_VMS_POSIX_EXIT(fR logical name now encodes a POSIX exit
+status in a VMS condition value for better interaction with GNV's bash
+shell and other utilities that depend on POSIX exit values.  See
+$? in perlvms for details.
+Selected Bug Fixes
+
+o 4
+5.10.0 inadvertently disabled an optimisation, which caused a measurable
+performance drop in list assignment, such as is often used to assign
+function parameters from @_. The optimisation has been re instated, and
+the performance regression fixed.
+o 4
+Fixed memory leak on while (1) { map 1, 1 }(fR [RT #53038].
+o 4
+Some potential coredumps in PerlIO fixed [RT #57322,54828].
+o 4
+The debugger now works with lvalue subroutines.
+o 4
+The debugger's m(fR command was broken on modules that defined constants
+[RT #61222].
+o 4
+crypt()(fR and string complement could return tainted values for untainted
+arguments [RT #59998].
+o 4
+The ( i.suffix(fR command line switch now recreates the file using
+restricted permissions, before changing its mode to match the original
+file. This eliminates a potential race condition [RT #60904].
+o 4
+On some Unix systems, the value in $? would not have the top bit set
+($? & 128(fR) even if the child core dumped.
+o 4
+Under some circumstances, $^R could incorrectly become undefined
+[RT #57042].
+o 4
+(XS) In various hash functions, passing a pre computed hash to when the
+key is UTF 8 might result in an incorrect lookup.
+o 4
+(XS) Including XSUB.h before perl.h gave a compile time error
+[RT #57176].
+o 4
+$object >isa(Foo)(fR would report false if the package Foo(fR didn't
+exist, even if the object's @ISA contained Foo(fR.
+o 4
+Various bugs in the new to 5.10.0 mro code, triggered by manipulating
+@ISA, have been found and fixed.
+o 4
+Bitwise operations on references could crash the interpreter, e.g.
+$x=($y; $x |= "foo"(fR [RT #54956].
+o 4
+Patterns including alternation might be sensitive to the internal UTF 8
+representation, e.g.
+    my $byte = chr(192);
+    my $utf8 = chr(192); utf8::upgrade($utf8);
+    $utf8 =~ /$byte|X}/i;       # failed in 5.10.0
+
+o 4
+Within UTF8 encoded Perl source files (i.e. where use utf8(fR is in
+effect), double quoted literal strings could be corrupted where a (exNN(fR,
+(e0NNN(fR or (eN{}(fR is followed by a literal character with ordinal value
+greater than 255 [RT #59908].
+o 4
+B::Deparse(fR failed to correctly deparse various constructs:
+readpipe STRING(fR [RT #62428], CORE::require(STRING)(fR [RT #62488],
+sub foo(_)(fR [RT #62484].
+o 4
+Using setpgrp()(fR with no arguments could corrupt the perl stack.
+o 4
+The block form of eval(fR is now specifically trappable by Safe(fR and
+ops(fR.  Previously it was erroneously treated like string eval(fR.
+o 4
+In 5.10.0, the two characters [~(fR were sometimes parsed as the smart
+match operator (~~(fR) [RT #63854].
+o 4
+In 5.10.0, the W(fR quantifier in patterns was sometimes treated as
+{0,32767}(fR [RT #60034, #60464]. For example, this match would fail:
+    ("ab" x 32768) =~ /^(ab)W$/
+
+o 4
+shmget(fR was limited to a 32 bit segment size on a 64 bit OS [RT #63924].
+o 4
+Using next(fR or last(fR to exit a given(fR block no longer produces a
+spurious warning like the following:
+    Exiting given via last at foo.pl line 123
+
+o 4
+On Windows, .(foo(fR and ..(foo(fR  were treated differently than
+./foo(fR and ../foo(fR by do(fR and require(fR [RT #63492].
+o 4
+Assigning a format to a glob could corrupt the format; e.g.:
+     Wbar=Wfoo{FORMAT}; # foo format now bad
+
+o 4
+Attempting to coerce a typeglob to a string or number could cause an
+assertion failure. The correct error message is now generated,
+Cant coerce GLOB to $type(fR.
+o 4
+Under use filetest access(W(C', ( x(fR was using the wrong access mode. This
+has been fixed [RT #49003].
+o 4
+length(fR on a tied scalar that returned a Unicode value would not be
+correct the first time. This has been fixed.
+o 4
+Using an array tie(fR inside in array tie(fR could SEGV. This has been
+fixed. [RT #51636]
+o 4
+A race condition inside PerlIOStdio_close()(fR has been identified and
+fixed. This used to cause various threading issues, including SEGVs.
+o 4
+In unpack(fR, the use of ()(fR groups in scalar context was internally
+placing a list on the interpreter's stack, which manifested in various
+ways, including SEGVs.  This is now fixed [RT #50256].
+o 4
+Magic was called twice in substr(fR, (e&$x(fR, tie $x, $m(fR and chop(fR.
+These have all been fixed.
+o 4
+A 5.10.0 optimisation to clear the temporary stack within the implicit
+loop of s///ge(fR has been reverted, as it turned out to be the cause of
+obscure bugs in seemingly unrelated parts of the interpreter [commit 
+ef0d4e17921ee3de].
+o 4
+The line numbers for warnings inside elsif(fR are now correct.
+o 4
+The ..(fR operator now works correctly with ranges whose ends are at or
+close to the values of the smallest and largest integers.
+o 4
+binmode STDIN, :raw(W(C' could lead to segmentation faults on some platforms.
+This has been fixed [RT #54828].
+o 4
+An off by one error meant that index $str, ...(fR was effectively being
+executed as index "$str(0", ...(fR. This has been fixed [RT #53746].
+o 4
+Various leaks associated with named captures in regexes have been fixed
+[RT #57024].
+o 4
+A weak reference to a hash would leak. This was affecting DBI(fR
+[RT #56908].
+o 4
+Using (?|) in a regex could cause a segfault [RT #59734].
+o 4
+Use of a UTF 8 tr//(fR within a closure could cause a segfault [RT #61520].
+o 4
+Calling sv_chop()(fR or otherwise upgrading an SV could result in an
+unaligned 64 bit access on the SPARC architecture [RT #60574].
+o 4
+In the 5.10.0 release, inc_version_list(fR would incorrectly list
+5.10.W(fR after 5.8.W(fR; this affected the @INC search order
+[RT #67628].
+o 4
+In 5.10.0, pack "aW", $tainted_value(fR returned a non tainted value
+[RT #52552].
+o 4
+In 5.10.0, printf(fR and sprintf(fR could produce the fatal error
+panic: utf8_mg_pos_cache_update(fR when printing UTF 8 strings
+[RT #62666].
+o 4
+In the 5.10.0 release, a dynamically created AUTOLOAD(fR method might be
+missed (method cache issue) [RT #60220,60232].
+o 4
+In the 5.10.0 release, a combination of use feature(fR and //ee(fR could
+cause a memory leak [RT #63110].
+o 4
+( C(fR on the shebang (#!(fR) line is once more permitted if it is also
+specified on the command line. ( C(fR on the shebang line used to be a
+silent no op if it was not also on the command line, so perl 5.10.0
+disallowed it, which broke some scripts. Now perl checks whether it is
+also on the command line and only dies if it is not [RT #67880].
+o 4
+In 5.10.0, certain types of re entrant regular expression could crash,
+or cause the following assertion failure [RT #60508]:
+    Assertion rx >sublen >= (s   rx >subbeg) + i failed
+
+New or Changed Diagnostics
+This new fatal error occurs when the C routine Perl_sv_chop()(fR was
+passed a position that is not within the scalar's string buffer. This
+could be caused by buggy XS code, and at this point recovery is not
+possible.
+This warning has been removed. In general, it only got produced in
+conjunction with other warnings, and removing it allowed an ISA lookup
+optimisation to be added.
+This warning has been removed.
+It is now possible to change the depth threshold for this warning from the
+default of 100, by recompiling the perl binary, setting the C
+pre processor macro PERL_SUB_DEPTH_WARN(fR to the desired value.
+Changed Internals
+
+o 4
+The J.R.R. Tolkien quotes at the head of C source file have been checked and
+proper citations added, thanks to a patch from Tom Christiansen.
+o 4
+vcroak()(fR now accepts a null first argument. In addition, a full audit
+was made of the not NULL(s0 compiler annotations, and those for several
+other internal functions were corrected.
+o 4
+New macros dSAVEDERRNO(fR, dSAVE_ERRNO(fR, SAVE_ERRNO(fR, RESTORE_ERRNO(fR
+have been added to formalise the temporary saving of the errno(fR
+variable.
+o 4
+The function Perl_sv_insert_flags(fR has been added to augment
+Perl_sv_insert(fR.
+o 4
+The function Perl_newSV_type(type)(fR has been added, equivalent to
+Perl_newSV()(fR followed by Perl_sv_upgrade(type)(fR.
+o 4
+The function Perl_newSVpvn_flags()(fR has been added, equivalent to
+Perl_newSVpvn()(fR and then performing the action relevant to the flag.
+
+Two flag bits are currently supported.
+This will call SvUTF8_on()(fR for you. (Note that this does not convert an
+sequence of ISO 8859 1 characters to UTF 8). A wrapper, newSVpvn_utf8()(fR
+is available for this.
+Call sv_2mortal()(fR on the new SV.
+There is also a wrapper that takes constant strings, newSVpvs_flags()(fR.
+
+o 4
+The function Perl_croak_xs_usage(fR has been added as a wrapper to
+Perl_croak(fR.
+o 4
+The functions PerlIO_find_layer(fR and PerlIO_list_alloc(fR are now
+exported.
+o 4
+PL_na(fR has been exterminated from the core code, replaced by local STRLEN
+temporaries, or W_nolen()(fR calls. Either approach is faster than PL_na(fR,
+which is a pointer deference into the interpreter structure under ithreads,
+and a global variable otherwise.
+o 4
+Perl_mg_free()(fR used to leave freed memory accessible via SvMAGIC() on
+the scalar. It now updates the linked list to remove each piece of magic
+as it is freed.
+o 4
+Under ithreads, the regex in PL_reg_curpm(fR is now reference counted. This
+eliminates a lot of hackish workarounds to cope with it not being reference
+counted.
+o 4
+Perl_mg_magical()(fR would sometimes incorrectly turn on SvRMAGICAL()(fR.
+This has been fixed.
+o 4
+The public IV and NV flags are now not set if the string value has
+trailing garbage. This behaviour is consistent with not setting the
+public IV or NV flags if the value is out of range for the type.
+o 4
+SV allocation tracing has been added to the diagnostics enabled by ( Dm(fR.
+The tracing can alternatively output via the PERL_MEM_LOG(fR mechanism, if
+that was enabled when the perl binary was compiled.
+o 4
+Uses of Nullav(fR, Nullcv(fR, Nullhv(fR, Nullop(fR, Nullsv(fR etc have been
+replaced by NULL(fR in the core code, and non dual life modules, as NULL(fR
+is clearer to those unfamiliar with the core code.
+o 4
+A macro MUTABLE_PTR(p) has been added, which on (non pedantic) gcc will
+not cast away const(fR, returning a void W(fR. Macros MUTABLE_SV(av)(fR,
+MUTABLE_SV(cv)(fR etc build on this, casting to AV W(fR etc without
+casting away const(fR. This allows proper compile time auditing of
+const(fR correctness in the core, and helped picked up some errors (now
+fixed).
+o 4
+Macros mPUSHs()(fR and mXPUSHs()(fR have been added, for pushing SVs on the
+stack and mortalizing them.
+o 4
+Use of the private structure mro_meta(fR has changed slightly. Nothing
+outside the core should be accessing this directly anyway.
+o 4
+A new tool, Porting/expand macro.pl(fR has been added, that allows you
+to view how a C preprocessor macro would be expanded when compiled.
+This is handy when trying to decode the macro hell that is the perl
+guts.
+New Tests
+
+Many modules updated from CPAN incorporate new tests.
+
+Several tests that have the potential to hang forever if they fail now
+incorporate a watchdog functionality that will kill them after a timeout,
+which helps ensure that make test(fR and make test_harness(fR run to
+completion automatically. (Jerry Hedden).
+
+Some core specific tests have been added:
+t/comp/retainedlines.t 4
+
+Check that the debugger can retain source lines from eval(fR.
+t/io/perlio_fail.t 4
+
+Check that bad layers fail.
+t/io/perlio_leaks.t 4
+
+Check that PerlIO layers are not leaking.
+t/io/perlio_open.t 4
+
+Check that certain special forms of open work.
+t/io/perlio.t 4
+
+General PerlIO tests.
+t/io/pvbm.t 4
+
+Check that there is no unexpected interaction between the internal types
+PVBM(fR and PVGV(fR.
+t/mro/package_aliases.t 4
+
+Check that mro works properly in the presence of aliased packages.
+t/op/dbm.t 4
+
+Tests for dbmopen(fR and dbmclose(fR.
+t/op/index_thr.t 4
+
+Tests for the interaction of index(fR and threads.
+t/op/pat_thr.t 4
+
+Tests for the interaction of esoteric patterns and threads.
+t/op/qr_gc.t 4
+
+Test that qr(fR doesn't leak.
+t/op/reg_email_thr.t 4
+
+Tests for the interaction of regex recursion and threads.
+t/op/regexp_qr_embed_thr.t 4
+
+Tests for the interaction of patterns with embedded qr//(fR and threads.
+t/op/regexp_unicode_prop.t 4
+
+Tests for Unicode properties in regular expressions.
+t/op/regexp_unicode_prop_thr.t 4
+
+Tests for the interaction of Unicode properties and threads.
+t/op/reg_nc_tie.t 4
+
+Test the tied methods of Tie::Hash::NamedCapture(fR.
+t/op/reg_posixcc.t 4
+
+Check that POSIX character classes behave consistently.
+t/op/re.t 4
+
+Check that exportable re(fR functions in universal.c work.
+t/op/setpgrpstack.t 4
+
+Check that setpgrp(fR works.
+t/op/substr_thr.t 4
+
+Tests for the interaction of substr(fR and threads.
+t/op/upgrade.t 4
+
+Check that upgrading and assigning scalars works.
+t/uni/lex_utf8.t 4
+
+Check that Unicode in the lexer works.
+t/uni/tie.t 4
+
+Check that Unicode and tie(fR work.
+Known Problems
+
+This is a list of some significant unfixed bugs, which are regressions
+from either 5.10.0 or 5.8.x.
+o 4
+List::Util::first(fR misbehaves in the presence of a lexical $_
+(typically introduced by my $_(fR or implicitly by given(fR). The variable
+which gets set for each iteration is the package variable $_, not the
+lexical $_ [RT #67694].
+
+A similar issue may occur in other modules that provide functions which
+take a block as their first argument, like
+    foo { ... $_ ...} list
+
+o 4
+The charnames(fR pragma may generate a run time error when a regex is
+interpolated [RT #56444]:
+    use charnames :full;
+    my $r1 = qr/(N{THAI CHARACTER SARA I}/;
+    "foo" =~ $r1;    # okay
+    "foo" =~ /$r1+/; # runtime error
+A workaround is to generate the character outside of the regex:
+    my $a = "(N{THAI CHARACTER SARA I}";
+    my $r1 = qr/$a/;
+
+o 4
+Some regexes may run much more slowly when run in a child thread compared
+with the thread the pattern was compiled into [RT #55600].
+Deprecations
+
+The following items are now deprecated.
+o 4
+Switch(fR is buggy and should be avoided. From perl 5.11.0 onwards, it is
+intended that any use of the core version of this module will emit a
+warning, and that the module will eventually be removed from the core
+(probably in perl 5.14.0). See Switch statements in perlsyn for its
+replacement.
+o 4
+suidperl(fR will be removed in 5.12.0. This provides a mechanism to
+emulate setuid permission bits on systems that don't support it properly.
+Acknowledgements
+
+Some of the work in this release was funded by a TPF grant.
+
+Nicholas Clark officially retired from maintenance pumpking duty at the
+end of 2008; however in reality he has put much effort in since then to
+help get 5.10.1 into a fit state to be released, including writing a
+considerable chunk of this perldelta.
+
+Steffen Mueller and David Golden in particular helped getting CPAN modules
+polished and synchronised with their in core equivalents.
+
+Craig Berry was tireless in getting maint to run under VMS, no matter how
+many times we broke it for him.
+
+The other core committers contributed most of the changes, and applied most
+of the patches sent in by the hundreds of contributors listed in AUTHORS.
+
+(Sorry to all the people I haven't mentioned by name).
+
+Finally, thanks to Larry Wall, without whom none of this would be
+necessary.
+Reporting Bugs
+
+If you find what you think is a bug, you might check the articles
+recently posted to the comp.lang.perl.misc newsgroup and the perl
+bug database at http://rt.perl.org/perlbug/ .  There may also be
+information at http://www.perl.org/ , the Perl Home Page.
+
+If you believe you have an unreported bug, please run the perlbug
+program included with your release.  Be sure to trim your bug down
+to a tiny but sufficient test case.  Your bug report, along with the
+output of perl  V(fR, will be sent off to perlbug@perl.org to be
+analysed by the Perl porting team.
+
+If the bug you are reporting has security implications, which make it
+inappropriate to send to a publicly archived mailing list, then please send
+it to perl5 security report@perl.org. This points to a closed subscription
+unarchived mailing list, which includes
+all the core committers, who will be able
+to help assess the impact of issues, figure out a resolution, and help
+co ordinate the release of patches to mitigate or fix the problem across all
+platforms on which Perl is supported. Please only use this address for
+security issues in the Perl core, not for modules independently
+distributed on CPAN.
+SEE ALSO
+
+The Changes file for an explanation of how to view exhaustive details
+on what changed.
+
+The INSTALL file for how to build Perl.
+
+The README file for general stuff.
+
+The Artistic and Copying files for copyright information.
+
